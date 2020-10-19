@@ -1,0 +1,25 @@
+<%
+  const icons = require('./icon.js').default
+  const { id, width, height } = icons[name] || {}
+  className = typeof className !== 'undefined' ? className : ''
+  left = typeof left !== 'undefined' ? left : false
+  right = typeof right !== 'undefined' ? right : false
+  img = typeof img !== 'undefined' ? img : false
+  const url = `static/img/sprite.svg#${id}`
+  const style = `height: 1em; width: ${width / height}em`
+  const classes = [
+    'icon',
+    `icon_${name}`,
+    left && 'icon_left',
+    right && 'icon_right',
+    className
+  ].filter(c => c).join(' ')
+%>
+
+<% if (img) { %>
+  <img class="<%= classes %>" style="<%= style %>" src="<%= url %>" alt="<%= name %>" />
+<% } else { %>
+  <svg class="<%= classes %>" style="<%= style %>">
+    <use xlink:href="<%= url.replace('-usage', '') %>" />
+  </svg>
+<% } %>

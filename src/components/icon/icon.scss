@@ -1,0 +1,14 @@
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  height: 1em;
+  fill: currentColor;
+
+  &_left {
+    margin-right: 0.4em;
+  }
+  &_right {
+    margin-left: 0.4em;
+  }
+}

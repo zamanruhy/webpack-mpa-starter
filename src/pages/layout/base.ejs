@@ -1,0 +1,26 @@
+<%
+  const header = require('@/components/header/header.ejs')
+  const footer = require('@/components/footer/footer.ejs')
+%>
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <title>Webpack MPA Starter</title>
+    <meta name="description" content="Webpack template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+  </head>
+  <body>
+    <div class="app">
+      <div class="app__inner">
+        <%= header() %>
+        <main class="main">
+          <%= content %>
+        </main>
+        <%= footer() %>
+      </div>
+    </div>
+  </body>
+</html>

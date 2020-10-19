@@ -1,0 +1,11 @@
+<%
+  showSlot = typeof showSlot !== 'undefined' ? showSlot : true
+%>
+
+<div class="example">
+  <h5 class="example__title"><%= title %></h5>
+  <% if (showSlot) { %>
+    <hr>
+    <%= slot %>
+  <% } %>
+</div>

@@ -1,0 +1,20 @@
+<header class="header">
+  <div class="container header__container">
+    <div class="header__inner">
+      <div class="header__logo">
+        <img src="<%= require('@/assets/img/svelte.svg') %>" alt="Logo" width1="98.1" height1="118" class="header__logo-img">
+      </div>
+      <app-hamburger class="header__toggle" .class="'some__element'"></app-hamburger>
+    </div>
+  </div>
+  <app-drawer class="header__drawer">
+    <app-button variant="primary" data-modal="main-modal">Open Modal</app-button>
+    <app-input
+      label="Name"
+      placeholder="Type your name"
+      name="name"
+      autofocus
+    ></app-input>
+    Lorem <br>ipsum <br>dolor <br>sit <br>amet, <br>consectetur <br>adipisicing <br>elit. <br>Aperiam, <br>eveniet!
+  </app-drawer>
+</header>

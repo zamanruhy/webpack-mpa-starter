@@ -1,0 +1,74 @@
+@function strip-unit($number) {
+  @if type-of($number) == "number" and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+@function rem($px, $root: 16) {
+  $px: strip-unit($px);
+  $root: strip-unit($root);
+  @return $px / $root * 1rem;
+}
+
+@function em($px, $context) {
+  $px: strip-unit($px);
+  $context: strip-unit($context);
+  @return $px / $context * 1em;
+}
+
+@function vw($px, $root: $max-width) {
+  $px: strip-unit($px);
+  $root: strip-unit($root);
+  @return $px / $root * 100 * 1vw;
+}
+
+@function vh($px, $root: 850) {
+  $px: strip-unit($px);
+  $root: strip-unit($root);
+  @return $px / $root * 100 * 1vh;
+}
+
+@function str-replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace +
+      str-replace(
+        str-slice($string, $index + str-length($search)),
+        $search,
+        $replace
+      );
+  }
+
+  @return $string;
+}
+
+@function linear(
+  $value-start,
+  $value-end,
+  $width-start,
+  $width-end,
+  $unit: vw,
+  $clamp: false
+) {
+  $units: (
+    vw: 1vw,
+    vh: 1vh,
+    vmin: 1vmin,
+    vmax: 1vmax
+  );
+  $unit: if(map-has-key($units, $unit), map-get($units, $unit), 1vw);
+  $list: ();
+  @each $item in zip($value-start, $value-end) {
+    $slope: (nth($item, 2) - nth($item, 1)) / ($width-end - $width-start);
+    // prettier-ignore
+    $calc: calc(#{nth($item, 1) - $width-start * $slope} + #{100 * $unit * $slope});
+    $list: append(
+      $list,
+      if($clamp, clamp(nth($item, 1), $calc, nth($item, 2)), $calc)
+    );
+  }
+  @return $list;
+}

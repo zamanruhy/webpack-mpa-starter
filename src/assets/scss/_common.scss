@@ -1,0 +1,42 @@
+// Fonts
+@include font-face("OpenSans", "../fonts/OpenSans", 400, normal, woff2 woff);
+
+// Layout
+.app {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow: hidden;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+}
+
+.main {
+  flex: 1 0 auto;
+}
+
+.container {
+  @include container(true);
+}
+
+// Display
+@each $bp in map-keys($breakpoints) {
+  @if $bp != xs {
+    .hidden-#{$bp}-up {
+      @include up($bp) {
+        display: none !important;
+      }
+    }
+    .hidden-#{$bp}-down {
+      @include down($bp) {
+        display: none !important;
+      }
+    }
+  }
+}
+
+// Components

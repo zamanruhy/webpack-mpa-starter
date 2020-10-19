@@ -1,0 +1,54 @@
+// Colors
+$primary: #a17d78;
+
+// Body & link
+$font-family: OpenSans, Arial, sans-serif;
+$font-size: 16px;
+$line-height: 1.5;
+$body-bg: #ffffff;
+$body-color: #222222;
+$link-color: $primary;
+
+// Layout
+$side-padding: 15px;
+$min-width: 320px;
+$max-width: 1200px + $side-padding * 2;
+$max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px
+);
+
+// Grid
+$grid-gutter: 30px;
+$grid-columns: 12;
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+);
+
+// Z-indexes
+$z-indexes: (
+  sticky: 1010,
+  fixed: 1020,
+  backdrop: 1030,
+  modal: 1040,
+  tooltip: 1050,
+  dropdown: 1060
+);
+
+// Transitions
+$easings: (
+  fast-out-slow-in: cubic-bezier(0.4, 0, 0.2, 1),
+  linear-out-slow-in: cubic-bezier(0, 0, 0.2, 1),
+  fast-out-linear-in: cubic-bezier(0.4, 0, 1, 1),
+  fast-in-fast-out: cubic-bezier(0.25, 0.8, 0.25, 1),
+  swing: cubic-bezier(0.25, 0.8, 0.5, 1)
+);
+$transition: 0.3s map-get($easings, swing);
+
+// Components

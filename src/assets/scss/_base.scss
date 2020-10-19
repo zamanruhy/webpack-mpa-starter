@@ -1,0 +1,111 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+:focus {
+  outline: 0;
+
+  @include keyboard() {
+    @include focus-ring();
+  }
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-size: $font-size;
+  font-family: $font-family;
+  line-height: $line-height;
+  min-width: $min-width;
+  color: $body-color;
+  background-color: $body-bg;
+}
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+  vertical-align: middle;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+td,
+th {
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: $link-color;
+}
+
+hr {
+  margin: 16px 0;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+p {
+  margin: 0 0 16px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 16px 0 8px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: $font-size * 2.5;
+}
+h2 {
+  font-size: $font-size * 2;
+}
+h3 {
+  font-size: $font-size * 1.75;
+}
+h4 {
+  font-size: $font-size * 1.5;
+}
+h5 {
+  font-size: $font-size * 1.25;
+}
+h6 {
+  font-size: $font-size;
+}
