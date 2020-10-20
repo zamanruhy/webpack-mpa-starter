@@ -1,7 +1,7 @@
 {
   "name": "webpack-mpa-starter",
   "version": "0.1.0",
-  "description": "Multi page app setup with webpack",
+  "description": "Webpack starter for building multi-page websites",
   "scripts": {
     "dev": "cross-env NODE_ENV=development BROWSERSLIST_ENV=modern webpack-dev-server --progress --config webpack/webpack.config.dev.js",
     "build": "cross-env NODE_ENV=production BROWSERSLIST_ENV=modern node webpack/prod.js",

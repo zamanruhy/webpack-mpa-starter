@@ -1,7 +1,6 @@
-# Webpack Multi Page App Starter
+# Webpack mpa starter
 
-Opinionated multiple page application setup with Webpack. Fully customizable.
-Powered by svelte.
+Multiple page application starter for Webpack. Optionally used svelte.
 
 ## Quick start
 
@@ -54,7 +53,8 @@ npm run dev
 
   - `_functions.scss` with useful functions
   - all three of the above files (combined in `settings.scss`) are automatically
-    imported into every scss file
+    imported into every `scss` file
+  - all `scss` files inside `src/components` auto imported in `main.js`
 
 - **[PostCSS](https://github.com/postcss/postcss) stylesheets postprocessing**
 
@@ -87,11 +87,11 @@ npm run dev
 
     ```ejs
     <%
-      global.layout = 'simple'
+      global.layout = 'other'
     %>
     ```
 
-    and `simple.ejs` will be picked up from `src/pages/layout` instead of
+    and `other.ejs` will be picked up from `src/pages/layout` instead of
     `base.ejs`
 
 - **SVG sprite generating using
@@ -124,12 +124,16 @@ npm run dev
 - **Image optimization using
   [image-webpack-loader](https://github.com/tcoopman/image-webpack-loader)**
 
-- **Powered by [Svelte](https://svelte.dev/) UI framework**
+- **[Svelte](https://svelte.dev/) UI framework used (optional)**
 
   - Ready to use svelte components are placed in` src/components/common`
 
-  - Svelte components can be mapped to custom elements in
-    `src/custom-elements.js` via `src/utils/custom-element.js`
+  - Svelte components can be mapped to custom elements with customElement
+    function from utils:
+
+    ```js
+    customElement('app-component', Component [, options])
+    ```
 
   - Svelte state manager can be used across project if needed (`src/store`
     directory)
@@ -157,9 +161,8 @@ npm run dev
   └─ pages/                # page templates
   └─ store/                # svelte store
   └─ utils/                # utils
-  ├─ custom-elements.js    # svelte to ce mapping
-  ├─ data-attributes.js    # data attributes
   ├─ main.js               # entry file
+  ├─ polyfills.js          # polyfills
 └─ webpack/                # webpack files
 ├─ .babelrc                # config for babel
 ├─ .eslintrc.js            # config for eslint
