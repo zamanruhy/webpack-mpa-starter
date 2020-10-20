@@ -1,4 +1,3 @@
-import 'what-input'
 import './assets/scss/main.scss'
 import './polyfills'
 import { customElements } from './helpers/custom-elements'

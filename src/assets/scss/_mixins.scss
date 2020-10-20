@@ -185,56 +185,9 @@
   }
 }
 
-@mixin img-wrap($position: relative) {
-  position: $position;
-  overflow: hidden;
-}
-
-@mixin img() {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  min-height: 100%;
-  min-width: 100%;
-  max-width: none;
-  max-height: none;
-
-  @supports (object-fit: cover) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
 @mixin focus-ring() {
-  outline: 3px solid mix(orange, #e59700);
+  outline: 3px solid mix(#e59700, #ffbf47);
   outline-offset: 2px;
-}
-
-@mixin keyboard() {
-  [data-whatintent="keyboard"] & {
-    @content;
-  }
-}
-
-@mixin keyboard-focus() {
-  &:focus {
-    @include keyboard() {
-      @content;
-    }
-  }
-}
-
-@mixin hover-focus() {
-  $this: &;
-  &:hover {
-    @content;
-  }
-  @include keyboard-focus() {
-    @extend #{$this}:hover;
-    outline: 0;
-  }
 }
 
 @mixin container($fluid: true) {

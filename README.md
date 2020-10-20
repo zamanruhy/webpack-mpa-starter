@@ -63,7 +63,7 @@ npm run dev
   - [autoprefixer](https://github.com/postcss/autoprefixer) adds vendor prefixes
     automatically
 
-- **[EJS](https://github.com/difelice/ejs-loader) template engine is used**
+- **[EJS](https://github.com/difelice/ejs-loader) template engine**
 
   - Usage of components:
 
@@ -186,5 +186,5 @@ npm run dev
 
 `npm run prettify` - run prettier on project files
 
-`npm run add-comp example` - create a new folder in src/components with 3 files
-inside (example.ejs, example.js, example.scss)
+`npm run add-comp example` - create a new folder in `src/components` with 3
+files inside (example.ejs, example.js, example.scss)

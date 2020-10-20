@@ -1,8 +1,11 @@
 <script>
+  import { uid } from '@/utils'
+
   export let value = ''
   export let checked = false
   export let group = undefined
   export let label = ''
+  export let id = ''
 
   if (checked) {
     handleChange(checked)
@@ -11,6 +14,7 @@
   $: if (group !== undefined) {
     checked = group === value
   }
+  $: cid = id || `radio-${uid()}`
 
   function handleChange(on) {
     if (group !== undefined) {
@@ -24,6 +28,7 @@
 <label class="radio" class:radio_single={!label}>
   <input
     class="radio__control"
+    id={cid}
     type="radio"
     {checked}
     {value}
@@ -59,9 +64,10 @@
       top: 4px;
     }
     &__control:focus ~ &__box {
-      @include keyboard() {
-        @include focus-ring();
-      }
+      @include focus-ring();
+    }
+    &__control:not(:focus-visible) ~ &__box {
+      outline: 0;
     }
     &__control:checked ~ &__box {
       &:before {

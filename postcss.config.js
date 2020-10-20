@@ -13,6 +13,10 @@ module.exports = {
         before: [/:defined/g],
         after: ['[defined]']
       }),
+    require('postcss-selector-replace')({
+      before: [/:focus-visible/g, /.*:-moz-focusring.*/g],
+      after: ['[data-focus-visible-added]', '']
+    }),
     require('autoprefixer')
   ]
 }

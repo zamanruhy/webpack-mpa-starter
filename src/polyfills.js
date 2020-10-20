@@ -1,3 +1,5 @@
+import 'focus-visible'
+
 if (process.env.BROWSERSLIST_ENV === 'legacy') {
   require('svgxuse')
   require('@webcomponents/custom-elements')

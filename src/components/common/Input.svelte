@@ -67,6 +67,12 @@
       height: calc(1.5em + #{6px * 2} + 2px);
       background-color: #ffffff;
 
+      &:focus {
+        outline: 0;
+        border-color: #e59700;
+        box-shadow: 0 0 0 3px rgba(#e59700, 0.35);
+      }
+
       &::placeholder {
         color: #6c757d;
         opacity: 1;
