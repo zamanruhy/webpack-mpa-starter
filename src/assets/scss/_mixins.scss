@@ -89,6 +89,18 @@
   }
 }
 
+@mixin above($args...) {
+  @include up($args...) {
+    @content;
+  }
+}
+
+@mixin below($args...) {
+  @include down($args...) {
+    @content;
+  }
+}
+
 @mixin between($min, $max) {
   @include up($min) {
     @include down($max) {

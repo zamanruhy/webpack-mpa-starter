@@ -68,9 +68,8 @@
       background-color: #ffffff;
 
       &:focus {
-        outline: 0;
-        border-color: #e59700;
-        box-shadow: 0 0 0 3px rgba(#e59700, 0.35);
+        outline: 2px solid #f2ab24;
+        outline-offset: -1px;
       }
 
       &::placeholder {

@@ -186,5 +186,5 @@ npm run dev
 
 `npm run prettify` - run prettier on project files
 
-`npm run add-comp example` - create a new folder in `src/components` with 3
-files inside (example.ejs, example.js, example.scss)
+`npm run add example` - create a new folder in `src/components` with 3 files
+inside (example.ejs, example.js, example.scss)
