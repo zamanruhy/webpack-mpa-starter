@@ -52,8 +52,8 @@ npm run dev
     `_variables.scss`
 
   - `_functions.scss` with useful functions
-  - all three of the above files (combined in `settings.scss`) are automatically
-    imported into every `scss` file
+  - all three of the above files are automatically imported into every `scss`
+    file
   - all `scss` files inside `src/components` auto imported in `main.js`
 
 - **[PostCSS](https://github.com/postcss/postcss) stylesheets postprocessing**

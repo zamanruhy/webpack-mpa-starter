@@ -10,6 +10,10 @@ const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 
+const scssData = ['functions', 'variables', 'mixins']
+  .map((file) => `@import "./src/assets/scss/_${file}.scss";\n`)
+  .join('')
+
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -62,7 +66,7 @@ module.exports = {
                 sourceMap: isDev,
                 postcss: true,
                 scss: {
-                  prependData: '@import "./src/assets/scss/settings.scss";',
+                  prependData: scssData,
                   renderSync: true
                 }
               })
@@ -151,7 +155,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sourceMap: isDev,
-              additionalData: '@import "./src/assets/scss/settings.scss";'
+              additionalData: scssData
             }
           }
         ]
