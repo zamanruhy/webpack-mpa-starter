@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Webpack starter for building multi-page websites",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development BROWSERSLIST_ENV=modern webpack-dev-server --progress --config webpack/webpack.config.dev.js",
-    "build": "cross-env NODE_ENV=production BROWSERSLIST_ENV=modern node webpack/prod.js",
+    "dev": "cross-env NODE_ENV=development BROWSERSLIST_ENV=legacy webpack-dev-server --progress --config webpack/webpack.config.dev.js",
+    "build": "cross-env NODE_ENV=production BROWSERSLIST_ENV=legacy node webpack/prod.js",
     "build:analyze": "cross-env BUNDLE_ANALYZE=true npm run build",
     "build:serve": "npm run build && serve dist -l 8080 --no-etag",
     "lint": "eslint --ext .js,.svelte .",
@@ -37,7 +37,6 @@
     "element-closest-polyfill": "^1.0.2",
     "focus-visible": "^5.2.0",
     "is-connected-node": "^1.0.0-beta",
-    "normalize.css": "^8.0.1",
     "svelte": "^3.29.4",
     "svgxuse": "^1.2.6",
     "swiper": "^6.3.4"

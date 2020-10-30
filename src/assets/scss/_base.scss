@@ -1,3 +1,9 @@
+// Global
+* {
+  padding: 0;
+  margin: 0;
+}
+
 *,
 *:before,
 *:after {
@@ -14,6 +20,7 @@
 
 html {
   font-size: 16px;
+  -webkit-text-size-adjust: 100%; // Prevent adjustments of font size after orientation changes in iOS
 }
 
 body {
@@ -23,6 +30,11 @@ body {
   min-width: $min-width;
   color: $body-color;
   background-color: $body-bg;
+}
+
+// General
+main {
+  display: block; // Render the `main` element consistently in IE
 }
 
 audio,
@@ -39,30 +51,9 @@ img {
   height: auto;
 }
 
-button,
-input,
-optgroup,
-select,
-textarea {
-  color: inherit;
-  font: inherit;
-  letter-spacing: inherit;
-}
-
-textarea {
-  resize: vertical;
-}
-
 ol,
 ul {
-  margin: 0;
-  padding: 0;
   list-style: none;
-}
-
-td,
-th {
-  padding: 0;
 }
 
 a {
@@ -71,9 +62,29 @@ a {
 }
 
 hr {
+  box-sizing: content-box; // Add the correct box sizing in Firefox
+  height: 0; // Add the correct box sizing in Firefox
+  overflow: visible; // Show the overflow in Edge and IE
   margin: 16px 0;
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+sub,
+sup {
+  // Prevent `sub` and `sup` elements from affectingthe line height in all browsers
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+
+  @at-root sub {
+    bottom: -0.25em;
+  }
+
+  @at-root sup {
+    top: -0.5em;
+  }
 }
 
 p {
@@ -108,4 +119,50 @@ h5 {
 }
 h6 {
   font-size: $font-size;
+}
+
+// Form
+button,
+input,
+optgroup,
+select,
+textarea {
+  // Specify font inheritance of form elements in all browsers
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+optgroup {
+  font-weight: bold; // Restore the font weight unset by the previous rule
+}
+
+button,
+input {
+  overflow: visible; // Show the overflow in Edge and IE
+}
+
+button,
+select {
+  text-transform: none; // Remove the inheritance of text transform in Edge, Firefox, and IE
+}
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button; // Correct the inability to style clickable types in iOS and Safari
+}
+
+textarea {
+  overflow: auto; // Remove the default vertical scrollbar in IE
+  resize: vertical;
+}
+
+[type="search"] {
+  -webkit-appearance: textfield; // Correct the odd appearance in Chrome and Safari
+
+  &::-webkit-search-decoration {
+    -webkit-appearance: none; // Remove the inner padding in Chrome and Safari on macOS
+  }
 }
