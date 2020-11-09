@@ -1,15 +1,14 @@
 <script>
   import { uid } from '@/utils'
 
+  let className = ''
+  export { className as class }
   export let value = ''
   export let checked = false
+  export let indeterminate = false
   export let group = undefined
   export let label = ''
   export let id = ''
-
-  if (checked) {
-    handleChange(checked)
-  }
 
   $: if (Array.isArray(group)) {
     checked = group.includes(value)
@@ -31,13 +30,14 @@
   }
 </script>
 
-<label class="checkbox" class:checkbox_single={!label}>
+<label class="checkbox {className}" class:checkbox_single={!label}>
   <input
     class="checkbox__control"
     id={cid}
     type="checkbox"
     {checked}
     {value}
+    bind:indeterminate
     {...$$restProps}
     on:change={(e) => handleChange(e.target.checked)}
     on:change
@@ -98,6 +98,10 @@
     }
     &__control:disabled ~ &__box {
       background-color: #e9ecef;
+
+      &:before {
+        opacity: 0.8;
+      }
     }
     &_single &__box {
       top: 0;

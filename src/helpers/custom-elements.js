@@ -15,6 +15,7 @@ import Input from '@/components/common/Input.svelte'
 import FileInput from '@/components/common/FileInput.svelte'
 import Checkbox from '@/components/common/Checkbox.svelte'
 import Radio from '@/components/common/Radio.svelte'
+import Switch from '@/components/common/Switch.svelte'
 
 export function customElements() {
   document.addEventListener('DOMContentLoaded', () => {
@@ -35,6 +36,7 @@ export function customElements() {
     customElement('FileInput', FileInput)
     customElement('Checkbox', Checkbox)
     customElement('Radio', Radio)
+    customElement('Switch', Switch)
     customElement('Spinner', Spinner)
     customElement('ToTop', ToTop)
   })

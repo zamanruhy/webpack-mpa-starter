@@ -1,6 +1,7 @@
 <script>
   import Input from './Input.svelte'
   import Checkbox from './Checkbox.svelte'
+  import Switch from './Switch.svelte'
   import Radio from './Radio.svelte'
   import FileInput from './FileInput.svelte'
   import LazyImage from './LazyImage.svelte'
@@ -17,8 +18,24 @@
   let value = ''
   let checked = true
   let check = true
-  let group = [2]
+  let group = []
   let radio = 1
+  let flavours = ['Orange', 'Grape', 'Apple', 'Lime', 'Very Berry']
+  let selected = []
+  let allSelected = false
+  let indeterminate = false
+
+  $: if (selected.length === 0) {
+    allSelected = false
+    indeterminate = false
+  } else if (selected.length === flavours.length) {
+    allSelected = true
+    indeterminate = false
+  } else {
+    allSelected = false
+    indeterminate = true
+  }
+
   let file
   let slideIndex = 2
   let visible = true
@@ -29,6 +46,19 @@
   let modalVisible = false
   let prev
   let next
+  const icons = [
+    { name: 'house', img: false },
+    { name: 'logo', img: true },
+    { name: 'close', img: false },
+    { name: 'lock', img: true }
+  ]
+  let buttonSize = ''
+  let buttonHasIcon = true
+  let buttonIcon = icons.find((i) => i.name === 'house')
+  let buttonIconLeft = true
+  let buttonLoading = false
+  let buttonDisabled = false
+  let buttonText = 'More Icons'
 
   $: swiperOptions = {
     navigation: {
@@ -37,7 +67,8 @@
     },
     pagination: {},
     slidesPerView: 2,
-    spaceBetween: 20
+    spaceBetween: 20,
+    keyboard: true
   }
 
   function onEvent(e) {
@@ -45,15 +76,44 @@
   }
 </script>
 
-<Button variant="primary" size="small" on:click={() => iconsCount++}>
-  More Icons
+<Switch label="Switch" />
+<hr />
+<b>Size: </b>
+<Radio bind:group={buttonSize} label="Small" value="small" />
+<Radio bind:group={buttonSize} label="Default" value="" />
+<Radio bind:group={buttonSize} label="Large" value="large" />
+<hr />
+<Checkbox bind:checked={buttonHasIcon} label="Has icon" />
+<Checkbox
+  bind:checked={buttonIconLeft}
+  label="Icon left"
+  disabled={!buttonHasIcon}
+/>
+<Checkbox bind:checked={buttonLoading} label="Loading" />
+<Checkbox bind:checked={buttonDisabled} label="Disabled" />
+<hr />
+<Input bind:value={buttonText} />
+<hr />
+<Button
+  variant="primary"
+  size={buttonSize}
+  loading={buttonLoading}
+  disabled={buttonDisabled}
+  on:click={() => iconsCount++}
+>
+  {#if buttonHasIcon && buttonIconLeft}
+    <Icon {...buttonIcon} left={buttonIconLeft} />
+  {/if}
+  {buttonText}
+  {#if buttonHasIcon && !buttonIconLeft}
+    <Icon {...buttonIcon} right={!buttonIconLeft} />
+  {/if}
 </Button>
 {#each [...Array(iconsCount).keys()] as num (num)}
   <p style="font-size: 30px">
-    <Icon name="logo" img />
-    <Icon name="house" class="block__element" />
-    <Icon name="lock" img />
-    <Icon name="close" />
+    {#each icons as icon (icon.name)}
+      <Icon {...icon} on:click={() => (buttonIcon = icon)} />
+    {/each}
   </p>
 {/each}
 
@@ -137,7 +197,10 @@
 </p>
 <p>
   <Modal bind:visible={modalVisible}>
-    <Swiper bind:index={slideIndex} options={{ loop: true, navigation: true }}>
+    <Swiper
+      bind:index={slideIndex}
+      options={{ loop: true, navigation: true, pagination: true }}
+    >
       {#each [...Array(range).keys()] as num}
         <SwiperSlide>
           <div class="styleguide__slide">{num + 1}</div>
@@ -168,6 +231,7 @@
   <div class="styleguide__gallery-item">
     <LazyImage
       src="https://picsum.photos/id/237/1072/708"
+      srcPlaceholder="https://picsum.photos/id/237/10/7"
       class="styleguide__gallery-img"
       alt="#"
       on:load={(e) => console.log(e)}
@@ -219,18 +283,55 @@
 <!--<input type="radio" bind:group={radio} value={2}>-->
 <!--<input type="radio" bind:group={radio} value={3}>-->
 
-<Radio label="Radio 1" bind:group={radio} value={1} />
-<Radio label="Radio 2" bind:group={radio} value={2} />
+<!-- <Radio label="Radio 1" bind:group={radio} value={1} />
+<Radio label="Radio 2" bind:group={radio} value={2} /> -->
 
-<!--<input type="checkbox" bind:checked={check} bind:group={group} value={1}>-->
-<!--<input type="checkbox" bind:checked={check} bind:group={group} value={range}>-->
+<!-- <input type="checkbox" bind:checked={check} bind:group value={1} />
+<input
+  type="checkbox"
+  bind:checked={check}
+  bind:group
+  value={2}
+  bind:indeterminate
+/> -->
+<hr />
+<div>
+  <Checkbox
+    label={allSelected ? 'Unselect All' : 'Select All'}
+    checked={allSelected}
+    {indeterminate}
+    on:change={(e) => {
+      selected = e.target.checked ? [...flavours] : []
+    }}
+  />
+</div>
+<ul style="padding-left: 25px; margin-bottom: 5px">
+  {#each flavours as flavour (flavour)}
+    <li>
+      <Checkbox
+        label={flavour}
+        name="group[]"
+        bind:group={selected}
+        value={flavour}
+      />
+    </li>
+  {/each}
+</ul>
 
-<Checkbox label="Some label" name="first" bind:group value={1} />
-<Checkbox label="Some label" name="second" bind:group value={2} />
-{JSON.stringify(group)}
-{JSON.stringify(radio)}
+<div>Selected: <b>{JSON.stringify(selected)}</b></div>
+<div>All Selected: <b>{allSelected}</b></div>
+<div>Indeterminate: <b>{indeterminate}</b></div>
 <!--{checked}-->
 <!--{check}-->
+<hr />
+<Switch label="First" bind:group value={1} />
+<Switch label="Second" bind:group value={2} />
+<!-- <input type="checkbox" bind:group value={1} />
+First
+<input type="checkbox" bind:group checked value={2} />
+Second -->
+{JSON.stringify(group)}
+<hr />
 
 <Input
   label="Test input"

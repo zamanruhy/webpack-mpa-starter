@@ -11,7 +11,7 @@
 
   let el
   let loaded = false
-  let intersected = false
+  let intersected = !intersect.support
   const dispatch = createEventDispatcher()
 
   $: srcImg =
@@ -65,10 +65,10 @@
       class:img_loaded={loaded}
       {...attrs}
       bind:this={el}
+      use:intersect={{ once: true }}
+      on:intersect={onIntersect}
       on:load={onLoad}
       on:error={onError}
-      on:intersect={onIntersect}
-      use:intersect={{ once: true }}
     />
   </picture>
 {/if}
@@ -86,7 +86,8 @@
   app-lazy-image:not(:defined) {
     display: block;
   }
-  app-lazy-image:defined {
-    display: none !important;
-  }
+
+  // app-lazy-image:defined {
+  //   display: none !important;
+  // }
 </style>

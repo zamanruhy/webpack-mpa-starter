@@ -1,12 +1,5 @@
 import { dispatchEvent } from '@/utils'
 
-// const supportObserver =
-//   typeof window !== 'undefined' && 'IntersectionObserver' in window
-// const supportScroll =
-//   typeof window !== 'undefined' &&
-//   'onscroll' in window &&
-//   !/(gle|ing)bot/.test(navigator.userAgent)
-
 intersect.support =
   typeof window !== 'undefined' &&
   'IntersectionObserver' in window &&
@@ -44,7 +37,5 @@ export default function intersect(node, options = {}) {
         observer.unobserve(node)
       }
     }
-  } else {
-    dispatchEvent(node, 'intersect', { intersecting: true })
   }
 }

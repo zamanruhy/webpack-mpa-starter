@@ -1,15 +1,13 @@
 <script>
   import { uid } from '@/utils'
 
+  let className = ''
+  export { className as class }
   export let value = ''
   export let checked = false
   export let group = undefined
   export let label = ''
   export let id = ''
-
-  if (checked) {
-    handleChange(checked)
-  }
 
   $: if (group !== undefined) {
     checked = group === value
@@ -25,7 +23,7 @@
   }
 </script>
 
-<label class="radio" class:radio_single={!label}>
+<label class="radio {className}" class:radio_single={!label}>
   <input
     class="radio__control"
     id={cid}
@@ -81,6 +79,10 @@
     }
     &__control:disabled ~ &__box {
       background-color: #e9ecef;
+
+      &:before {
+        opacity: 0.8;
+      }
     }
     &_single &__box {
       top: 0;
