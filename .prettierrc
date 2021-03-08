@@ -5,8 +5,6 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "none",
-  "svelteSortOrder": "options-scripts-markup-styles",
-  "svelteBracketNewLine": true,
   "overrides": [
     {
       "files": "*.scss",

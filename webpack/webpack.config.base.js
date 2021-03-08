@@ -18,6 +18,7 @@ function resolve(dir) {
 }
 
 module.exports = {
+  target: isDev ? 'web' : 'browserslist', // temporary solution for prevent bug
   entry: {
     app: resolve('src/main.js')
   },
@@ -50,6 +51,13 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /node_modules[/\\](?!(svelte|swiper|dom7))/,
         loader: 'babel-loader'
+      },
+      {
+        // required to prevent errors from Svelte on Webpack 5+
+        test: /node_modules[/\\]svelte[/\\].*\.mjs$/,
+        resolve: {
+          fullySpecified: false
+        }
       },
       {
         test: /\.svelte$/,

@@ -29,9 +29,6 @@ module.exports = merge(baseConfig, {
     },
     minimizer: [
       new TerserPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: false,
         extractComments: false
       }),
       new OptimizeCSSAssetsPlugin({
@@ -47,7 +44,7 @@ module.exports = merge(baseConfig, {
     ]
   },
   plugins: [
-    new webpack.HashedModuleIdsPlugin(),
+    new webpack.ids.HashedModuleIdsPlugin(),
     new MiniCssExtractPlugin({
       filename: 'static/css/[name].css?[contenthash:8]'
     }),

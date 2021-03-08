@@ -124,7 +124,7 @@ npm run dev
 - **Image optimization using
   [image-webpack-loader](https://github.com/tcoopman/image-webpack-loader)**
 
-- **[Svelte](https://svelte.dev/) UI framework used (optional)**
+- **[Svelte](https://svelte.dev/) UI framework is used (optional)**
 
   - Ready to use svelte components are placed in` src/components/common`
 
@@ -177,9 +177,9 @@ npm run dev
 
 `npm run build` - create a production build in the dist folder
 
-`npm run build:analyze` - create a production build and analyze bundle
-
 `npm run build:serve` - create a production build and start server on localhost
+
+`npm run build:analyze` - create a production build and analyze bundle
 
 `npm run lint` - run eslint on project files
 

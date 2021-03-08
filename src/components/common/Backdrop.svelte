@@ -4,7 +4,7 @@
 
   export let visible = false
 
-  const fadeOptions = { duration: 300, easing: easing.swing }
+  const fadeOptions = { duration: 300, easing: easing.fastOutSlowIn }
 </script>
 
 {#if visible}
