@@ -133,3 +133,7 @@ $gallery-grid-gutter: 20px;
     float: left;
   }
 }
+
+.truncate {
+  @include truncate(4);
+}

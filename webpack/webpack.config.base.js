@@ -59,9 +59,12 @@ module.exports = {
           {
             loader: 'svelte-loader',
             options: {
-              emitCss: true,
-              dev: isDev,
-              accessors: true,
+              compilerOptions: {
+                dev: isDev,
+                accessors: true
+              },
+              emitCss: !isDev,
+              // hotReload: isDev,
               preprocess: require('svelte-preprocess')({
                 sourceMap: isDev,
                 postcss: true,

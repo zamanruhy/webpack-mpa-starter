@@ -73,7 +73,7 @@
     font-size: 16px;
     padding: 6px 12px;
     border-radius: 4px;
-    transition: $transition;
+    transition: 0.25s map-get($easings, fast-out-slow-in);
     transition-property: color, background-color, border-color, box-shadow;
     max-width: 100%;
     min-width: 48px;
@@ -133,7 +133,7 @@
       opacity: 0;
     }
 
-    &__spinner {
+    &__spinner.spinner {
       display: flex;
       position: absolute;
       top: 50%;

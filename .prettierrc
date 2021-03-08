@@ -5,7 +5,7 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "none",
-  "svelteSortOrder": "scripts-markup-styles",
+  "svelteSortOrder": "options-scripts-markup-styles",
   "svelteBracketNewLine": true,
   "overrides": [
     {

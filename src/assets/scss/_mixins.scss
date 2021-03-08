@@ -40,16 +40,25 @@
   }
 }
 
-@mixin hyphenation() {
-  word-break: break-all;
+@mixin word-wrap() {
+  overflow-wrap: break-word;
   word-wrap: break-word;
-  hyphens: auto;
 }
 
-@mixin text-truncate() {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+@mixin truncate($lines: 1, $line-height: $line-height) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    max-height: $lines * $line-height * 1em;
+    line-height: $line-height;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 @mixin visually-hidden() {

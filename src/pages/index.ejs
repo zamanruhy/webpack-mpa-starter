@@ -7,11 +7,12 @@
 <div class="container examples" style="display1: none;">
   <%= example({
     title: 'First',
-    slot: `<b>Slot for first</b>`
+    slot: `<div class="truncate">Достаточнодавноза&shy;нимаюсь разработкой на Vue.js, но вот упаковывать компоненты для публикации как то не приходилось.
+    Недавно пришла идея интересного компонента, и я решил поделиться им с сообществом.</div>`
   }) %>
   <%= example({
     title: 'Second',
-    showSlot: false,
+    showSlot: true,
     slot: `
       <app-button variant="primary" data-modal="main-modal">
         ${icon({ name: 'house', left: true })}

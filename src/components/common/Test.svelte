@@ -11,11 +11,12 @@
   import { Tabs, TabList, Tab, TabPanel } from './tabs'
   import Icon from './Icon.svelte'
   import Modal from './Modal.svelte'
+  import Range from './Range.svelte'
   import { mq } from '@/helpers/mq'
   import { collapse, modal, portal, intersect } from '@/actions'
 
   let range = 5
-  let value = ''
+  let inputValue = ''
   let checked = true
   let check = true
   let group = []
@@ -59,7 +60,10 @@
   let buttonLoading = false
   let buttonDisabled = false
   let buttonText = 'More Icons'
+  let switched = true
+  let values = [25, 75]
 
+  $: step = switched ? 2 : 7
   $: swiperOptions = {
     navigation: {
       prevEl: prev && prev.el,
@@ -76,7 +80,12 @@
   }
 </script>
 
-<Switch label="Switch" />
+<Range {step} bind:values min={0} max={100} float />
+<hr />
+{JSON.stringify(values)}
+<hr />
+<Switch bind:checked={switched} label="Switch" />
+{switched}
 <hr />
 <b>Size: </b>
 <Radio bind:group={buttonSize} label="Small" value="small" />
@@ -217,7 +226,7 @@
   <div style="overflow: hidden;">
     <LazyImage
       src="https://picsum.photos/id/354/1072/708"
-      class={value}
+      class={inputValue}
       alt="#"
       width="1072"
       height="708"
@@ -335,14 +344,14 @@ Second -->
 
 <Input
   label="Test input"
-  bind:value
+  bind:value={inputValue}
   placeholder="Some placeholder"
   data-test="test"
   on:input={onEvent}
 />
 <br />
 <FileInput bind:value={file} on:change={console.log} />
-{value}
+{inputValue}
 {file}
 
 <style lang="scss" global>

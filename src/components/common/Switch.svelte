@@ -29,6 +29,11 @@
       checked = on
     }
   }
+
+  function onClick() {
+    inputEl.click()
+    inputEl.focus()
+  }
 </script>
 
 <div class="switch {className}">
@@ -43,7 +48,7 @@
     on:change={(e) => handleChange(e.target.checked)}
     on:change
   />
-  <div class="switch__box" on:click={() => inputEl.click()} />
+  <div class="switch__box" on:click={onClick} />
   {#if label}<label class="switch__label" for={cid}>{label}</label>{/if}
 </div>
 
@@ -53,7 +58,7 @@
   $switch-space: 2px;
   $switch-size: $switch-height - $switch-space * 2;
   $switch-translate: $switch-width - $switch-space * 2 - $switch-size;
-  $switch-transition: 0.3s map-get($easings, swing);
+  $switch-transition: 0.15s map-get($easings, fast-out-slow-in);
 
   .switch {
     display: inline-flex;

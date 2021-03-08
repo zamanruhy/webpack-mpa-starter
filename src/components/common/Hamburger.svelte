@@ -48,17 +48,24 @@
     padding: 0;
     cursor: pointer;
     position: relative;
-    outline-offset: 4px !important;
+    outline-offset: 4px;
 
     &:before {
       content: '';
       display: block;
       position: absolute;
-      width: 48px;
-      height: 48px;
+      width: 24px;
+      height: 24px;
+      min-width: 100%;
+      min-height: 100%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+
+      @media (pointer: coarse) {
+        width: 48px;
+        height: 48px;
+      }
     }
 
     &__bar {

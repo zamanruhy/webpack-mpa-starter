@@ -1,8 +1,6 @@
-<script context="module">
-  import icons from '@/components/icon/icon'
-</script>
-
 <script>
+  import icons from '@/components/icon/icon'
+
   let className = ''
   export { className as class }
   export let name = ''

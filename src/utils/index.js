@@ -29,3 +29,9 @@ export function dispatchEvent(node, name, detail = null) {
 export function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key)
 }
+
+export function objectToStyle(obj) {
+  return Object.entries(obj)
+    .map((p) => `${hyphenate(p[0])}: ${p[1]}`)
+    .join('; ')
+}

@@ -50,10 +50,10 @@
     class:img_loaded={loaded}
     {...attrs}
     bind:this={el}
+    use:intersect={{ once: true }}
+    on:intersect={onIntersect}
     on:load={onLoad}
     on:error={onError}
-    on:intersect={onIntersect}
-    use:intersect={{ once: true }}
   />
 {:else}
   <picture>
