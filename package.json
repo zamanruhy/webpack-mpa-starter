@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Webpack starter for building multi-page websites",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development BROWSERSLIST_ENV=modern webpack-dev-server --progress --config webpack/webpack.config.dev.js",
-    "build": "cross-env NODE_ENV=production BROWSERSLIST_ENV=modern node webpack/prod.js",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --progress --config webpack/webpack.config.dev.js",
+    "build": "cross-env NODE_ENV=production node webpack/prod.js",
     "build:serve": "npm run build && serve dist -l 8080 --no-etag",
     "build:analyze": "cross-env BUNDLE_ANALYZE=true npm run build",
     "lint": "eslint --ext .js,.svelte .",
@@ -31,14 +31,9 @@
   },
   "homepage": "https://github.com/zamanruhy/webpack-mpa-starter",
   "dependencies": {
-    "@webcomponents/custom-elements": "^1.4.3",
     "core-js": "^3.9.1",
-    "custom-event-polyfill": "^1.0.7",
-    "element-closest-polyfill": "^1.0.2",
     "focus-visible": "^5.2.0",
-    "is-connected-node": "^1.0.0-beta",
     "svelte": "^3.35.0",
-    "svgxuse": "^1.2.6",
     "swiper": "^6.5.0"
   },
   "devDependencies": {

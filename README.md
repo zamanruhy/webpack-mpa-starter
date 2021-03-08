@@ -162,7 +162,6 @@ npm run dev
   └─ store/                # svelte store
   └─ utils/                # utils
   ├─ main.js               # entry file
-  ├─ polyfills.js          # polyfills
 └─ webpack/                # webpack files
 ├─ .babelrc                # config for babel
 ├─ .eslintrc.js            # config for eslint

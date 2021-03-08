@@ -1,5 +1,4 @@
 const pxToRem = false
-const legacy = process.env.BROWSERSLIST_ENV === 'legacy'
 
 module.exports = {
   plugins: [
@@ -7,11 +6,6 @@ module.exports = {
       require('postcss-pxtorem')({
         propList: ['*'],
         selectorBlackList: [/^html$/]
-      }),
-    legacy &&
-      require('postcss-selector-replace')({
-        before: [/:defined/g],
-        after: ['[defined]']
       }),
     require('postcss-selector-replace')({
       before: [/:focus-visible/g],

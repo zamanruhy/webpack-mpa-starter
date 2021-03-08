@@ -1,5 +1,5 @@
+import 'focus-visible'
 import './assets/scss/main.scss'
-import './polyfills'
 import { customElements } from './helpers/custom-elements'
 import { dataModal, dataCollapse } from './helpers/data-attributes'
 import header from './components/header/header'

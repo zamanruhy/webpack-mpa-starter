@@ -6,8 +6,6 @@ import {
   hasOwn
 } from '@/utils'
 
-const legacy = process.env.BROWSERSLIST_ENV === 'legacy'
-
 export default function customElement(
   name,
   Component,
@@ -118,10 +116,6 @@ export default function customElement(
 
       this.handleAttributes()
       this.handleChildren()
-
-      if (legacy) {
-        this.setAttribute('defined', '')
-      }
 
       dispatchEvent(this, 'beforeMount')
 
