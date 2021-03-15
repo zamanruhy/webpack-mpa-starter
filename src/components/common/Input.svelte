@@ -1,12 +1,10 @@
 <script>
   import { onMount } from 'svelte'
-  import { uid } from '@/utils'
 
   let className = ''
   export { className as class }
-  export let id = ''
+  export let id = undefined
   export let value = ''
-  export let label = ''
   export let type = 'text'
   export let autofocus = false
 
@@ -19,8 +17,7 @@
   ) {
     type = 'text'
   }
-  $: cid = id || `input-${uid()}`
-  $: classes = ['input', className].filter((c) => c).join(' ')
+  $: classes = ['input', className].filter(Boolean).join(' ')
 
   function onInput(e) {
     value = type === 'number' ? +e.target.value : e.target.value
@@ -34,30 +31,21 @@
 </script>
 
 <div class={classes}>
-  {#if label}<label class="input__label" for={cid}>{label}</label>{/if}
-  <div class="input__field">
-    <input
-      class="input__control"
-      id={cid}
-      {type}
-      {value}
-      {...$$restProps}
-      bind:this={inputEl}
-      on:input={onInput}
-      on:input
-      on:click
-    />
-  </div>
+  <input
+    class="input__control"
+    {id}
+    {type}
+    {value}
+    {...$$restProps}
+    bind:this={inputEl}
+    on:input={onInput}
+    on:input
+    on:click
+  />
 </div>
 
 <style lang="scss" global>
   .input {
-    &__label {
-      margin-bottom: 8px;
-      display: inline-block;
-    }
-    &__field {
-    }
     &__control {
       width: 100%;
       border: 1px solid #ced4da;
@@ -80,16 +68,16 @@
   }
 
   app-input:defined {
-    display: block;
+    display: contents;
   }
 
   app-input:not(:defined) {
     display: block;
 
-    &[label]:before {
-      @extend .input__label;
-      content: attr(label);
-    }
+    // &[label]:before {
+    //   @extend .input__label;
+    //   content: attr(label);
+    // }
     &:after {
       @extend .input__control;
       content: '';

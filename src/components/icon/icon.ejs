@@ -13,7 +13,7 @@
     left && 'icon_left',
     right && 'icon_right',
     className
-  ].filter(c => c).join(' ')
+  ].filter(Boolean).join(' ')
 %>
 
 <% if (img) { %>

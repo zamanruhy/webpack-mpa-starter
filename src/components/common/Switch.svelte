@@ -1,20 +1,15 @@
 <script>
-  import { uid } from '@/utils'
-
   let className = ''
   export { className as class }
   export let value = ''
   export let checked = false
   export let group = undefined
   export let label = ''
-  export let id = ''
-
-  let inputEl
+  export let id = undefined
 
   $: if (Array.isArray(group)) {
     checked = group.includes(value)
   }
-  $: cid = id || `switch-${uid()}`
 
   function handleChange(on) {
     if (Array.isArray(group)) {
@@ -29,28 +24,24 @@
       checked = on
     }
   }
-
-  function onClick() {
-    inputEl.click()
-    inputEl.focus()
-  }
 </script>
 
-<div class="switch {className}">
+<label class="switch {className}">
   <input
     class="switch__control"
-    id={cid}
     type="checkbox"
+    {id}
     {checked}
     {value}
     {...$$restProps}
-    bind:this={inputEl}
     on:change={(e) => handleChange(e.target.checked)}
     on:change
   />
-  <div class="switch__box" on:click={onClick} />
-  {#if label}<label class="switch__label" for={cid}>{label}</label>{/if}
-</div>
+  <span class="switch__box" />
+  {#if label}
+    <span class="switch__label">{label}</span>
+  {/if}
+</label>
 
 <style lang="scss" global>
   $switch-width: 40px;
@@ -70,6 +61,7 @@
       @include visually-hidden();
     }
     &__box {
+      display: inline-block;
       position: relative;
       background-color: #ccc;
       border-radius: $switch-height;
@@ -134,8 +126,7 @@
   }
 
   app-switch:defined {
-    display: inline-flex;
-    vertical-align: middle;
+    display: contents;
   }
 
   // app-switch:not(:defined) {

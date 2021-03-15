@@ -7,9 +7,7 @@
   export let accordion = ''
   export let visible = false
 
-  let el
   let mounted = false
-  let transitioning = false
   const dispatch = createEventDispatcher()
   const slideOptions = { duration: 300, easing: easing.fastOutSlowIn }
 
@@ -57,7 +55,6 @@
 {#if visible}
   <div
     {id}
-    bind:this={el}
     transition:slide|local={slideOptions}
     on:introstart={onOpen}
     on:introend={onOpened}
@@ -70,7 +67,7 @@
 
 <style lang="scss" global>
   app-collapse:defined {
-    display: block;
+    display: contents;
   }
 
   app-collapse:not(:defined) {

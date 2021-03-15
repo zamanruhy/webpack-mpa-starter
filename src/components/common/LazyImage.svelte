@@ -46,8 +46,8 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 {#if !picture}
   <img
-    class:img={true}
-    class:img_loaded={loaded}
+    class:lazy-image={true}
+    class:lazy-image_loaded={loaded}
     {...attrs}
     bind:this={el}
     use:intersect={{ once: true }}
@@ -61,8 +61,8 @@
       <slot />
     {/if}
     <img
-      class:img={true}
-      class:img_loaded={loaded}
+      class:lazy-image={true}
+      class:lazy-image_loaded={loaded}
       {...attrs}
       bind:this={el}
       use:intersect={{ once: true }}
@@ -74,7 +74,7 @@
 {/if}
 
 <style lang="scss" global>
-  .img {
+  .lazy-image {
     display: block;
     filter: blur(6px);
 
@@ -83,11 +83,11 @@
     }
   }
 
+  app-lazy-image:defined {
+    display: contents;
+  }
+
   app-lazy-image:not(:defined) {
     display: block;
   }
-
-  // app-lazy-image:defined {
-  //   display: none !important;
-  // }
 </style>

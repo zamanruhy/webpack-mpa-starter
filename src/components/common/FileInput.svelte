@@ -65,7 +65,7 @@
   }
 
   app-file-input:defined {
-    display: block;
+    display: contents;
   }
 
   app-file-input:not(:defined) {

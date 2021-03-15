@@ -11,7 +11,6 @@ export default function customElement(
   Component,
   { outside = false, events = [] } = {}
 ) {
-  name = `${!name.includes('-') ? 'app-' : ''}${hyphenate(name)}`
   const [, ...propsList] = Object.getOwnPropertyNames(Component.prototype)
   const attrsList = propsList.map(hyphenate)
 
@@ -20,14 +19,15 @@ export default function customElement(
       super()
       this.component = null
       this.props = {}
-      this.grabInitialProps()
+      this.upgradeProps()
     }
 
-    grabInitialProps() {
+    upgradeProps() {
       propsList.forEach((prop) => {
         if (hasOwn(this, prop)) {
-          this.props[prop] = this[prop]
+          const value = this[prop]
           delete this[prop]
+          this[prop] = value
         }
       })
     }
@@ -41,20 +41,20 @@ export default function customElement(
 
       for (const attribute of this.attributes) {
         let { name, value } = attribute
-        if (!['class', 'style'].includes(name) || outside) {
-          if (name.startsWith('.')) {
-            name = camelize(name.slice(1))
-            value = eval(`(${value})`) // eslint-disable-line no-eval
-          } else if (attrsList.includes(name)) {
-            name = camelize(name)
-            value = value === '' ? true : Number(value) || value
-          } else {
-            value = value === '' ? true : value
-          }
-          if (!hasOwn(this.props, name)) {
-            this.props[name] = value
-          }
+        // if (!['class', 'style'].includes(name) || outside) {
+        if (name.startsWith('.')) {
+          name = camelize(name.slice(1))
+          value = eval(`(${value})`) // eslint-disable-line no-eval
+        } else if (attrsList.includes(name)) {
+          name = camelize(name)
+          value = value === '' ? true : Number(value) || value
+        } else {
+          value = value === '' ? true : value
         }
+        // if (!hasOwn(this.props, name)) {
+        this.props[name] = value
+        // }
+        // }
       }
     }
 
@@ -117,8 +117,6 @@ export default function customElement(
       this.handleAttributes()
       this.handleChildren()
 
-      dispatchEvent(this, 'beforeMount')
-
       window.__currentElement__ = this
 
       this.component = new Component({
@@ -139,8 +137,6 @@ export default function customElement(
     }
 
     destroy() {
-      dispatchEvent(this, 'beforeDestroy')
-
       this.component.$destroy()
       this.component = null
 

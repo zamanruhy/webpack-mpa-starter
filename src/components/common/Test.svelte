@@ -12,6 +12,7 @@
   import Icon from './Icon.svelte'
   import Modal from './Modal.svelte'
   import Range from './Range.svelte'
+  import Field from './Field.svelte'
   import { mq } from '@/helpers/mq'
   import { collapse, modal, portal, intersect } from '@/actions'
 
@@ -59,7 +60,7 @@
   let buttonIconLeft = true
   let buttonLoading = false
   let buttonDisabled = false
-  let buttonText = 'More Icons'
+  let buttonText = 'More icons more'
   let switched = true
   let values = [25, 75]
 
@@ -87,21 +88,26 @@
 <Switch bind:checked={switched} label="Switch" />
 {switched}
 <hr />
-<b>Size: </b>
-<Radio bind:group={buttonSize} label="Small" value="small" />
-<Radio bind:group={buttonSize} label="Default" value="" />
-<Radio bind:group={buttonSize} label="Large" value="large" />
+<Field label="Size">
+  <Radio bind:group={buttonSize} label="Small" value="small" />
+  <Radio bind:group={buttonSize} label="Default" value="" />
+  <Radio bind:group={buttonSize} label="Large" value="large" />
+</Field>
 <hr />
-<Checkbox bind:checked={buttonHasIcon} label="Has icon" />
-<Checkbox
-  bind:checked={buttonIconLeft}
-  label="Icon left"
-  disabled={!buttonHasIcon}
-/>
-<Checkbox bind:checked={buttonLoading} label="Loading" />
-<Checkbox bind:checked={buttonDisabled} label="Disabled" />
+<Field label="Options">
+  <Checkbox bind:checked={buttonHasIcon} label="Has icon" />
+  <Checkbox
+    bind:checked={buttonIconLeft}
+    label="Icon left"
+    disabled={!buttonHasIcon}
+  />
+  <Checkbox bind:checked={buttonLoading} label="Loading" />
+  <Checkbox bind:checked={buttonDisabled} label="Disabled" />
+</Field>
 <hr />
-<Input bind:value={buttonText} />
+<Field label="Button text" labelFor="form-blah">
+  <Input bind:value={buttonText} id="form-blah" />
+</Field>
 <hr />
 <Button
   variant="primary"

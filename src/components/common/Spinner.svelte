@@ -90,8 +90,7 @@
   }
 
   app-spinner:defined {
-    display: inline-flex;
-    vertical-align: middle;
+    display: contents;
   }
 
   app-spinner:not(:defined) {

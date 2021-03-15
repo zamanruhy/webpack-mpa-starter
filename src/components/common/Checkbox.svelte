@@ -1,6 +1,4 @@
 <script>
-  import { uid } from '@/utils'
-
   let className = ''
   export { className as class }
   export let value = ''
@@ -8,12 +6,11 @@
   export let indeterminate = false
   export let group = undefined
   export let label = ''
-  export let id = ''
+  export let id = undefined
 
   $: if (Array.isArray(group)) {
     checked = group.includes(value)
   }
-  $: cid = id || `checkbox-${uid()}`
 
   function handleChange(on) {
     if (Array.isArray(group)) {
@@ -33,8 +30,8 @@
 <label class="checkbox {className}" class:checkbox_single={!label}>
   <input
     class="checkbox__control"
-    id={cid}
     type="checkbox"
+    {id}
     {checked}
     {value}
     bind:indeterminate
@@ -43,7 +40,9 @@
     on:change
   />
   <span class="checkbox__box" />
-  {#if label}<span class="checkbox__label">{label}</span>{/if}
+  {#if label}
+    <span class="checkbox__label">{label}</span>
+  {/if}
 </label>
 
 <style lang="scss" global>
@@ -117,8 +116,7 @@
   }
 
   app-checkbox:defined {
-    display: inline-flex;
-    vertical-align: middle;
+    display: contents;
   }
 
   app-checkbox:not(:defined) {

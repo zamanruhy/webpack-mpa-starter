@@ -101,12 +101,15 @@
   }
 
   app-hamburger:defined {
-    display: inline-flex;
-    vertical-align: middle;
+    display: contents;
   }
 
   app-hamburger:not(:defined) {
-    @extend .hamburger;
+    width: $hamburger-width;
+    height: $hamburger-height;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
 
     &:before,
     &:after {

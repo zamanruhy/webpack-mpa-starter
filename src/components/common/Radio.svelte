@@ -1,18 +1,15 @@
 <script>
-  import { uid } from '@/utils'
-
   let className = ''
   export { className as class }
   export let value = ''
   export let checked = false
   export let group = undefined
   export let label = ''
-  export let id = ''
+  export let id = undefined
 
   $: if (group !== undefined) {
     checked = group === value
   }
-  $: cid = id || `radio-${uid()}`
 
   function handleChange(on) {
     if (group !== undefined) {
@@ -26,8 +23,8 @@
 <label class="radio {className}" class:radio_single={!label}>
   <input
     class="radio__control"
-    id={cid}
     type="radio"
+    {id}
     {checked}
     {value}
     {...$$restProps}
@@ -35,7 +32,9 @@
     on:change
   />
   <span class="radio__box" />
-  {#if label}<span class="radio__label">{label}</span>{/if}
+  {#if label}
+    <span class="radio__label">{label}</span>
+  {/if}
 </label>
 
 <style lang="scss" global>
@@ -98,8 +97,7 @@
   }
 
   app-radio:defined {
-    display: inline-flex;
-    vertical-align: middle;
+    display: contents;
   }
 
   app-radio:not(:defined) {

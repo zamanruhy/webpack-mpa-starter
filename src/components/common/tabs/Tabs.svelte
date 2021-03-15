@@ -78,7 +78,7 @@
 
   function scrollToActiveTab() {
     const activeTabEl = $activeTab.el
-    const listEl = activeTabEl.parentNode
+    const listEl = activeTabEl.closest('.tabs__list')
     const isOverflowing = listEl.scrollWidth > listEl.offsetWidth
     if (!isOverflowing) {
       return
@@ -203,10 +203,16 @@
   }
 
   app-tabs:defined {
-    display: block;
+    display: contents;
+  }
+  app-tab-list:defined {
+    display: contents;
   }
   app-tab:defined {
-    display: none;
+    display: contents;
+  }
+  app-tab-panel:defined {
+    display: contents;
   }
 
   app-tabs:not(:defined) {
@@ -226,6 +232,7 @@
         }
       }
     }
+
     &:not([index]) {
       > app-tab-list > app-tab {
         &:nth-of-type(1) {

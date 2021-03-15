@@ -146,7 +146,7 @@
   }
 
   app-swiper:defined {
-    display: block;
+    display: contents;
   }
 
   app-swiper-slide:defined {

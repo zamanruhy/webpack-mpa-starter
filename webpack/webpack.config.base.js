@@ -71,7 +71,7 @@ module.exports = {
                 accessors: true
               },
               emitCss: !isDev,
-              // hotReload: isDev,
+              hotReload: isDev,
               preprocess: require('svelte-preprocess')({
                 sourceMap: isDev,
                 postcss: true,
@@ -195,6 +195,7 @@ module.exports = {
 
 function getHtmlWebpackPlugins() {
   const dir = resolve('src/pages')
+
   return fs
     .readdirSync(dir)
     .filter((file) => file.endsWith('.ejs'))
@@ -205,8 +206,8 @@ function getHtmlWebpackPlugins() {
         filename: `${name}.html`,
         page: name,
         inject: 'head',
-        minify: false,
-        scriptLoading: 'defer'
+        scriptLoading: 'defer',
+        minify: false
       })
     })
 }

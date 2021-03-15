@@ -10,7 +10,7 @@
   export let type = 'button'
   export let href = ''
   export let use = []
-  export let el = null
+  export let el = undefined
 
   $: classes = [
     'button',
@@ -19,7 +19,7 @@
     loading && 'button_loading',
     className
   ]
-    .filter((c) => c)
+    .filter(Boolean)
     .join(' ')
 </script>
 
@@ -143,8 +143,7 @@
   }
 
   app-button:defined {
-    display: inline-flex;
-    vertical-align: middle;
+    display: contents;
   }
 
   app-button:not(:defined) {

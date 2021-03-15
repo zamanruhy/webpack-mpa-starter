@@ -35,7 +35,10 @@ export default function header() {
     return
   }
 
-  swiperEl.addEventListener('beforeMount', () => {
+  function onNavMount() {
+    if (!prevEl.el || !nextEl.el) {
+      return
+    }
     swiperEl.options = {
       navigation: {
         prevEl: prevEl.el,
@@ -43,7 +46,10 @@ export default function header() {
       },
       pagination: {}
     }
-  })
+  }
+
+  prevEl.addEventListener('mount', onNavMount)
+  nextEl.addEventListener('mount', onNavMount)
 
   swiperEl.addEventListener('mount', () => {
     swiperEl.component.$on('update', (e) => {
