@@ -206,9 +206,9 @@
   }
 }
 
-@mixin focus-ring() {
-  outline: 3px solid mix(#e59700, #ffbf47);
-  outline-offset: 2px;
+@mixin focus-ring($width: 3px, $offset: 2px) {
+  outline: $width solid #f2ab24;
+  outline-offset: $offset;
 }
 
 @mixin container($fluid: true) {

@@ -71,7 +71,7 @@ module.exports = {
                 accessors: true
               },
               emitCss: !isDev,
-              hotReload: isDev,
+              // hotReload: isDev,
               preprocess: require('svelte-preprocess')({
                 sourceMap: isDev,
                 postcss: true,

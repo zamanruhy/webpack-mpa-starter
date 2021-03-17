@@ -56,8 +56,7 @@
       background-color: #ffffff;
 
       &:focus {
-        outline: 2px solid #f2ab24;
-        outline-offset: -1px;
+        @include focus-ring(2px, -1px);
       }
 
       &::placeholder {

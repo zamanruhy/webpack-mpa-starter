@@ -11,6 +11,7 @@ import LazyImage from '@/components/common/LazyImage.svelte'
 import { Tabs, TabList, Tab, TabPanel } from '@/components/common/tabs'
 import Modal from '@/components/common/Modal.svelte'
 import Drawer from '@/components/common/Drawer.svelte'
+import Field from '@/components/common/Field.svelte'
 import Input from '@/components/common/Input.svelte'
 import FileInput from '@/components/common/FileInput.svelte'
 import Checkbox from '@/components/common/Checkbox.svelte'
@@ -32,6 +33,7 @@ export function customElements() {
     customElement('app-tab-list', TabList)
     customElement('app-tab', Tab)
     customElement('app-tab-panel', TabPanel)
+    customElement('app-field', Field)
     customElement('app-input', Input)
     customElement('app-file-input', FileInput)
     customElement('app-checkbox', Checkbox)

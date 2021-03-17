@@ -203,14 +203,18 @@
       </div>
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Input</h2>
-        <app-input
-          .id="'some-id'"
-          value="default value"
+        <app-field
           label="Name"
-          placeholder="Type your name"
-          name="name"
-          class="block__element"
-        ></app-input>
+          label-for="some-id"
+          hint="Some additional message"
+        >
+          <app-input
+            .id="'some-id'"
+            value="default value"
+            placeholder="Type your name"
+            name="name"
+          ></app-input>
+        </app-field>
       </div>
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">File Input</h2>
@@ -238,23 +242,25 @@
       </div>
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Radio</h2>
-        <div class="styleguide__options">
-          <div class="styleguide__option">
-            <app-radio
-              label="Radio one"
-              name="radio"
-              value="radio-a"
-            ></app-radio>
+        <app-field label="Radio group">
+          <div class="styleguide__options">
+            <div class="styleguide__option">
+              <app-radio
+                label="Radio one"
+                name="radio"
+                value="radio-a"
+              ></app-radio>
+            </div>
+            <div class="styleguide__option">
+              <app-radio
+                label="Radio two"
+                name="radio"
+                value="radio-b"
+                checked
+              ></app-radio>
+            </div>
           </div>
-          <div class="styleguide__option">
-            <app-radio
-              label="Radio two"
-              name="radio"
-              value="radio-b"
-              checked
-            ></app-radio>
-          </div>
-        </div>
+        </app-field>
       </div>
     </div>
   </div>

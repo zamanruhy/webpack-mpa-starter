@@ -41,7 +41,7 @@ export default function customElement(
 
       for (const attribute of this.attributes) {
         let { name, value } = attribute
-        // if (!['class', 'style'].includes(name) || outside) {
+
         if (name.startsWith('.')) {
           name = camelize(name.slice(1))
           value = eval(`(${value})`) // eslint-disable-line no-eval
@@ -51,10 +51,8 @@ export default function customElement(
         } else {
           value = value === '' ? true : value
         }
-        // if (!hasOwn(this.props, name)) {
+
         this.props[name] = value
-        // }
-        // }
       }
     }
 

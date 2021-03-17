@@ -10,14 +10,12 @@ export default function styleguide() {
 
   const swiperEl = el.querySelector('.styleguide__modal-swiper')
 
-  swiperEl.addEventListener('beforeMount', () => {
-    swiperEl.index = get(slideIndex)
-    swiperEl.options = {
-      pagination: true,
-      navigation: true,
-      keyboard: true
-    }
-  })
+  swiperEl.index = get(slideIndex)
+  swiperEl.options = {
+    pagination: true,
+    navigation: true,
+    keyboard: true
+  }
 
   swiperEl.addEventListener('mount', () => {
     swiperEl.component.$on('update', (e) => {
