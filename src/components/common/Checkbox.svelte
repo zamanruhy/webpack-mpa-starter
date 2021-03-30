@@ -1,6 +1,7 @@
 <script>
   let className = ''
   export { className as class }
+  export let style = ''
   export let value = ''
   export let checked = false
   export let indeterminate = false
@@ -27,7 +28,7 @@
   }
 </script>
 
-<label class="checkbox {className}" class:checkbox_single={!label}>
+<label class="checkbox {className}" class:checkbox_single={!label} {style}>
   <input
     class="checkbox__control"
     type="checkbox"

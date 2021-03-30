@@ -15,6 +15,7 @@
   import Field from './Field.svelte'
   import { mq } from '@/helpers/mq'
   import { collapse, modal, portal, intersect } from '@/actions'
+  // import '@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg'
 
   let range = 5
   let inputValue = ''
@@ -46,6 +47,7 @@
   let iconsCount = 1
   let intersecting = false
   let modalVisible = false
+  let modalInputValue = ''
   let prev
   let next
   const icons = [
@@ -127,7 +129,12 @@
 {#each [...Array(iconsCount).keys()] as num (num)}
   <p style="font-size: 30px">
     {#each icons as icon (icon.name)}
-      <Icon {...icon} on:click={() => (buttonIcon = icon)} />
+      <Icon
+        {...icon}
+        style="margin: 0"
+        aria-hidden="true"
+        on:click={() => (buttonIcon = icon)}
+      />
     {/each}
   </p>
 {/each}
@@ -201,6 +208,10 @@
 
 <br />
 
+<input type="range" max="20" bind:value={range} style="width: 100%" />
+
+<br /><br />
+
 <p>
   <Button
     variant="primary"
@@ -211,24 +222,29 @@
   </Button>
 </p>
 <p>
-  <Modal bind:visible={modalVisible}>
+  <Modal
+    class="some__modal"
+    style="margin: 0"
+    aria-labelledby="modal-title"
+    bind:visible={modalVisible}
+    on:open={() => console.log('open')}
+  >
+    <h3 id="modal-title" style="margin-top: 0">Modal title</h3>
+    <Input bind:value={modalInputValue} autofocus style="margin-bottom: 15px" />
     <Swiper
       bind:index={slideIndex}
       options={{ loop: true, navigation: true, pagination: true }}
     >
       {#each [...Array(range).keys()] as num}
         <SwiperSlide>
-          <div class="styleguide__slide">{num + 1}</div>
+          <div class="styleguide__slide">{num + 1} {modalInputValue}</div>
         </SwiperSlide>
       {/each}
     </Swiper>
   </Modal>
 </p>
 
-<input type="range" max="20" bind:value={range} style="width: 100%" />
-
-<p>intersecting: {intersecting}</p>
-{#if $mq.smUp && $mq.lgDown}
+{#if $mq.lgUp}
   <div style="overflow: hidden;">
     <LazyImage
       src="https://picsum.photos/id/354/1072/708"
@@ -361,6 +377,9 @@ Second -->
 {file}
 
 <style lang="scss" global>
+  body {
+    // background: url(@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg);
+  }
   img {
     /*max-width: 100%;*/
   }

@@ -3,6 +3,7 @@
 
   let className = ''
   export { className as class }
+  export let style = ''
   export let id = undefined
   export let value = ''
   export let type = 'text'
@@ -30,7 +31,7 @@
   })
 </script>
 
-<div class={classes}>
+<div class={classes} {style}>
   <input
     class="input__control"
     {id}

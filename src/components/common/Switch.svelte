@@ -1,6 +1,7 @@
 <script>
   let className = ''
   export { className as class }
+  export let style = ''
   export let value = ''
   export let checked = false
   export let group = undefined
@@ -26,7 +27,7 @@
   }
 </script>
 
-<label class="switch {className}">
+<label class="switch {className}" {style}>
   <input
     class="switch__control"
     type="checkbox"

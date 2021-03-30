@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte'
+  import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte'
   import {
     getScrollbarWidth,
     registerPopup,
@@ -13,7 +13,7 @@
   export let visible = false
 
   let el
-  let returnElement = null
+  let returnFocus = null
   let mounted = false
   const drawer = {}
   const dispatch = createEventDispatcher()
@@ -28,23 +28,27 @@
     visible = false
   }
   function beforeOpen() {
-    returnElement = document.activeElement
+    returnFocus = returnFocus || document.activeElement
     registerPopup(drawer)
   }
   function onOpen() {
     dispatch('open')
-    setFocus()
   }
   function onOpened() {
     dispatch('opened')
+    setFocus()
   }
   function onClose() {
     dispatch('close')
     el.classList.remove('drawer_visible')
   }
   function onClosed() {
-    returnElement && returnElement.focus({ preventScroll: true })
     dispatch('closed')
+    tick().then(afterClose)
+  }
+  function afterClose() {
+    returnFocus.focus()
+    returnFocus = null
     unregisterPopup(drawer)
   }
   function slide() {
@@ -82,12 +86,12 @@
 
 {#if visible && mounted}
   <div class="drawer-container" use:portal>
-    <div
+    <aside
       class="drawer"
       class:drawer_visible={visible}
       tabindex="-1"
       bind:this={el}
-      transition:slide
+      transition:slide|local
       on:keydown={onEsc}
       on:keydown={trapFocus}
       on:introstart={onOpen}
@@ -112,7 +116,7 @@
         </button>
         <slot />
       </div>
-    </div>
+    </aside>
     <Backdrop {visible} on:click={close} />
   </div>
 {/if}

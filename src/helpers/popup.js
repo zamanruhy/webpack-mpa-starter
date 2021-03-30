@@ -1,15 +1,14 @@
 const popups = []
-let isBodyOverflowing = false
 let offsetElements = null
 let scrollbarWidth = null
 const appEl = document.querySelector('.app')
 
 export function registerPopup(popup) {
-  if (popups.indexOf(popup) === -1) {
-    popups.push(popup)
+  if (popups.indexOf(popup) > -1) {
+    return
   }
+  popups.push(popup)
   if (popups.length === 1) {
-    checkScrollbar()
     setScrollbar()
     document.body.style.overflow = 'hidden'
     appEl.setAttribute('aria-hidden', 'true')
@@ -29,13 +28,13 @@ export function unregisterPopup(popup) {
   }
 }
 
-function checkScrollbar() {
+function checkBodyOverflow() {
   const { left, right } = document.body.getBoundingClientRect()
-  isBodyOverflowing = left + right < window.innerWidth
+  return left + right < window.innerWidth
 }
 
 function setScrollbar() {
-  if (!isBodyOverflowing) {
+  if (!checkBodyOverflow()) {
     return
   }
   offsetElements = [
@@ -54,7 +53,7 @@ function setScrollbar() {
 }
 
 function resetScrollbar() {
-  if (!isBodyOverflowing) {
+  if (!offsetElements) {
     return
   }
   offsetElements.forEach((el) => {
@@ -66,7 +65,7 @@ function resetScrollbar() {
 }
 
 export function getScrollbarWidth() {
-  if (scrollbarWidth === null && typeof window !== 'undefined') {
+  if (scrollbarWidth === null) {
     const div = document.createElement('div')
     div.style.cssText = `
       width: 100px;
@@ -78,7 +77,7 @@ export function getScrollbarWidth() {
     scrollbarWidth = div.getBoundingClientRect().width - div.clientWidth
     document.body.removeChild(div)
   }
-  return scrollbarWidth || 0
+  return scrollbarWidth
 }
 
 function getFocusable(node) {

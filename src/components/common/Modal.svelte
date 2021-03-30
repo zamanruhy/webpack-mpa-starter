@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte'
+  import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte'
   import {
     getScrollbarWidth,
     registerPopup,
@@ -10,6 +10,9 @@
   import { easing } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
+  let className = ''
+  export { className as class }
+  export let style = ''
   export let id = ''
   export let visible = false
   export let noCloseOnBackdrop = false
@@ -18,19 +21,20 @@
 
   let modalEl
   let contentEl
-  let isModalOverflowing = false
-  let returnElement = null
+  let isOverflowing = false
+  let returnFocus = null
   let observer = null
   let mounted = false
   const modal = {}
   const dispatch = createEventDispatcher()
 
-  $: modalClasses = ['modal', variant && `modal_${variant}`]
-    .filter((c) => c)
+  $: modalClasses = ['modal', variant && `modal_${variant}`, className]
+    .filter(Boolean)
     .join(' ')
-  $: modalStyles = `padding-left: ${
-    isModalOverflowing ? `${getScrollbarWidth()}px` : '0'
-  }`
+  $: modalStyles = `
+    ${style ? `${style};` : ''}
+    ${isOverflowing ? `padding-left: ${getScrollbarWidth()}px;` : ''}
+  `
   $: dispatch('update', visible)
   $: visible && mounted && beforeOpen()
 
@@ -41,25 +45,29 @@
     visible = false
   }
   function beforeOpen() {
-    returnElement = document.activeElement
+    returnFocus = returnFocus || document.activeElement
     registerPopup(modal)
   }
   function onOpen() {
     dispatch('open')
     observeDom()
-    checkModalOverflow()
-    setFocus()
+    checkOverflow()
   }
   function onOpened() {
     dispatch('opened')
+    setFocus()
   }
   function onClose() {
     dispatch('close')
     unobserveDom()
   }
   function onClosed() {
-    returnElement && returnElement.focus({ preventScroll: true })
     dispatch('closed')
+    tick().then(afterClose)
+  }
+  function afterClose() {
+    returnFocus.focus()
+    returnFocus = null
     unregisterPopup(modal)
   }
   function scale() {
@@ -90,9 +98,9 @@
       modalEl.scrollTop = 0
     }
   }
-  function checkModalOverflow() {
+  function checkOverflow() {
     if (visible) {
-      isModalOverflowing =
+      isOverflowing =
         modalEl.scrollHeight > document.documentElement.clientHeight
     }
   }
@@ -119,7 +127,7 @@
         }
       }
       if (changed) {
-        checkModalOverflow()
+        checkOverflow()
       }
     }).observe(contentEl, {
       subtree: true,
@@ -159,8 +167,8 @@
 <svelte:window
   on:openModal={openHandler}
   on:closeModal={closeHandler}
-  on:resize={checkModalOverflow}
-  on:orientationchange={checkModalOverflow}
+  on:resize={checkOverflow}
+  on:orientationchange={checkOverflow}
 />
 
 {#if visible && mounted}
@@ -170,13 +178,15 @@
       class={modalClasses}
       style={modalStyles}
       role="dialog"
+      aria-modal="true"
+      {...$$restProps}
       bind:this={modalEl}
       on:click={onClickOut}
       on:keydown={onEsc}
     >
       <div
         class="modal__dialog"
-        transition:scale
+        transition:scale|local
         on:introstart={onOpen}
         on:introend={onOpened}
         on:outrostart={onClose}

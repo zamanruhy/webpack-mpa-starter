@@ -1,10 +1,14 @@
 <script>
+  let className = ''
+  export { className as class }
   export let label = ''
   export let labelFor = undefined
   export let hint = ''
   export let error = ''
 
-  $: classes = ['field', error && 'field_error'].filter(Boolean).join(' ')
+  $: classes = ['field', error && 'field_error', className]
+    .filter(Boolean)
+    .join(' ')
   $: text = error || hint
 </script>
 

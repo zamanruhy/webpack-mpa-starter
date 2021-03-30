@@ -1,25 +1,36 @@
 <%
-  const icons = require('./icon.js').default
+  const { icons } = require('@/components/common/Icon.svelte')
   const { id, width, height } = icons[name] || {}
   className = typeof className !== 'undefined' ? className : ''
+  style = typeof style !== 'undefined' ? style.trim() : ''
   left = typeof left !== 'undefined' ? left : false
   right = typeof right !== 'undefined' ? right : false
   img = typeof img !== 'undefined' ? img : false
+  attrs = typeof attrs !== 'undefined' ? attrs : {}
+  const attrsStr = Object.entries(attrs)
+    .map((p) => `${p[0]}="${p[1]}"`)
+    .join(' ')
   const url = `static/img/sprite.svg#${id}`
-  const style = `height: 1em; width: ${width / height}em`
+  const styles = `
+    ${style ? (style.endsWith(';') ? style : `${style};`) : ''}
+    height: 1em;
+    width: ${width / height}em
+  `
   const classes = [
     'icon',
     `icon_${name}`,
     left && 'icon_left',
     right && 'icon_right',
     className
-  ].filter(Boolean).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ')
 %>
 
 <% if (img) { %>
-  <img class="<%= classes %>" style="<%= style %>" src="<%= url %>" alt="<%= name %>" />
+  <img class="<%= classes %>" style="<%= styles %>" src="<%= url %>" alt="<%= name %>" <%= attrsStr %> />
 <% } else { %>
-  <svg class="<%= classes %>" style="<%= style %>">
+  <svg class="<%= classes %>" style="<%= styles %>">
     <use xlink:href="<%= url.replace('-usage', '') %>" />
   </svg>
 <% } %>

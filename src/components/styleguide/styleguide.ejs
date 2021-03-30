@@ -195,9 +195,20 @@
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Icon</h2>
         <p style="font-size: 30px">
-          <%= icon({ name: 'logo', img: true, left: true, class: 'bla' }) %>
+          <%= icon({
+            name: 'logo',
+            img: true,
+            left: true,
+            style: 'margin: 0',
+            attrs: {
+              'data-modal': 'main-modal',
+              role: 'button',
+              tabindex: 0,
+              'aria-label': 'Open main modal'
+            }
+          }) %>
           <%= icon({ name: 'house', className: 'block__element' }) %>
-          <%= icon({ name: 'lock', img: true }) %>
+          <%= icon({ name: 'lock', img: true, attrs: { 'aria-hidden': 'true' } }) %>
           <%= icon({ name: 'close', right: true }) %>
         </p>
       </div>

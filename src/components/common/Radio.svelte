@@ -1,6 +1,7 @@
 <script>
   let className = ''
   export { className as class }
+  export let style = ''
   export let value = ''
   export let checked = false
   export let group = undefined
@@ -20,7 +21,7 @@
   }
 </script>
 
-<label class="radio {className}" class:radio_single={!label}>
+<label class="radio {className}" class:radio_single={!label} {style}>
   <input
     class="radio__control"
     type="radio"
