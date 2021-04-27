@@ -74,10 +74,6 @@
   app-input:not(:defined) {
     display: block;
 
-    // &[label]:before {
-    //   @extend .input__label;
-    //   content: attr(label);
-    // }
     &:after {
       @extend .input__control;
       content: '';

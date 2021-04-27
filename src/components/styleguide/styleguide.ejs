@@ -15,15 +15,15 @@
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle" data-modal="main-modal" role="button" tabindex="0">Modal</h2>
         <app-button variant="primary" data-modal="main-modal">Open Modal</app-button>
-        <app-modal .id="'other-modal'">
+        <app-modal .id="other-modal">
           <p>
             <app-button variant="primary" data-collapse="other-collapse">Toggle</app-button>
           </p>
-          <app-collapse .id="'other-collapse'" visible>
+          <app-collapse .id="other-collapse" visible>
             <div class="styleguide__slide"></div>
           </app-collapse>
         </app-modal>
-        <app-modal .id="'main-modal'" class="main-modal">
+        <app-modal .id="main-modal" class="main-modal">
           <app-swiper class="styleguide__modal-swiper">
             <% for (let i = 0; i < 10; i++) { %>
               <app-swiper-slide>
@@ -56,7 +56,7 @@
         <p>
           <app-button variant="primary" data-collapse="main-collapse" data-class="collapsed__class">Toggle</app-button>
         </p>
-        <app-collapse .id="'main-collapse'" visible accordion="collapse">
+        <app-collapse .id="main-collapse" visible accordion="collapse">
           <div class="styleguide__slide"></div>
         </app-collapse>
       </div>
@@ -87,15 +87,28 @@
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Lazy Image in text</h2>
         <p>
+          <noscript>
+            <img
+              src="https://picsum.photos/id/122/1072/708"
+              class="styleguide__img-in-text"
+              alt="#"
+              width="1072"
+              height="708"
+            >
+            <style>
+              noscript + app-lazy-image {
+                display: none !important;
+              }
+            </style>
+          </noscript>
           <app-lazy-image
             src="https://picsum.photos/id/122/1072/708"
             class="styleguide__img-in-text"
             alt="#"
             width="1072"
             height="708"
-          >
-            <span style="display: block; padding-bottom: 66.045%"></span>
-          </app-lazy-image>
+            style="aspect-ratio: 1072 / 708"
+          ></app-lazy-image>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. A asperiores delectus deserunt, dicta doloribus eligendi iusto nemo officia perferendis, praesentium provident recusandae, rerum ullam. Alias blanditiis, deserunt dolor esse ex incidunt labore nihil officia omnis placeat quaerat quas rem sint! Aut cum dicta expedita, hic labore quod ullam. Iusto, repellendus vitae. Deleniti itaque quam qui quisquam quo? Ab aperiam asperiores consequuntur deleniti dolore dolorum ducimus est et illum incidunt ipsa itaque iure laborum magni necessitatibus neque optio quod repellat reprehenderit, sequi sint soluta tempore vero. Atque dignissimos est facere impedit ipsam maiores minima, nesciunt nihil non quae qui repudiandae voluptatem.
         </p>
       </div>
@@ -105,7 +118,6 @@
           <div class="styleguide__gallery-item">
             <app-lazy-image
               src="https://picsum.photos/id/237/1072/708"
-              src-placeholder="https://picsum.photos/id/237/10/7"
               class="styleguide__gallery-img"
               alt="#"
             ></app-lazy-image>
@@ -220,7 +232,7 @@
           hint="Some additional message"
         >
           <app-input
-            .id="'some-id'"
+            .id="some-id"
             value="default value"
             placeholder="Type your name"
             name="name"
@@ -229,7 +241,9 @@
       </div>
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">File Input</h2>
-        <app-file-input></app-file-input>
+        <app-field label="Select file" label-for="file-id">
+          <app-file-input .id="file-id"></app-file-input>
+        </app-field>
       </div>
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Checkbox</h2>

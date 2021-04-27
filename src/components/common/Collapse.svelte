@@ -13,9 +13,9 @@
 
   $: dispatch('update', visible)
   $: if (id && mounted) {
-    dispatchEvent(window, 'collapseUpdate', { id, visible })
+    dispatchEvent(window, 'collapse:update', { id, visible })
     if (accordion && visible) {
-      dispatchEvent(window, 'collapseAccordion', { id, accordion })
+      dispatchEvent(window, 'collapse:accordion', { id, accordion })
     }
   }
 
@@ -48,8 +48,8 @@
 </script>
 
 <svelte:window
-  on:toggleCollapse={toggleHandler}
-  on:collapseAccordion={accordionHandler}
+  on:toggle:collapse={toggleHandler}
+  on:collapse:accordion={accordionHandler}
 />
 
 {#if visible}

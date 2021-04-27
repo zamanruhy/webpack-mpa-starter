@@ -3,6 +3,7 @@
   import Input from './Input.svelte'
   import Button from './Button.svelte'
 
+  export let id = undefined
   export let value = null
 
   let controlEl
@@ -21,11 +22,11 @@
 
 <div class="file-input">
   <input
+    class="file-input__control"
+    {id}
     type="file"
     name="image"
-    tabindex="-1"
     accept="image/*"
-    class="file-input__control"
     bind:this={controlEl}
     on:change={onFileSelect}
   />
@@ -35,12 +36,18 @@
       value={fileName}
       tabindex="-1"
       readonly
-      placeholder="Choose file..."
-      aria-label="Choose file..."
+      placeholder="No file chosen"
+      aria-hidden="true"
       on:click={onClick}
     />
-    <Button variant="primary" class="file-input__button" on:click={onClick}>
-      Обзор
+    <Button
+      variant="primary"
+      class="file-input__button"
+      tabindex="-1"
+      aria-hidden="true"
+      on:click={onClick}
+    >
+      Browse
     </Button>
   </div>
 </div>
@@ -49,6 +56,9 @@
   .file-input {
     &__control {
       @include visually-hidden();
+    }
+    &__control:focus + &__field .input__control {
+      @include focus-ring(2px, -1px);
     }
     &__field {
       position: relative;
@@ -78,7 +88,7 @@
     }
     &:after {
       @extend .file-input__button;
-      content: 'Обзор';
+      content: 'Browse';
     }
   }
 </style>

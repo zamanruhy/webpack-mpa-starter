@@ -165,8 +165,8 @@
 </script>
 
 <svelte:window
-  on:openModal={openHandler}
-  on:closeModal={closeHandler}
+  on:open:modal={openHandler}
+  on:close:modal={closeHandler}
   on:resize={checkOverflow}
   on:orientationchange={checkOverflow}
 />

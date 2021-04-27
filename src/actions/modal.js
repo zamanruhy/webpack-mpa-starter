@@ -12,7 +12,7 @@ export default function modal(node, id) {
       (type === 'keydown' && (keyCode === 13 || keyCode === 32))
     ) {
       e.preventDefault()
-      dispatchEvent(window, 'openModal', { id })
+      dispatchEvent(window, 'open:modal', { id })
     }
   }
 

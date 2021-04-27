@@ -82,7 +82,7 @@
   })
 </script>
 
-<svelte:window on:openDrawer={open} on:closeDrawer={close} />
+<svelte:window on:open:drawer={open} on:close:drawer={close} />
 
 {#if visible && mounted}
   <div class="drawer-container" use:portal>

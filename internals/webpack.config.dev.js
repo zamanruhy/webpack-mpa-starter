@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
@@ -15,15 +16,12 @@ const devConfig = merge(baseConfig, {
   devServer: {
     clientLogLevel: 'silent',
     hot: true,
-    contentBase: 'dist',
+    contentBase: path.join(__dirname, '../dist'),
     compress: true,
     host: HOST,
     port: PORT,
-    open: false,
     overlay: { warnings: true, errors: true },
-    publicPath: '/',
-    quiet: true,
-    inline: true
+    quiet: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 })

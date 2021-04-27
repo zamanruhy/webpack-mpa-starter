@@ -29,11 +29,13 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@': resolve('src'),
-      svelte: resolve('node_modules/svelte')
+      '@': resolve('src')
     },
     extensions: ['.mjs', '.js', '.json', '.svelte'],
-    mainFields: ['svelte', 'browser', 'module', 'main']
+    mainFields: ['svelte', 'browser', 'module', 'main'],
+    fallback: {
+      path: require.resolve('path-browserify')
+    }
   },
   module: {
     rules: [

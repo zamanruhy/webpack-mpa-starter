@@ -65,6 +65,7 @@
   let buttonText = 'More icons more'
   let switched = true
   let values = [25, 75]
+  let intersectOnce = false
 
   $: step = switched ? 2 : 7
   $: swiperOptions = {
@@ -244,8 +245,20 @@
   </Modal>
 </p>
 
+<p>
+  <Button
+    variant="primary"
+    style="margin-bottom: 100px"
+    on:click={() => (intersectOnce = !intersectOnce)}>Change intersect</Button
+  >
+</p>
+
 {#if $mq.lgUp}
-  <div style="overflow: hidden;">
+  <div
+    style="overflow: hidden;"
+    use:intersect={{ once: intersectOnce }}
+    on:intersect={(e) => console.log(e.detail.intersecting)}
+  >
     <LazyImage
       src="https://picsum.photos/id/354/1072/708"
       class={inputValue}
@@ -262,10 +275,8 @@
   <div class="styleguide__gallery-item">
     <LazyImage
       src="https://picsum.photos/id/237/1072/708"
-      srcPlaceholder="https://picsum.photos/id/237/10/7"
       class="styleguide__gallery-img"
       alt="#"
-      on:load={(e) => console.log(e)}
     />
   </div>
   <div class="styleguide__gallery-item">

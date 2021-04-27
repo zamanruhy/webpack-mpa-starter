@@ -1,27 +1,28 @@
 import { dispatchEvent } from '@/utils'
 
-intersect.support =
-  typeof window !== 'undefined' &&
-  'IntersectionObserver' in window &&
-  'onscroll' in window &&
-  !/(gle|ing)bot/.test(navigator.userAgent)
+export default function intersect(node, options) {
+  let observer
 
-export default function intersect(node, options = {}) {
-  const {
-    once = false,
-    root = null,
-    rootMargin = '40px',
-    threshold = 0
-  } = options
+  function update(_options = {}) {
+    const {
+      once = false,
+      root = null,
+      rootMargin = '40px',
+      threshold = 0
+    } = _options
 
-  if (intersect.support) {
-    const observer = new IntersectionObserver(
+    if (observer) {
+      observer.disconnect()
+    }
+
+    observer = new IntersectionObserver(
       (entries) => {
-        const intersecting = entries[0].isIntersecting
+        const entry = entries[0]
+        const intersecting = entry.isIntersecting
         if (intersecting && once) {
-          observer.unobserve(node)
+          observer.disconnect()
         }
-        dispatchEvent(node, 'intersect', { intersecting })
+        dispatchEvent(node, 'intersect', { intersecting, entry, observer })
       },
       {
         root,
@@ -31,11 +32,14 @@ export default function intersect(node, options = {}) {
     )
 
     observer.observe(node)
+  }
 
-    return {
-      destroy() {
-        observer.unobserve(node)
-      }
+  update(options)
+
+  return {
+    update,
+    destroy() {
+      observer.disconnect()
     }
   }
 }

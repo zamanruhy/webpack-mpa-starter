@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "description": "Webpack starter for building multi-page websites",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack serve --progress --config webpack/webpack.config.dev.js",
-    "build": "cross-env NODE_ENV=production node webpack/prod.js",
-    "build:serve": "npm run build && serve dist -l 8080 --no-etag",
+    "dev": "cross-env NODE_ENV=development webpack serve --progress --config internals/webpack.config.dev.js",
+    "build": "cross-env NODE_ENV=production node internals/prod.js",
+    "build:serve": "npm run build && serve dist -l 8080 -n -c ../internals/serve.json",
     "build:analyze": "cross-env BUNDLE_ANALYZE=true npm run build",
     "lint": "eslint --ext .js,.svelte .",
     "prettify": "prettier --write \"**/*.{js,json,md,scss,svelte}\"",
-    "add": "node add-component.js"
+    "add": "node internals/add-component.js"
   },
   "keywords": [
     "webpack",
@@ -31,10 +31,10 @@
   },
   "homepage": "https://github.com/zamanruhy/webpack-mpa-starter",
   "dependencies": {
-    "core-js": "^3.9.1",
+    "core-js": "^3.10.0",
     "focus-visible": "^5.2.0",
-    "svelte": "^3.35.0",
-    "swiper": "^6.5.1"
+    "svelte": "^3.37.0",
+    "swiper": "^6.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
@@ -66,14 +66,15 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-prettify-webpack-plugin": "^1.0.0",
     "html-webpack-plugin": "^5.3.1",
-    "husky": "^5.2.0",
+    "husky": "^6.0.0",
     "image-webpack-loader": "^7.0.1",
     "lint-staged": "^10.5.4",
     "mini-css-extract-plugin": "^1.4.0",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "ora": "^5.4.0",
+    "path-browserify": "^1.0.1",
     "portfinder": "^1.0.28",
-    "postcss": "^8.2.8",
+    "postcss": "^8.2.9",
     "postcss-load-config": "^3.0.1",
     "postcss-loader": "^5.2.0",
     "postcss-pxtorem": "^6.0.0",

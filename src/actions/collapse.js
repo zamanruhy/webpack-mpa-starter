@@ -21,7 +21,7 @@ export default function collapse(node, options = {}) {
     ) {
       e.preventDefault()
       ids.forEach((id) => {
-        dispatchEvent(window, 'toggleCollapse', { id })
+        dispatchEvent(window, 'toggle:collapse', { id })
       })
     }
   }
@@ -40,7 +40,7 @@ export default function collapse(node, options = {}) {
 
   node.addEventListener('click', onClick)
   node.addEventListener('keydown', onClick)
-  window.addEventListener('collapseUpdate', onUpdate)
+  window.addEventListener('collapse:update', onUpdate)
 
   return {
     update(newOptions) {
@@ -57,7 +57,7 @@ export default function collapse(node, options = {}) {
     destroy() {
       node.removeEventListener('click', onClick)
       node.removeEventListener('keydown', onClick)
-      window.removeEventListener('collapseUpdate', onUpdate)
+      window.removeEventListener('collapse:update', onUpdate)
     }
   }
 }

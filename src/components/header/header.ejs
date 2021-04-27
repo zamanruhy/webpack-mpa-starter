@@ -1,9 +1,24 @@
+<%
+  // require('svelte/register')
+
+  // const Icon = require('./Icon.svelte').default
+
+  // const { html } = Icon.render({ name: 'close' })
+
+  // console.log(html)
+
+  // const fs = require('fs')
+
+  console.log('global', global)
+%>
+
 <header class="header">
   <div class="container header__container">
     <div class="header__inner">
       <div class="header__logo">
-        <img src="<%= require('@/assets/img/svelte.svg') %>" alt="Logo" width1="98.1" height1="118" class="header__logo-img">
+        <img src="<%= require('@/assets/img/svelte.svg') %>" alt="Logo" width="98.1" height="118" class="header__logo-img">
       </div>
+      <% /*html*/ %>
       <app-hamburger class="header__toggle"></app-hamburger>
     </div>
   </div>

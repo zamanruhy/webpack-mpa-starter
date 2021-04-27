@@ -24,6 +24,10 @@
 }
 
 // Display
+.visually-hidden {
+  @include visually-hidden();
+}
+
 @each $bp in map-keys($breakpoints) {
   @if $bp != xs {
     .hidden-#{$bp}-up {

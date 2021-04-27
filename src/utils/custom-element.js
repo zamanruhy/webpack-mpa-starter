@@ -43,9 +43,10 @@ export default function customElement(
         let { name, value } = attribute
 
         if (name.startsWith('.')) {
-          name = camelize(name.slice(1))
-          value = eval(`(${value})`) // eslint-disable-line no-eval
-        } else if (attrsList.includes(name)) {
+          name = name.slice(1)
+        }
+
+        if (attrsList.includes(name)) {
           name = camelize(name)
           value = value === '' ? true : Number(value) || value
         } else {
