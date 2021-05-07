@@ -14,7 +14,7 @@ const scssData = ['functions', 'variables', 'mixins']
   .join('')
 
 function resolve(dir) {
-  return path.join(__dirname, '..', dir)
+  return path.join(process.cwd(), dir)
 }
 
 module.exports = {
@@ -32,10 +32,7 @@ module.exports = {
       '@': resolve('src')
     },
     extensions: ['.mjs', '.js', '.json', '.svelte'],
-    mainFields: ['svelte', 'browser', 'module', 'main'],
-    fallback: {
-      path: require.resolve('path-browserify')
-    }
+    mainFields: ['svelte', 'browser', 'module', 'main']
   },
   module: {
     rules: [
@@ -53,13 +50,6 @@ module.exports = {
         test: /\.m?js$/,
         exclude: /node_modules[/\\](?!(svelte|swiper|dom7))/,
         loader: 'babel-loader'
-      },
-      {
-        // required to prevent errors from Svelte on Webpack 5+
-        test: /node_modules[/\\]svelte[/\\].*\.mjs$/,
-        resolve: {
-          fullySpecified: false
-        }
       },
       {
         test: /\.svelte$/,

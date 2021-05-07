@@ -10,7 +10,7 @@ const prodConfig = require('./webpack.config.prod')
 const spinner = ora('building for production...')
 spinner.start()
 
-rimraf(path.join(__dirname, '../dist'), (err) => {
+rimraf(path.join(process.cwd(), 'dist'), (err) => {
   if (err) throw err
   webpack(prodConfig, (err, stats) => {
     spinner.stop()

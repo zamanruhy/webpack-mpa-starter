@@ -100,7 +100,7 @@
       background-color: #e9ecef;
 
       &:before {
-        opacity: 0.8;
+        background-color: rgba(0, 0, 0, 0.26);
       }
     }
     &_single &__box {

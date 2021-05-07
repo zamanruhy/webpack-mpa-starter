@@ -13,8 +13,7 @@ module.exports = {
   },
   plugins: ['svelte3'],
   rules: {
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'func-names': ['warn', 'always']
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   },
   overrides: [
     {

@@ -16,7 +16,7 @@ const devConfig = merge(baseConfig, {
   devServer: {
     clientLogLevel: 'silent',
     hot: true,
-    contentBase: path.join(__dirname, '../dist'),
+    contentBase: path.join(process.cwd(), 'dist'),
     compress: true,
     host: HOST,
     port: PORT,

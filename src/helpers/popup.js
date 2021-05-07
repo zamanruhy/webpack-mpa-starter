@@ -1,14 +1,14 @@
-const popups = []
+const popups = new Set()
 let offsetElements = null
 let scrollbarWidth = null
 const appEl = document.querySelector('.app')
 
 export function registerPopup(popup) {
-  if (popups.indexOf(popup) > -1) {
+  if (popups.has(popup)) {
     return
   }
-  popups.push(popup)
-  if (popups.length === 1) {
+  popups.add(popup)
+  if (popups.size === 1) {
     setScrollbar()
     document.body.style.overflow = 'hidden'
     appEl.setAttribute('aria-hidden', 'true')
@@ -16,12 +16,11 @@ export function registerPopup(popup) {
 }
 
 export function unregisterPopup(popup) {
-  const index = popups.indexOf(popup)
-  if (index === -1) {
+  if (!popups.has(popup)) {
     return
   }
-  popups.splice(index, 1)
-  if (popups.length === 0) {
+  popups.delete(popup)
+  if (popups.size === 0) {
     resetScrollbar()
     document.body.style.overflow = ''
     appEl.removeAttribute('aria-hidden')
@@ -29,8 +28,7 @@ export function unregisterPopup(popup) {
 }
 
 function checkBodyOverflow() {
-  const { left, right } = document.body.getBoundingClientRect()
-  return left + right < window.innerWidth
+  return window.innerWidth > document.documentElement.clientWidth
 }
 
 function setScrollbar() {
@@ -53,7 +51,7 @@ function setScrollbar() {
 }
 
 function resetScrollbar() {
-  if (!offsetElements) {
+  if (offsetElements === null) {
     return
   }
   offsetElements.forEach((el) => {
