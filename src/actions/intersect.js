@@ -1,5 +1,3 @@
-import { dispatchEvent } from '@/utils'
-
 export default function intersect(node, options) {
   let observer
 
@@ -7,7 +5,7 @@ export default function intersect(node, options) {
     const {
       once = false,
       root = null,
-      rootMargin = '40px',
+      rootMargin = '0px',
       threshold = 0
     } = _options
 
@@ -16,13 +14,16 @@ export default function intersect(node, options) {
     }
 
     observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
+      ([entry]) => {
         const intersecting = entry.isIntersecting
         if (intersecting && once) {
           observer.disconnect()
         }
-        dispatchEvent(node, 'intersect', { intersecting, entry, observer })
+        node.dispatchEvent(
+          new CustomEvent('intersect', {
+            detail: { intersecting, entry, observer }
+          })
+        )
       },
       {
         root,

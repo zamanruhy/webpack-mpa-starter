@@ -7,7 +7,6 @@ import ToTop from '@/components/common/ToTop.svelte'
 import Button from '@/components/common/Button.svelte'
 import Collapse from '@/components/common/Collapse.svelte'
 import { Swiper, SwiperSlide } from '@/components/common/swiper'
-import LazyImage from '@/components/common/LazyImage.svelte'
 import { Tabs, TabList, Tab, TabPanel } from '@/components/common/tabs'
 import Modal from '@/components/common/Modal.svelte'
 import Drawer from '@/components/common/Drawer.svelte'
@@ -28,7 +27,6 @@ export function customElements() {
     customElement('app-collapse', Collapse)
     customElement('app-swiper', Swiper)
     customElement('app-swiper-slide', SwiperSlide, { outside: true })
-    customElement('app-lazy-image', LazyImage)
     customElement('app-tabs', Tabs)
     customElement('app-tab-list', TabList)
     customElement('app-tab', Tab)

@@ -69,11 +69,8 @@
       position: relative;
       top: 4px;
     }
-    &__control:focus ~ &__box {
+    &__control:focus-visible ~ &__box {
       @include focus-ring();
-    }
-    &__control:not(:focus-visible) ~ &__box {
-      outline: 0;
     }
     &__control:checked ~ &__box {
       &:before {

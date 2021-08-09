@@ -2,8 +2,9 @@
   const header = require('@/components/header/header.ejs')
   const footer = require('@/components/footer/footer.ejs')
   const metaSocial = require('./meta-social.ejs')
-  const title = 'Webpack MPA Starter'
-  const description = 'Multiple page application starter for Webpack. Optionally used svelte.'
+  const themeColor = null
+  const title = 'Site title'
+  const description = 'Site description'
 %>
 
 <!DOCTYPE html>
@@ -13,18 +14,19 @@
     <title><%= title %></title>
     <meta name="description" content="<%= description %>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% if (themeColor) { %>
+      <meta name="theme-color" content="<%= themeColor %>">
+    <% } %>
     <%= metaSocial({ title, description }) %>
     <link rel="icon" href="favicon.ico">
   </head>
   <body>
     <div class="app">
-      <div class="app__inner">
-        <%= header() %>
-        <main class="main">
-          <%= content %>
-        </main>
-        <%= footer() %>
-      </div>
+      <%= header() %>
+      <main class="main">
+        <%= content %>
+      </main>
+      <%= footer() %>
     </div>
   </body>
 </html>

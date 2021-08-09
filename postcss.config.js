@@ -7,10 +7,6 @@ module.exports = {
         propList: ['*'],
         selectorBlackList: [/^html$/]
       }),
-    require('postcss-selector-replace')({
-      before: [/:focus-visible/g],
-      after: ['[data-focus-visible-added]']
-    }),
     require('autoprefixer')
   ]
 }

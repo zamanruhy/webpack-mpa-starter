@@ -1,62 +1,77 @@
-import { dispatchEvent } from '@/utils'
-
 export default function collapse(node, options = {}) {
   if (typeof options !== 'object') {
-    options = { id: String(options) }
+    options = { id: options }
   }
 
-  if (!options.id) {
-    return
-  }
-
+  let isCollapsed
   let ids = options.id.split(' ')
 
   node.setAttribute('aria-controls', options.id)
 
+  if (node.tagName !== 'BUTTON') {
+    if (!node.hasAttribute('role')) {
+      node.setAttribute('role', 'button')
+    }
+    if (node.tagName !== 'A' && !node.hasAttribute('tabindex')) {
+      node.setAttribute('tabindex', '0')
+    }
+  }
+
   function onClick(e) {
-    const { type, keyCode } = e
     if (
-      type === 'click' ||
-      (type === 'keydown' && (keyCode === 13 || keyCode === 32))
+      e.type === 'click' ||
+      (e.type === 'keydown' && ['Enter', ' '].includes(e.key))
     ) {
       e.preventDefault()
       ids.forEach((id) => {
-        dispatchEvent(window, 'toggle:collapse', { id })
+        window.dispatchEvent(
+          new CustomEvent('toggle:collapse', { detail: { id } })
+        )
       })
     }
   }
 
   function onUpdate({ detail }) {
     if (ids.includes(detail.id)) {
+      isCollapsed = !detail.visible
       if (detail.visible) {
-        node.classList.remove(options.class || 'collapsed')
+        options.class && node.classList.remove(options.class)
         node.setAttribute('aria-expanded', 'true')
       } else {
-        node.classList.add(options.class || 'collapsed')
+        options.class && node.classList.add(options.class)
         node.setAttribute('aria-expanded', 'false')
       }
     }
   }
 
   node.addEventListener('click', onClick)
-  node.addEventListener('keydown', onClick)
+
+  if (!['BUTTON', 'A'].includes(node.tagName)) {
+    node.addEventListener('keydown', onClick)
+  }
+
   window.addEventListener('collapse:update', onUpdate)
 
   return {
     update(newOptions) {
       if (typeof newOptions !== 'object') {
-        newOptions = { id: String(newOptions) }
+        newOptions = { id: newOptions }
       }
-      if (!newOptions.id) {
-        return
+      if (isCollapsed) {
+        options.class && node.classList.remove(options.class)
+        newOptions.class && node.classList.add(newOptions.class)
       }
+      ids = newOptions.id.split(' ')
+      node.setAttribute('aria-controls', newOptions.id)
       options = newOptions
-      ids = options.id.split(' ')
-      node.setAttribute('aria-controls', options.id)
     },
     destroy() {
       node.removeEventListener('click', onClick)
-      node.removeEventListener('keydown', onClick)
+
+      if (!['BUTTON', 'A'].includes(node.tagName)) {
+        node.removeEventListener('keydown', onClick)
+      }
+
       window.removeEventListener('collapse:update', onUpdate)
     }
   }

@@ -1,3 +1,5 @@
+@use 'globals' as *;
+
 // Fonts
 @include font-face("OpenSans", "../fonts/OpenSans", 400, normal, woff2 woff);
 
@@ -5,14 +7,7 @@
 .app {
   display: flex;
   flex-direction: column;
-  max-width: 100%;
-  overflow: hidden;
-
-  &__inner {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+  min-height: 100%;
 }
 
 .main {
@@ -20,7 +15,12 @@
 }
 
 .container {
-  @include container(true);
+  width: 100%;
+  padding-right: $side-padding;
+  padding-left: $side-padding;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: $max-width;
 }
 
 // Display

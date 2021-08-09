@@ -1,10 +1,10 @@
 <script>
   import { fade } from 'svelte/transition'
-  import { easing } from '@/utils'
+  import { fastOutSlowIn } from '@/utils'
 
   export let visible = false
 
-  const fadeOptions = { duration: 300, easing: easing.fastOutSlowIn }
+  const fadeOptions = { duration: 300, easing: fastOutSlowIn }
 </script>
 
 {#if visible}

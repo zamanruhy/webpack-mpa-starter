@@ -110,32 +110,27 @@
   }
   function focusActiveTab() {
     const activeTabEl = $activeTab.el
-    const listEl = activeTabEl.parentNode
-    const scrollLeft = listEl.scrollLeft
+    // const listEl = activeTabEl.parentNode
+    // const scrollLeft = listEl.scrollLeft
     activeTabEl.focus()
-    listEl.scrollLeft = scrollLeft
+    // listEl.scrollLeft = scrollLeft
   }
   function onTabKeydown(e, tab) {
-    const key = e.keyCode
+    const key = e.key
     const i = tabs.indexOf(tab)
-    if (key === 32) {
-      // space
+    if (key === ' ') {
       e.preventDefault()
       index = i
-    } else if (key === 38 || key === 37) {
-      // up, left
+    } else if (key === 'ArrowDown' || key === 'ArrowLeft') {
       e.preventDefault()
       index = Math.max(index - 1, 0)
-    } else if (key === 40 || key === 39) {
-      // down, right
+    } else if (key === 'ArrowUp' || key === 'ArrowRight') {
       e.preventDefault()
       index = Math.min(index + 1, tabs.length - 1)
-    } else if (key === 36) {
-      // home
+    } else if (key === 'Home') {
       e.preventDefault()
       index = 0
-    } else if (key === 35) {
-      // end
+    } else if (key === 'End') {
       e.preventDefault()
       index = tabs.length - 1
     }
@@ -170,7 +165,7 @@
       scroll-behavior: smooth;
     }
     &__tab {
-      color: $primary;
+      color: $color-primary;
       cursor: pointer;
       flex: 0 0 auto;
       display: flex;

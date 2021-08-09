@@ -1,34 +1,39 @@
-import { dispatchEvent } from '@/utils'
-
 export default function modal(node, id) {
-  if (!id) {
-    return
+  if (node.tagName !== 'BUTTON') {
+    if (!node.hasAttribute('role')) {
+      node.setAttribute('role', 'button')
+    }
+    if (node.tagName !== 'A' && !node.hasAttribute('tabindex')) {
+      node.setAttribute('tabindex', '0')
+    }
   }
 
   function onClick(e) {
-    const { type, keyCode } = e
     if (
-      type === 'click' ||
-      (type === 'keydown' && (keyCode === 13 || keyCode === 32))
+      e.type === 'click' ||
+      (e.type === 'keydown' && ['Enter', ' '].includes(e.key))
     ) {
       e.preventDefault()
-      dispatchEvent(window, 'open:modal', { id })
+      window.dispatchEvent(new CustomEvent('open:modal', { detail: { id } }))
     }
   }
 
   node.addEventListener('click', onClick)
-  node.addEventListener('keydown', onClick)
+
+  if (!['BUTTON', 'A'].includes(node.tagName)) {
+    node.addEventListener('keydown', onClick)
+  }
 
   return {
     update(newId) {
-      if (!newId) {
-        return
-      }
       id = newId
     },
     destroy() {
       node.removeEventListener('click', onClick)
-      node.removeEventListener('keydown', onClick)
+
+      if (!['BUTTON', 'A'].includes(node.tagName)) {
+        node.removeEventListener('keydown', onClick)
+      }
     }
   }
 }

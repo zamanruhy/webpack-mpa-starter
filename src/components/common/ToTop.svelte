@@ -1,10 +1,10 @@
 <script>
   import { fade } from 'svelte/transition'
-  import { easing } from '@/utils'
+  import { fastOutSlowIn } from '@/utils'
 
   let offset = 600
   let scrollTop = window.pageYOffset
-  const fadeOptions = { duration: 250, easing: easing.fastOutSlowIn }
+  const fadeOptions = { duration: 250, easing: fastOutSlowIn }
 
   $: visible = scrollTop > offset
 
@@ -51,7 +51,7 @@
   .to-top {
     width: 60px;
     height: 60px;
-    background-color: $primary;
+    background-color: $color-primary;
     border-radius: 50%;
     position: fixed;
     border: none;
@@ -75,13 +75,13 @@
     }
 
     &:hover {
-      background-color: lighten($primary, 4%);
-      border-color: lighten($primary, 4%);
+      background-color: lighten($color-primary, 4%);
+      border-color: lighten($color-primary, 4%);
     }
 
     &:active {
-      background-color: darken($primary, 4%);
-      border-color: darken($primary, 4%);
+      background-color: darken($color-primary, 4%);
+      border-color: darken($color-primary, 4%);
       padding: 0;
     }
 

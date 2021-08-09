@@ -7,7 +7,7 @@
     trapFocus
   } from '@/helpers/popup'
   import { portal } from '@/actions'
-  import { easing } from '@/utils'
+  import { fastInFastOut } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
   let className = ''
@@ -19,7 +19,7 @@
   export let noCloseOnEsc = false
   export let variant = ''
 
-  let modalEl
+  let el
   let contentEl
   let isOverflowing = false
   let returnFocus = null
@@ -28,10 +28,10 @@
   const modal = {}
   const dispatch = createEventDispatcher()
 
-  $: modalClasses = ['modal', variant && `modal_${variant}`, className]
+  $: classes = ['modal', variant && `modal_${variant}`, className]
     .filter(Boolean)
     .join(' ')
-  $: modalStyles = `
+  $: styles = `
     ${style ? `${style};` : ''}
     ${isOverflowing ? `padding-left: ${getScrollbarWidth()}px;` : ''}
   `
@@ -50,7 +50,7 @@
   }
   function onOpen() {
     dispatch('open')
-    observeDom()
+    observeSize()
     checkOverflow()
   }
   function onOpened() {
@@ -59,21 +59,21 @@
   }
   function onClose() {
     dispatch('close')
-    unobserveDom()
+    unobserveSize()
   }
   function onClosed() {
     dispatch('closed')
     tick().then(afterClose)
   }
   function afterClose() {
-    returnFocus.focus()
+    returnFocus.focus?.()
     returnFocus = null
     unregisterPopup(modal)
   }
   function scale() {
     return {
       duration: 300,
-      easing: easing.fastInFastOut,
+      easing: fastInFastOut,
       css: (t, n) => {
         return `
           transform: scale(${0.9 + 0.1 * t}, ${0.85 + 0.15 * t});
@@ -87,57 +87,26 @@
     }
   }
   function onEsc(e) {
-    if (!noCloseOnEsc && e.keyCode === 27) {
+    if (!noCloseOnEsc && e.key === 'Escape') {
       close()
     }
   }
   function setFocus() {
-    const active = document.activeElement
-    if (!contentEl.contains(active)) {
-      contentEl.focus()
-      modalEl.scrollTop = 0
+    if (!el.contains(document.activeElement)) {
+      el.focus()
     }
   }
   function checkOverflow() {
-    if (visible) {
-      isOverflowing =
-        modalEl.scrollHeight > document.documentElement.clientHeight
-    }
+    isOverflowing = el.scrollHeight > document.documentElement.clientHeight
   }
-  function observeDom() {
-    if (!('MutationObserver' in window)) {
+  function observeSize() {
+    if (!('ResizeObserver' in window)) {
       return
     }
-    observer = new MutationObserver((mutations) => {
-      let changed = false
-      for (let i = 0; i < mutations.length && !changed; i++) {
-        const mutation = mutations[i]
-        const type = mutation.type
-        const target = mutation.target
-
-        if (type === 'characterData' && target.nodeType === Node.TEXT_NODE) {
-          changed = true
-        } else if (type === 'attributes') {
-          changed = true
-        } else if (
-          type === 'childList' &&
-          (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)
-        ) {
-          changed = true
-        }
-      }
-      if (changed) {
-        checkOverflow()
-      }
-    }).observe(contentEl, {
-      subtree: true,
-      childList: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ['style', 'class']
-    })
+    observer = new ResizeObserver(checkOverflow)
+    observer.observe(contentEl)
   }
-  function unobserveDom() {
+  function unobserveSize() {
     if (observer) {
       observer.disconnect()
       observer = null
@@ -160,6 +129,7 @@
   })
 
   onDestroy(() => {
+    unobserveSize()
     unregisterPopup(modal)
   })
 </script>
@@ -167,22 +137,23 @@
 <svelte:window
   on:open:modal={openHandler}
   on:close:modal={closeHandler}
-  on:resize={checkOverflow}
-  on:orientationchange={checkOverflow}
+  on:resize={visible ? checkOverflow : null}
 />
 
 {#if visible && mounted}
   <div class="modal-container" use:portal>
     <div
       {id}
-      class={modalClasses}
-      style={modalStyles}
+      class={classes}
+      style={styles}
+      {...$$restProps}
       role="dialog"
       aria-modal="true"
-      {...$$restProps}
-      bind:this={modalEl}
+      tabindex="-1"
+      bind:this={el}
       on:click={onClickOut}
       on:keydown={onEsc}
+      on:keydown={trapFocus}
     >
       <div
         class="modal__dialog"
@@ -192,13 +163,7 @@
         on:outrostart={onClose}
         on:outroend={onClosed}
       >
-        <div
-          class="modal__content"
-          tabindex="-1"
-          role="document"
-          bind:this={contentEl}
-          on:keydown={trapFocus}
-        >
+        <div class="modal__content" role="document" bind:this={contentEl}>
           <button
             class="modal__close"
             type="button"
@@ -213,23 +178,22 @@
               />
             </svg>
           </button>
-          <slot />
+          <slot {close} />
         </div>
       </div>
     </div>
-    <Backdrop {visible} on:click={onClickOut} />
+    <Backdrop {visible} />
   </div>
 {/if}
 
 <style lang="scss" global>
-  $modal-padding-y: 30px;
-
   .modal-container {
-    position: absolute;
+    position: relative;
     z-index: map-get($z-indexes, modal);
   }
 
   .modal {
+    --modal-margin: 28px;
     position: fixed;
     top: 0;
     right: 0;
@@ -238,28 +202,35 @@
     overflow-x: hidden;
     overflow-y: auto;
     z-index: map-get($z-indexes, modal);
+    outline: 0;
+
+    @include down(sm) {
+      --modal-margin: 8px;
+    }
 
     &__dialog {
-      margin: $modal-padding-y auto;
-      min-height: calc(100% - #{$modal-padding-y} * 2);
-      width: 100%;
+      margin: var(--modal-margin);
+      min-height: calc(100% - var(--modal-margin) * 2);
       display: flex;
       align-items: center;
+      justify-content: center;
       will-change: transform, opacity;
     }
 
     &__content {
-      margin: auto;
       position: relative;
       background-color: #ffffff;
       box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
         0px 24px 38px 3px rgba(0, 0, 0, 0.14),
         0px 9px 46px 8px rgba(0, 0, 0, 0.12);
       border-radius: 4px;
-      max-width: 100%;
+      width: 100%;
+      max-width: 720px;
+      min-width: 0;
       padding: 40px 40px 40px;
-      outline: 0 !important;
-      width: 720px;
+      // transform: translateY(
+      //   calc(max(100vh - 100% - var(--modal-margin) * 2, 0px) / 2 * 0.1 * -1)
+      // );
     }
 
     &__close {

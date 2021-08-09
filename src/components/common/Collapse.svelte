@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte'
   import { slide } from 'svelte/transition'
-  import { dispatchEvent, easing } from '@/utils'
+  import { fastOutSlowIn } from '@/utils'
 
   export let id = ''
   export let accordion = ''
@@ -9,13 +9,17 @@
 
   let mounted = false
   const dispatch = createEventDispatcher()
-  const slideOptions = { duration: 300, easing: easing.fastOutSlowIn }
+  const slideOptions = { duration: 300, easing: fastOutSlowIn }
 
   $: dispatch('update', visible)
   $: if (id && mounted) {
-    dispatchEvent(window, 'collapse:update', { id, visible })
+    window.dispatchEvent(
+      new CustomEvent('collapse:update', { detail: { id, visible } })
+    )
     if (accordion && visible) {
-      dispatchEvent(window, 'collapse:accordion', { id, accordion })
+      window.dispatchEvent(
+        new CustomEvent('collapse:accordion', { detail: { id, accordion } })
+      )
     }
   }
 

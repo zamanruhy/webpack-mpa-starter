@@ -7,10 +7,15 @@
     trapFocus
   } from '@/helpers/popup'
   import { portal } from '@/actions'
-  import { easing } from '@/utils'
+  import { fastOutSlowIn } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
+  let className = ''
+  export { className as class }
+  export let id = ''
   export let visible = false
+  export let placement = 'right'
+  export let variant = ''
 
   let el
   let returnFocus = null
@@ -18,6 +23,15 @@
   const drawer = {}
   const dispatch = createEventDispatcher()
 
+  $: classes = [
+    'drawer',
+    placement && `drawer_${placement}`,
+    variant && `drawer_${variant}`,
+    visible && 'drawer_visible',
+    className
+  ]
+    .filter(Boolean)
+    .join(' ')
   $: dispatch('update', visible)
   $: visible && mounted && beforeOpen()
 
@@ -54,21 +68,34 @@
   function slide() {
     return {
       duration: 200,
-      easing: easing.fastOutSlowIn,
+      easing: fastOutSlowIn,
       css: (t, n) => {
-        return `transform: translateX(${n * 100}%);`
+        if (placement === 'right') {
+          return `transform: translateX(${n * 100}%);`
+        } else if (placement === 'left') {
+          return `transform: translateX(${n * -100}%);`
+        }
       }
     }
   }
   function onEsc(e) {
-    if (e.keyCode === 27) {
+    if (e.key === 'Escape') {
       close()
     }
   }
   function setFocus() {
-    const active = document.activeElement
-    if (!el.contains(active)) {
+    if (!el.contains(document.activeElement)) {
       el.focus()
+    }
+  }
+  function openHandler({ detail }) {
+    if (id === detail.id) {
+      open()
+    }
+  }
+  function closeHandler({ detail }) {
+    if (id === detail.id) {
+      close()
     }
   }
 
@@ -82,16 +109,19 @@
   })
 </script>
 
-<svelte:window on:open:drawer={open} on:close:drawer={close} />
+<svelte:window on:open:drawer={openHandler} on:close:drawer={closeHandler} />
 
 {#if visible && mounted}
   <div class="drawer-container" use:portal>
-    <aside
-      class="drawer"
-      class:drawer_visible={visible}
+    <div
+      {id}
+      class={classes}
+      {...$$restProps}
+      role="dialog"
+      aria-modal="true"
       tabindex="-1"
-      bind:this={el}
       transition:slide|local
+      bind:this={el}
       on:keydown={onEsc}
       on:keydown={trapFocus}
       on:introstart={onOpen}
@@ -114,9 +144,9 @@
             />
           </svg>
         </button>
-        <slot />
+        <slot {close} />
       </div>
-    </aside>
+    </div>
     <Backdrop {visible} on:click={close} />
   </div>
 {/if}
@@ -126,15 +156,20 @@
     background-color: #ffffff;
     position: fixed;
     top: 0;
-    right: 0;
     overflow-y: auto;
     width: 340px;
     max-width: 100%;
     height: 100%;
-    outline: 0 !important;
+    outline: 0;
     z-index: map-get($z-indexes, fixed);
     will-change: transform;
 
+    &_right {
+      right: 0;
+    }
+    &_left {
+      left: 0;
+    }
     &_visible {
       box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),
         0px 16px 24px 2px rgba(0, 0, 0, 0.14),

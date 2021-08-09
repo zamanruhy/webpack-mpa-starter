@@ -1,9 +1,9 @@
-import 'focus-visible'
 import './assets/scss/main.scss'
 import { customElements } from './helpers/custom-elements'
 import { dataModal, dataCollapse } from './helpers/data-attributes'
 import header from './components/header/header'
 import styleguide from './components/styleguide/styleguide'
+import 'bootstrap/dist/css/bootstrap.css'
 
 customElements()
 dataModal()
@@ -13,6 +13,7 @@ header()
 styleguide()
 
 // Require all component styles
+// require('./components/styleguide/styleguide.scss')
 const requireStyle = require.context('./components', true, /\.scss$/)
 requireStyle.keys().forEach(requireStyle)
 

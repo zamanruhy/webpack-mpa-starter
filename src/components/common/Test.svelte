@@ -4,16 +4,17 @@
   import Switch from './Switch.svelte'
   import Radio from './Radio.svelte'
   import FileInput from './FileInput.svelte'
-  import LazyImage from './LazyImage.svelte'
   import { Swiper, SwiperSlide } from './swiper'
   import Collapse from './Collapse.svelte'
   import Button from './Button.svelte'
   import { Tabs, TabList, Tab, TabPanel } from './tabs'
   import Icon from './Icon.svelte'
   import Modal from './Modal.svelte'
+  import Drawer from './Drawer.svelte'
   import Range from './Range.svelte'
   import Field from './Field.svelte'
-  import { mq } from '@/helpers/mq'
+  import VerticalRhythm from './VerticalRhythm.svelte'
+  import { bp } from '@/helpers/bp'
   import { collapse, modal, portal, intersect } from '@/actions'
   // import '@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg'
 
@@ -54,7 +55,8 @@
     { name: 'house', img: false },
     { name: 'logo', img: true },
     { name: 'close', img: false },
-    { name: 'lock', img: true }
+    { name: 'lock', img: true },
+    { name: 'in', img: false }
   ]
   let buttonSize = ''
   let buttonHasIcon = true
@@ -66,6 +68,9 @@
   let switched = true
   let values = [25, 75]
   let intersectOnce = false
+  let intersected = false
+  let placement = 'left'
+  let collapsedClass = 'collapsed'
 
   $: step = switched ? 2 : 7
   $: swiperOptions = {
@@ -82,11 +87,16 @@
   function onEvent(e) {
     console.log(e)
   }
+  window.togglePlacement = function () {
+    placement = placement === 'left' ? 'right' : 'left'
+  }
 </script>
+
+<VerticalRhythm />
 
 <Range {step} bind:values min={0} max={100} float />
 <hr />
-{JSON.stringify(values)}
+<div>{JSON.stringify(values)}</div>
 <hr />
 <Switch bind:checked={switched} label="Switch" />
 {switched}
@@ -112,6 +122,34 @@
   <Input bind:value={buttonText} id="form-blah" />
 </Field>
 <hr />
+<h6>Drawer</h6>
+<Button
+  variant="primary"
+  on:click={() => {
+    window.dispatchEvent(
+      new window.CustomEvent('open:drawer', {
+        detail: { id: 'content-drawer' }
+      })
+    )
+  }}>Open Drawer</Button
+>
+<Drawer id="content-drawer" {placement} let:close>
+  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero, laboriosam
+  deleniti? Ipsum aliquid maiores placeat iure obcaecati, accusamus cum, dolores
+  sunt optio, quis voluptate similique perspiciatis! Laudantium aspernatur
+  asperiores impedit necessitatibus, ex nulla tenetur. Qui ea repellendus sint
+  ex illo recusandae dolorem laboriosam, ipsa deleniti! Incidunt doloribus
+  distinctio ullam error dignissimos ad magnam ipsam sed? Dolorum temporibus
+  dicta consequatur commodi est, reiciendis sunt deserunt odio non quam sapiente
+  obcaecati eaque aliquid necessitatibus facere, ab, ratione magnam animi modi?
+  Nam deleniti eligendi, reprehenderit consectetur exercitationem dignissimos,
+  quas cumque odit amet error vel ipsum dolore. Assumenda amet ea,
+  exercitationem quasi ab quibusdam.
+  <footer>
+    <button type="button" on:click={close}>Close</button>
+  </footer>
+</Drawer>
+<hr />
 <Button
   variant="primary"
   size={buttonSize}
@@ -128,7 +166,9 @@
   {/if}
 </Button>
 {#each [...Array(iconsCount).keys()] as num (num)}
-  <p style="font-size: 30px">
+  <p
+    style="font-size: 30px; color: rebeccapurple; --in-outer-color: red; --in-inner-color: blue; --in-dot-color: green;"
+  >
     {#each icons as icon (icon.name)}
       <Icon
         {...icon}
@@ -221,17 +261,68 @@
   >
     Modal
   </Button>
+  <a href="#button" use:modal={'modal-test'}>Modal by action</a>
+  <svg use:modal={'modal-test'}><text>Modal by action on SVG</text></svg>
 </p>
 <p>
   <Modal
+    id="modal-test"
     class="some__modal"
     style="margin: 0"
     aria-labelledby="modal-title"
+    noCloseOnBackdrop
     bind:visible={modalVisible}
-    on:open={() => console.log('open')}
+    onopen={() => console.log('open')}
+    let:close
   >
-    <h3 id="modal-title" style="margin-top: 0">Modal title</h3>
-    <Input bind:value={modalInputValue} autofocus style="margin-bottom: 15px" />
+    <button
+      href="#df"
+      id="modal-title"
+      style="margin-top: 0; cursor: pointer;"
+      use:collapse={{ id: 'modal-collapse', class: collapsedClass }}
+    >
+      Modal title
+    </button>
+    <button
+      type="button"
+      on:click={() =>
+        (collapsedClass =
+          collapsedClass === 'collapsed' ? 'collapsed-class' : 'collapsed')}
+      >Change collapsedClass</button
+    >
+    <Collapse id="modal-collapse" visible>
+      <p style="margin: 0;">
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam nemo
+        possimus dolorum ducimus rerum tempora aut repudiandae necessitatibus
+        adipisci, voluptatem, esse est? Alias ad error magni culpa at
+        consectetur architecto magnam, deserunt dolorem doloribus sequi
+        reiciendis laudantium sint laboriosam, delectus cum rerum quam totam
+        sit. Sint culpa facilis doloribus accusamus voluptate omnis unde iste
+        corrupti, harum architecto soluta enim velit aut minus sequi magni
+        laborum quisquam esse cumque sapiente laboriosam nisi et quasi saepe!
+        Quibusdam perferendis quo illum architecto fuga. Eius provident
+        architecto nostrum, incidunt alias quis totam saepe deleniti nam tempore
+        quidem natus quibusdam accusamus velit maiores fugiat! Pariatur?
+      </p>
+    </Collapse>
+    <footer style="margin-top: 16px; display: none1;">
+      <button type="button" on:click={close}>Close</button>
+      <div>
+        <label>
+          <input type="radio" name="modal-radio" value="1" />
+          One
+        </label>
+        <label>
+          <input type="radio" name="modal-radio" value="2" />
+          Two
+        </label>
+        <label>
+          <input type="radio" name="modal-radio" value="3" />
+          Three
+        </label>
+      </div>
+    </footer>
+    <!-- <Input bind:value={modalInputValue} autofocus style="margin-bottom: 15px" />
     <Swiper
       bind:index={slideIndex}
       options={{ loop: true, navigation: true, pagination: true }}
@@ -241,30 +332,40 @@
           <div class="styleguide__slide">{num + 1} {modalInputValue}</div>
         </SwiperSlide>
       {/each}
-    </Swiper>
+    </Swiper> -->
   </Modal>
 </p>
 
-<p>
-  <Button
-    variant="primary"
-    style="margin-bottom: 100px"
-    on:click={() => (intersectOnce = !intersectOnce)}>Change intersect</Button
-  >
+<p style="margin-bottom: 150px; display: flex; align-items: center; gap: 16px;">
+  <Button variant="primary" on:click={() => (intersectOnce = !intersectOnce)}
+    >Change intersect
+  </Button>
+  <span
+    style="
+      border-radius: 50%;
+      display: inline-block;
+      background-color: {intersected ? 'green' : 'red'};
+      height: 38px;
+      width: 38px;
+    "
+  />
+  {intersected}
 </p>
 
-{#if $mq.lgUp}
+{#if $bp.lgUp}
   <div
-    style="overflow: hidden;"
-    use:intersect={{ once: intersectOnce }}
-    on:intersect={(e) => console.log(e.detail.intersecting)}
+    use:intersect={{ once: intersectOnce, threshold: 0.5 }}
+    on:intersect={({ detail: { entry } }) => {
+      intersected = entry.intersectionRatio >= 0.5
+    }}
   >
-    <LazyImage
+    <img
       src="https://picsum.photos/id/354/1072/708"
       class={inputValue}
       alt="#"
       width="1072"
       height="708"
+      loading="lazy"
     />
   </div>
 {/if}
@@ -273,19 +374,15 @@
 
 <div class="styleguide__gallery">
   <div class="styleguide__gallery-item">
-    <LazyImage
+    <img
       src="https://picsum.photos/id/237/1072/708"
       class="styleguide__gallery-img"
       alt="#"
+      loading="lazy"
     />
   </div>
   <div class="styleguide__gallery-item">
-    <LazyImage
-      src="https://picsum.photos/id/866/1072/708"
-      alt="#"
-      class="styleguide__gallery-img"
-      picture
-    >
+    <picture>
       <source
         media="(max-width: 575px)"
         srcset="https://picsum.photos/id/237/1072/708"
@@ -294,10 +391,16 @@
         media="(max-width: 767px)"
         srcset="https://picsum.photos/id/1084/1072/708"
       />
-    </LazyImage>
+      <img
+        src="https://picsum.photos/id/866/1072/708"
+        alt="#"
+        class="styleguide__gallery-img"
+        loading="lazy"
+      />
+    </picture>
   </div>
   <div class="styleguide__gallery-item">
-    <LazyImage
+    <img
       src="https://picsum.photos/id/1032/1072/708"
       srcset="https://picsum.photos/id/237/200/132 200w,
       https://picsum.photos/id/1084/400/264 400w,
@@ -307,16 +410,18 @@
       sizes="(max-width: 767px) 33.333vw, 16.666vw"
       class="styleguide__gallery-img"
       alt="#"
+      loading="lazy"
     />
   </div>
   <div class="styleguide__gallery-item">
-    <LazyImage
+    <img
       src="https://picsum.photos/id/1032/1072/708"
       srcset="https://picsum.photos/id/237/1072/708 1.5x,
       https://picsum.photos/id/1084/1072/708 2x,
       https://picsum.photos/id/1018/1072/708 3x"
       class="styleguide__gallery-img"
       alt="#"
+      loading="lazy"
     />
   </div>
 </div>

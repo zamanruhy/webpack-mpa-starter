@@ -9,9 +9,7 @@ const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const scssData = ['functions', 'variables', 'mixins']
-  .map((file) => `@import "./src/assets/scss/_${file}.scss";\n`)
-  .join('')
+const scssData = '@use "./src/assets/scss/_globals.scss" as *;'
 
 function resolve(dir) {
   return path.join(process.cwd(), dir)
@@ -107,8 +105,7 @@ module.exports = {
             options: {
               disable: isDev,
               mozjpeg: {
-                progressive: true,
-                quality: 75
+                progressive: true
               },
               optipng: {
                 optimizationLevel: 7

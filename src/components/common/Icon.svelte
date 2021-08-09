@@ -20,7 +20,7 @@
   export let right = false
   export let img = false
 
-  $: icon = getIcon(name)
+  $: icon = icons[name] || {}
   $: ({ id, width, height } = icon)
   $: url = `static/img/sprite.svg#${id}`
   $: styles = `
@@ -37,10 +37,6 @@
   ]
     .filter(Boolean)
     .join(' ')
-
-  function getIcon(n) {
-    return icons[n] || {}
-  }
 </script>
 
 {#if img}

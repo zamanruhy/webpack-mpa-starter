@@ -91,17 +91,17 @@
 
     &_primary {
       color: #ffffff;
-      background-color: $primary;
-      border-color: $primary;
+      background-color: $color-primary;
+      border-color: $color-primary;
 
       &:hover {
-        background-color: lighten($primary, 4%);
-        border-color: lighten($primary, 4%);
+        background-color: lighten($color-primary, 4%);
+        border-color: lighten($color-primary, 4%);
       }
 
       &:active {
-        background-color: darken($primary, 4%);
-        border-color: darken($primary, 4%);
+        background-color: darken($color-primary, 4%);
+        border-color: darken($color-primary, 4%);
       }
     }
 

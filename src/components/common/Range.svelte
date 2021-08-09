@@ -369,7 +369,7 @@
   }
 </script>
 
-{activeHandle}
+<div>{activeHandle}</div>
 <div
   class="range"
   class:range_vertical={vertical}
@@ -460,14 +460,14 @@
       width: 100%;
       height: 100%;
       border-radius: inherit;
-      background-color: $primary;
+      background-color: $color-primary;
       opacity: 0.38;
     }
     &__track {
       position: absolute;
       height: 100%;
       border-radius: inherit;
-      background-color: $primary;
+      background-color: $color-primary;
     }
     &__thumb {
       position: absolute;
@@ -476,7 +476,7 @@
       width: $range-thumb-size;
       height: $range-thumb-size;
       margin: $range-thumb-margin 0 0 $range-thumb-margin;
-      background-color: $primary;
+      background-color: $color-primary;
       border-radius: 50%;
     }
   }

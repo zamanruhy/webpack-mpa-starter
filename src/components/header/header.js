@@ -1,4 +1,4 @@
-import { mqs } from '@/helpers/mq'
+import { bps } from '@/helpers/bp'
 import { slideIndex } from '@/store'
 
 export default function header() {
@@ -23,7 +23,7 @@ export default function header() {
     })
   })
 
-  mqs.mdUp.subscribe((value) => {
+  bps.mdUp.subscribe((value) => {
     // console.log(value)
   })
 

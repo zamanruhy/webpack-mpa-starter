@@ -4,7 +4,7 @@
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
-const BLOCKS_DIR = path.join(__dirname, '../src/components')
+const BLOCKS_DIR = path.join(process.cwd(), 'src/components')
 const fileSources = {
   ejs: `<div class="{blockName}"></div>`,
   scss: `.{blockName} {}`,

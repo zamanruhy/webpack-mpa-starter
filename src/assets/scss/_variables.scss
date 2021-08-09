@@ -1,28 +1,16 @@
 // Colors
-$primary: #a17d78;
+$color-primary: #a17d78;
 
-// Body & link
+// Body
 $font-family: OpenSans, Arial, sans-serif;
 $font-size: 16px;
 $line-height: 1.5;
 $body-bg: #ffffff;
 $body-color: #222222;
-$link-color: $primary;
 
 // Layout
 $side-padding: 15px;
-$min-width: 320px;
 $max-width: 1200px + $side-padding * 2;
-$max-widths: (
-  sm: 540px,
-  md: 720px,
-  lg: 960px,
-  xl: 1140px
-);
-
-// Grid
-$grid-gutter: 30px;
-$grid-columns: 12;
 $breakpoints: (
   xs: 0,
   sm: 576px,

@@ -1,10 +1,4 @@
-import {
-  camelize,
-  hyphenate,
-  dispatchEvent,
-  createSlots,
-  hasOwn
-} from '@/utils'
+import { camelize, hyphenate, createSlots, hasOwn } from '@/utils'
 
 export default function customElement(
   name,
@@ -132,14 +126,14 @@ export default function customElement(
         })
       })
 
-      dispatchEvent(this, 'mount')
+      this.dispatchEvent(new CustomEvent('mount'))
     }
 
     destroy() {
       this.component.$destroy()
       this.component = null
 
-      dispatchEvent(this, 'destroy')
+      this.dispatchEvent(new CustomEvent('destroy'))
     }
   }
 

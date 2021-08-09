@@ -1,32 +1,13 @@
-@mixin font-face(
-  $name,
-  $path,
-  $weight: null,
-  $style: null,
-  $exts: eot woff2 woff ttf svg
-) {
+@use "variables" as *;
+@use "functions" as *;
+
+@mixin font-face($name, $path, $weight: null, $style: null, $exts: woff2 woff) {
   $src: null;
 
-  $extmods: (
-    eot: "?",
-    svg: "#" + str-replace($name, " ", "_")
-  );
-
-  $formats: (
-    otf: "opentype",
-    ttf: "truetype"
-  );
-
   @each $ext in $exts {
-    $extmod: if(
-      map-has-key($extmods, $ext),
-      $ext + map-get($extmods, $ext),
-      $ext
-    );
-    $format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
     $src: append(
       $src,
-      url(quote($path + "." + $extmod)) format(quote($format)),
+      url(quote($path + "." + $ext)) format(quote($ext)),
       comma
     );
   }
@@ -40,12 +21,7 @@
   }
 }
 
-@mixin word-wrap() {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-@mixin truncate($lines: 1, $line-height: $line-height) {
+@mixin truncate($lines: 1, $line-height) {
   @if $lines == 1 {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -54,7 +30,7 @@
     display: -webkit-box;
     -webkit-line-clamp: $lines;
     -webkit-box-orient: vertical;
-    max-height: $lines * $line-height * 1em;
+    max-height: calc(#{$lines} * #{$line-height} * 1em);
     line-height: $line-height;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -98,18 +74,6 @@
   }
 }
 
-@mixin above($args...) {
-  @include up($args...) {
-    @content;
-  }
-}
-
-@mixin below($args...) {
-  @include down($args...) {
-    @content;
-  }
-}
-
 @mixin between($min, $max) {
   @include up($min) {
     @include down($max) {
@@ -118,113 +82,30 @@
   }
 }
 
-@mixin linear($property, $value-start, $value-end, $width-start, $width-end) {
-  @include down($width-start) {
-    #{$property}: $value-start;
-  }
-
-  @include between($width-start, $width-end) {
-    #{$property}: linear($value-start, $value-end, $width-start, $width-end);
-  }
-
-  @include up($width-end) {
-    #{$property}: $value-end;
-  }
-}
-
-@mixin triangle($size, $color, $direction) {
-  $width: nth($size, 1);
-  $height: nth($size, length($size));
-  $foreground-color: nth($color, 1);
-  $background-color: if(length($color) == 2, nth($color, 2), transparent);
-  height: 0;
-  width: 0;
-
-  @if ($direction == up) or
-    ($direction == down) or
-    ($direction == right) or
-    ($direction == left)
-  {
-    $width: $width / 2;
-    $height: if(length($size) > 1, $height, $height / 2);
-
-    @if $direction == up {
-      border-bottom: $height solid $foreground-color;
-      border-left: $width solid $background-color;
-      border-right: $width solid $background-color;
-    } @else if $direction == right {
-      border-bottom: $width solid $background-color;
-      border-left: $height solid $foreground-color;
-      border-top: $width solid $background-color;
-    } @else if $direction == down {
-      border-left: $width solid $background-color;
-      border-right: $width solid $background-color;
-      border-top: $height solid $foreground-color;
-    } @else if $direction == left {
-      border-bottom: $width solid $background-color;
-      border-right: $height solid $foreground-color;
-      border-top: $width solid $background-color;
-    }
-  } @else if ($direction == up-right) or ($direction == up-left) {
-    border-top: $height solid $foreground-color;
-
-    @if $direction == up-right {
-      border-left: $width solid $background-color;
-    } @else if $direction == up-left {
-      border-right: $width solid $background-color;
-    }
-  } @else if ($direction == down-right) or ($direction == down-left) {
-    border-bottom: $height solid $foreground-color;
-
-    @if $direction == down-right {
-      border-left: $width solid $background-color;
-    } @else if $direction == down-left {
-      border-right: $width solid $background-color;
-    }
-  } @else if ($direction == inset-up) {
-    border-color: $background-color $background-color $foreground-color;
-    border-style: solid;
-    border-width: $height $width;
-  } @else if ($direction == inset-down) {
-    border-color: $foreground-color $background-color $background-color;
-    border-style: solid;
-    border-width: $height $width;
-  } @else if ($direction == inset-right) {
-    border-color: $background-color
-      $background-color
-      $background-color
-      $foreground-color;
-    border-style: solid;
-    border-width: $width $height;
-  } @else if ($direction == inset-left) {
-    border-color: $background-color
-      $foreground-color
-      $background-color
-      $background-color;
-    border-style: solid;
-    border-width: $width $height;
-  }
-}
-
 @mixin focus-ring($width: 3px, $offset: 2px) {
   outline: $width solid #f2ab24;
   outline-offset: $offset;
 }
 
-@mixin container($fluid: true) {
-  width: 100%;
-  padding-right: $side-padding;
-  padding-left: $side-padding;
-  margin-left: auto;
-  margin-right: auto;
+@mixin steps(
+  $property,
+  $value-start,
+  $value-end,
+  $width-start,
+  $width-end,
+  $step: 1px
+) {
+  $count: ($value-end - $value-start) / $step;
+  $width-step: ($width-end - $width-start) / $count;
+  $max-bp: $width-end - $width-step / 2;
 
-  @if $fluid {
-    max-width: $max-width;
-  } @else {
-    @each $bp, $max-width in $max-widths {
-      @include up($bp) {
-        max-width: $max-width;
-      }
+  @include up($max-bp) {
+    #{$property}: $value-end;
+  }
+
+  @for $n from 1 through $count {
+    @include down($max-bp - ($n - 1) * $width-step - 1) {
+      #{$property}: $value-end - $n * $step;
     }
   }
 }

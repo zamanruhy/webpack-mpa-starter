@@ -79,24 +79,31 @@ export function getScrollbarWidth() {
 }
 
 function getFocusable(node) {
+  // https://www.smashingmagazine.com/2021/07/accessible-dialog-from-scratch/
   const selector = [
-    'button',
-    '[href]',
-    'input',
-    'select',
-    'textarea',
-    '[tabindex]',
-    '[contenteditable]'
+    'a[href]',
+    'area[href]',
+    'input:not([type="hidden"]):not([type="radio"]):not([disabled])',
+    'input[type="radio"]:not([disabled]):checked',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    'button:not([disabled])',
+    'iframe',
+    'audio[controls]',
+    'video[controls]',
+    '[contenteditable]',
+    '[tabindex]'
   ]
-    .map((s) => `${s}:not(:disabled):not([disabled])`)
+    .map((s) => `${s}:not([tabindex^="-"])`)
     .join(', ')
+
   return Array.from(node.querySelectorAll(selector)).filter(
-    (i) => i.tabIndex > -1 && !i.disabled
+    (el) => el.offsetWidth || el.offsetHeight || el.getClientRects().length
   )
 }
 
 export function trapFocus(e) {
-  if (e.keyCode !== 9) {
+  if (e.key !== 'Tab') {
     return
   }
 

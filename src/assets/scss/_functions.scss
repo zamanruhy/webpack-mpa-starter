@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 @function strip-unit($number) {
   @if type-of($number) == "number" and not unitless($number) {
     @return $number / ($number * 0 + 1);
@@ -6,28 +8,10 @@
   @return $number;
 }
 
-@function rem($px, $root: 16) {
-  $px: strip-unit($px);
-  $root: strip-unit($root);
-  @return $px / $root * 1rem;
-}
-
 @function em($px, $context) {
   $px: strip-unit($px);
   $context: strip-unit($context);
   @return $px / $context * 1em;
-}
-
-@function vw($px, $root: $max-width) {
-  $px: strip-unit($px);
-  $root: strip-unit($root);
-  @return $px / $root * 100 * 1vw;
-}
-
-@function vh($px, $root: 850) {
-  $px: strip-unit($px);
-  $root: strip-unit($root);
-  @return $px / $root * 100 * 1vh;
 }
 
 @function str-replace($string, $search, $replace: "") {
@@ -67,7 +51,7 @@
     $calc: calc(#{nth($item, 1) - $width-start * $slope} + #{100 * $unit * $slope});
     $list: append(
       $list,
-      if($clamp, clamp(nth($item, 1), $calc, nth($item, 2)), $calc)
+      if($clamp, clamp(#{nth($item, 1)}, #{$calc}, #{nth($item, 2)}), $calc)
     );
   }
   @return $list;

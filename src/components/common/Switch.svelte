@@ -78,7 +78,7 @@
         right: 0;
         bottom: 0;
         border-radius: inherit;
-        background-color: $primary;
+        background-color: $color-primary;
         opacity: 0;
         transition: opacity $switch-transition;
         will-change: opacity;
@@ -97,11 +97,8 @@
         will-change: transform;
       }
     }
-    &__control:focus ~ &__box {
+    &__control:focus-visible ~ &__box {
       @include focus-ring();
-    }
-    &__control:not(:focus-visible) ~ &__box {
-      outline: 0;
     }
     &__control:checked ~ &__box {
       &:before {

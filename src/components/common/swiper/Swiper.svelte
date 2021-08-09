@@ -135,14 +135,14 @@
 </div>
 
 <style lang="scss" global>
-  @import 'swiper/swiper.scss';
-  @import 'swiper/components/navigation/navigation.scss';
-  @import 'swiper/components/pagination/pagination.scss';
-  @import 'swiper/components/scrollbar/scrollbar.scss';
-  @import 'swiper/components/a11y/a11y.scss';
+  @use 'swiper/swiper.min.css';
+  @use 'swiper/components/navigation/navigation.min.css';
+  @use 'swiper/components/pagination/pagination.min.css';
+  @use 'swiper/components/scrollbar/scrollbar.min.css';
+  @use 'swiper/components/a11y/a11y.min.css';
 
   :root {
-    --swiper-theme-color: #{$primary};
+    --swiper-theme-color: #{$color-primary};
   }
 
   app-swiper:defined {
