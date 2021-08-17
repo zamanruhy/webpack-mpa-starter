@@ -28,12 +28,15 @@
 </button>
 
 <style lang="scss" global>
+  @use "sass:math";
+
   $hamburger-width: 26px;
   $hamburger-height: 22px;
   $hamburger-bar-height: 2px;
   $hamburger-bar-radius: 0;
-  $hamburger-bar-offset: ($hamburger-height - $hamburger-bar-height) / 2;
+  $hamburger-bar-offset: math.div($hamburger-height - $hamburger-bar-height, 2);
   $hamburger-transition: 0.3s map-get($easings, fast-in-fast-out);
+  $hamburger-color: #222222;
 
   .hamburger {
     width: $hamburger-width;
@@ -70,7 +73,7 @@
 
     &__bar {
       height: $hamburger-bar-height;
-      background-color: currentColor;
+      background-color: $hamburger-color;
       width: 100%;
       display: block;
       border-radius: $hamburger-bar-radius;
@@ -107,27 +110,21 @@
   app-hamburger:not(:defined) {
     width: $hamburger-width;
     height: $hamburger-height;
-    display: inline-block;
-    vertical-align: middle;
-    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
 
     &:before,
     &:after {
       content: '';
-      position: absolute;
-      left: 0;
-      width: 100%;
+      display: block;
       height: $hamburger-bar-height;
       border-radius: $hamburger-bar-radius;
-      background-color: currentColor;
-      transform: none;
+      background-color: $hamburger-color;
     }
     &:before {
-      top: 0;
-      box-shadow: 0 $hamburger-bar-offset currentColor;
-    }
-    &:after {
-      bottom: 0;
+      box-shadow: 0 $hamburger-bar-offset $hamburger-color;
     }
   }
 </style>

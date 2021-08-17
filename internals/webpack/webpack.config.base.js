@@ -16,14 +16,13 @@ function resolve(dir) {
 }
 
 module.exports = {
-  target: isDev ? 'web' : 'browserslist', // temporary solution for prevent bug
+  // target: isDev ? 'web' : 'browserslist',
   entry: {
     app: resolve('src/main.js')
   },
   output: {
     path: resolve('dist'),
-    filename: 'static/js/[name].js',
-    publicPath: '/'
+    filename: 'static/js/[name].js'
   },
   resolve: {
     alias: {
@@ -83,23 +82,21 @@ module.exports = {
             options: {
               symbolId: 'icon-[name]',
               extract: true,
-              spriteFilename: 'static/img/sprite.svg'
+              spriteFilename: 'static/img/sprite.svg',
+              publicPath: isDev ? '/' : ''
             }
           },
           'svgo-loader'
         ]
       },
       {
-        test: /\.(png|jpe?g|gif|svg|webp)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/,
         exclude: resolve('src/assets/svg'),
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/img/[name][ext]'
+        },
         use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'static/img/[name].[ext]',
-              esModule: false
-            }
-          },
           {
             loader: 'image-webpack-loader',
             options: {
@@ -123,17 +120,16 @@ module.exports = {
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        loader: 'file-loader',
-        options: {
-          name: 'static/media/[name].[ext]',
-          esModule: false
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/media/[name][ext]'
         }
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'file-loader',
-        options: {
-          name: 'static/fonts/[name].[ext]'
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/fonts/[name][ext]'
         }
       },
       {
@@ -143,19 +139,19 @@ module.exports = {
             ? 'style-loader'
             : {
                 loader: MiniCssExtractPlugin.loader,
-                options: { publicPath: '../../' }
+                options: {}
               },
           {
             loader: 'css-loader',
             options: { sourceMap: isDev, importLoaders: 1 }
           },
-          { loader: 'postcss-loader', options: { sourceMap: isDev } },
+          {
+            loader: 'postcss-loader',
+            options: { sourceMap: isDev }
+          },
           {
             loader: 'sass-loader',
-            options: {
-              sourceMap: isDev,
-              additionalData: scssData
-            }
+            options: { sourceMap: isDev, additionalData: scssData }
           }
         ]
       },
@@ -163,6 +159,7 @@ module.exports = {
         test: /\.ejs$/,
         loader: 'ejs-loader',
         options: {
+          // variable: 'data',
           esModule: false
         }
       }
@@ -191,7 +188,7 @@ function getHtmlWebpackPlugins() {
     .map((file) => {
       const { name } = path.parse(file)
       return new HtmlWebpackPlugin({
-        template: path.join(dir, 'layout/index.js'),
+        template: path.join(dir, 'layout'),
         filename: `${name}.html`,
         page: name,
         inject: 'head',

@@ -1,55 +1,28 @@
-<script context="module">
-  const icons = {}
-  const requireIcon = require.context('@/assets/svg', false, /\.svg$/)
-  requireIcon.keys().forEach((fileName) => {
-    const iconConfig = requireIcon(fileName)
-    const { id, viewBox, url } = iconConfig.default || iconConfig
-    const iconName = fileName.replace(/^\.\/|\.\w+$/g, '')
-    const [width, height] = viewBox.split(' ').slice(-2).map(Number)
-    icons[iconName] = { id, width, height, url }
-  })
-  export { icons }
-</script>
-
 <script>
   let className = ''
   export { className as class }
-  export let style = ''
-  export let name = ''
-  export let left = false
-  export let right = false
+  export let data
   export let img = false
 
-  $: icon = icons[name] || {}
-  $: ({ id, width, height } = icon)
-  $: url = `static/img/sprite.svg#${id}`
-  $: styles = `
-    ${style ? `${style};` : ''}
-    height: 1em;
-    width: ${width / height}em
-  `
-  $: classes = [
-    'icon',
-    `icon_${name}`,
-    left && 'icon_left',
-    right && 'icon_right',
-    className
-  ]
-    .filter(Boolean)
-    .join(' ')
+  $: ({ id, viewBox, url } = data)
+  $: [width, height] = viewBox.split(' ').slice(-2).map(Number)
+  $: name = id.replace(/^icon-|-usage$/g, '')
+  $: classes = ['icon', `icon_${name}`, className].filter(Boolean).join(' ')
 </script>
 
 {#if img}
   <img
     class={classes}
-    style={styles}
     src={url}
-    alt={name}
+    {width}
+    {height}
+    alt=""
+    aria-hidden="true"
     {...$$restProps}
     on:click
   />
 {:else}
-  <svg class={classes} style={styles} {...$$restProps} on:click>
+  <svg class={classes} {viewBox} aria-hidden="true" {...$$restProps} on:click>
     <use xlink:href={url.replace('-usage', '')} />
   </svg>
 {/if}
@@ -62,11 +35,9 @@
     height: 1em;
     fill: currentColor;
 
-    &_left {
-      margin-right: 0.4em;
-    }
-    &_right {
-      margin-left: 0.4em;
+    @at-root img#{&} {
+      width: auto;
+      max-width: none;
     }
   }
 </style>

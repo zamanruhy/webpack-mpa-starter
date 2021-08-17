@@ -1,8 +1,10 @@
+@use "sass:math";
+
 @use "variables" as *;
 
 @function strip-unit($number) {
   @if type-of($number) == "number" and not unitless($number) {
-    @return $number / ($number * 0 + 1);
+    @return math.div($number, $number * 0 + 1);
   }
 
   @return $number;
@@ -11,7 +13,7 @@
 @function em($px, $context) {
   $px: strip-unit($px);
   $context: strip-unit($context);
-  @return $px / $context * 1em;
+  @return math.div($px, $context) * 1em;
 }
 
 @function str-replace($string, $search, $replace: "") {
@@ -46,7 +48,7 @@
   $unit: if(map-has-key($units, $unit), map-get($units, $unit), 1vw);
   $list: ();
   @each $item in zip($value-start, $value-end) {
-    $slope: (nth($item, 2) - nth($item, 1)) / ($width-end - $width-start);
+    $slope: math.div(nth($item, 2) - nth($item, 1), $width-end - $width-start);
     // prettier-ignore
     $calc: calc(#{nth($item, 1) - $width-start * $slope} + #{100 * $unit * $slope});
     $list: append(

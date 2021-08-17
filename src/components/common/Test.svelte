@@ -17,6 +17,11 @@
   import { bp } from '@/helpers/bp'
   import { collapse, modal, portal, intersect } from '@/actions'
   // import '@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg'
+  import houseIcon from '@/assets/svg/house.svg'
+  import logoIcon from '@/assets/svg/logo.svg'
+  import closeIcon from '@/assets/svg/close.svg'
+  import lockIcon from '@/assets/svg/lock.svg'
+  import inIcon from '@/assets/svg/in.svg'
 
   let range = 5
   let inputValue = ''
@@ -52,15 +57,15 @@
   let prev
   let next
   const icons = [
-    { name: 'house', img: false },
-    { name: 'logo', img: true },
-    { name: 'close', img: false },
-    { name: 'lock', img: true },
-    { name: 'in', img: false }
+    { data: houseIcon, img: false },
+    { data: logoIcon, img: true },
+    { data: closeIcon, img: false },
+    { data: lockIcon, img: true },
+    { data: inIcon, img: false }
   ]
+  let buttonIcon = icons[0]
   let buttonSize = ''
   let buttonHasIcon = true
-  let buttonIcon = icons.find((i) => i.name === 'house')
   let buttonIconLeft = true
   let buttonLoading = false
   let buttonDisabled = false
@@ -92,7 +97,7 @@
   }
 </script>
 
-<VerticalRhythm />
+<!-- <VerticalRhythm /> -->
 
 <Range {step} bind:values min={0} max={100} float />
 <hr />
@@ -149,7 +154,9 @@
     <button type="button" on:click={close}>Close</button>
   </footer>
 </Drawer>
+
 <hr />
+
 <Button
   variant="primary"
   size={buttonSize}
@@ -158,24 +165,20 @@
   on:click={() => iconsCount++}
 >
   {#if buttonHasIcon && buttonIconLeft}
-    <Icon {...buttonIcon} left={buttonIconLeft} />
+    <Icon {...buttonIcon} style="margin-right: 4px;" />
   {/if}
   {buttonText}
   {#if buttonHasIcon && !buttonIconLeft}
-    <Icon {...buttonIcon} right={!buttonIconLeft} />
+    <Icon {...buttonIcon} style="margin-left: 4px;" />
   {/if}
 </Button>
+
 {#each [...Array(iconsCount).keys()] as num (num)}
   <p
     style="font-size: 30px; color: rebeccapurple; --in-outer-color: red; --in-inner-color: blue; --in-dot-color: green;"
   >
-    {#each icons as icon (icon.name)}
-      <Icon
-        {...icon}
-        style="margin: 0"
-        aria-hidden="true"
-        on:click={() => (buttonIcon = icon)}
-      />
+    {#each icons as icon (icon.data.id)}
+      <Icon {...icon} style="margin: 0" on:click={() => (buttonIcon = icon)} />
     {/each}
   </p>
 {/each}
@@ -228,13 +231,19 @@
     variant="primary"
     use={[[collapse, { id: 'test-collapse', class: 'collapsed-class' }]]}
   >
-    <Icon name="house" left />
+    <Icon data={houseIcon} style="margin-right: 4px;" />
     Toogle
   </Button>
   {slideIndex}
 </p>
 <Collapse id="test-collapse" visible>
-  <Swiper bind:index={slideIndex} options={swiperOptions}>
+  <Swiper
+    bind:index={slideIndex}
+    options={swiperOptions}
+    on:slideChange={(e) => console.log('slideChange', e.detail)}
+    on:beforeTransitionStart={(e) =>
+      console.log('beforeTransitionStart', e.detail)}
+  >
     {#each [...Array(range).keys()] as num}
       <SwiperSlide>
         <div class="styleguide__slide">{num + 1}</div>
@@ -362,7 +371,7 @@
     <img
       src="https://picsum.photos/id/354/1072/708"
       class={inputValue}
-      alt="#"
+      alt="The bridge"
       width="1072"
       height="708"
       loading="lazy"

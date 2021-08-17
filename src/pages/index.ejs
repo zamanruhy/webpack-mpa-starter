@@ -1,7 +1,10 @@
 <%
-  const styleguide = require('../components/styleguide/styleguide.ejs')
-  const example = require('../components/example/example.ejs')
-  const icon = require('../components/icon/icon.ejs')
+  const styleguide = require('@/components/styleguide/styleguide.ejs')
+  const example = require('@/components/example/example.ejs')
+  const icon = require('@/components/icon/icon.ejs')
+  const houseIcon = require('@/assets/svg/house.svg').default
+  const inIcon = require('@/assets/svg/in.svg').default
+  const closeIcon = require('@/assets/svg/close.svg').default
 %>
 
 <div class="container examples" style="display1: none;">
@@ -15,7 +18,7 @@
     showSlot: true,
     slot: `
       <app-button variant="primary" data-modal="main-modal">
-        ${icon({ name: 'house', left: true })}
+        ${icon({ data: inIcon, attrs: { style: 'margin-right: 4px;' } })}
         Slot for second
       </app-button>
     `
@@ -34,4 +37,5 @@
     alt="#"
   >
 </div>
+
 <br>

@@ -35,6 +35,10 @@ export default function header() {
     return
   }
 
+  // customElements.whenDefined('app-button').then(() => {
+  //   console.log(prevEl.el.outerHTML, nextEl.el.outerHTML)
+  // })
+
   function onNavMount() {
     if (!prevEl.el || !nextEl.el) {
       return
@@ -52,8 +56,9 @@ export default function header() {
   nextEl.addEventListener('mount', onNavMount)
 
   swiperEl.addEventListener('mount', () => {
-    swiperEl.component.$on('update', (e) => {
-      slideIndex.set(e.detail)
+    swiperEl.component.$on('slideChange', (e) => {
+      const [swiper] = e.detail
+      slideIndex.set(swiper.realIndex)
     })
   })
 

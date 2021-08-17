@@ -6,16 +6,15 @@ const baseConfig = require('./webpack.config.base')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-  .BundleAnalyzerPlugin
+const BundleAnalyzerPlugin =
+  require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const HtmlPrettifyPlugin = require('html-prettify-webpack-plugin')
 
 module.exports = merge(baseConfig, {
   mode: 'production',
   output: {
     filename: 'static/js/[name].js?[contenthash:8]',
-    chunkFilename: 'static/js/[name].chunk.js?[contenthash:8]',
-    publicPath: ''
+    chunkFilename: 'static/js/[name].chunk.js?[contenthash:8]'
   },
   optimization: {
     splitChunks: {
@@ -45,6 +44,5 @@ module.exports = merge(baseConfig, {
       chunkFilename: 'static/css/[name].chunk.css?[contenthash:8]'
     }),
     new HtmlPrettifyPlugin()
-    // new webpack.ContextReplacementPlugin(/components$/, /qwerty/)
   ].concat(process.env.BUNDLE_ANALYZE ? new BundleAnalyzerPlugin() : [])
 })

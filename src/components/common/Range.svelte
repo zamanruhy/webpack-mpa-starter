@@ -440,8 +440,10 @@
 />
 
 <style lang="scss" global>
+  @use "sass:math";
+
   $range-thumb-size: 20px;
-  $range-thumb-margin: $range-thumb-size / -2;
+  $range-thumb-margin: math.div($range-thumb-size, -2);
 
   .range {
     min-height: 24px;

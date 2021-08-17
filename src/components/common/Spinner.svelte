@@ -15,7 +15,7 @@
   $: viewBox = `0 0 ${viewBoxSize * 2} ${viewBoxSize * 2}`
 </script>
 
-<div class="spinner {className}" {style}>
+<div class="spinner {className}" {style} role="progressbar">
   <svg xmlns="http://www.w3.org/2000/svg" {viewBox} class="spinner__svg">
     <circle
       fill="transparent"
@@ -33,10 +33,8 @@
 <style lang="scss" global>
   .spinner {
     position: relative;
-    display: inline-flex;
+    display: inline-block;
     vertical-align: middle;
-    justify-content: center;
-    align-items: center;
 
     &__svg {
       width: 100%;
@@ -48,13 +46,10 @@
       left: 0;
       right: 0;
       z-index: 0;
-      vertical-align: middle;
       animation: progress-circular-rotate 1.4s linear infinite;
       transform-origin: center center;
-      transition: all 0.2s ease-in-out;
 
       @keyframes progress-circular-rotate {
-        /* autoprefixer: off */
         100% {
           transform: rotate(360deg);
         }
@@ -63,24 +58,20 @@
     &__circle {
       stroke: currentColor;
       z-index: 2;
-      transition: all 0.6s ease-in-out;
       animation: progress-circular-dash 1.4s ease-in-out infinite;
       stroke-linecap: round;
       stroke-dasharray: 80, 200;
       stroke-dashoffset: 0;
 
       @keyframes progress-circular-dash {
-        /* autoprefixer: off */
         0% {
           stroke-dasharray: 1, 200;
           stroke-dashoffset: 0;
         }
-
         50% {
           stroke-dasharray: 100, 200;
           stroke-dashoffset: -15px;
         }
-
         100% {
           stroke-dasharray: 100, 200;
           stroke-dashoffset: -125px;

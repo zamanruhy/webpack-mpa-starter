@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @use "variables" as *;
 @use "functions" as *;
 
@@ -95,9 +97,9 @@
   $width-end,
   $step: 1px
 ) {
-  $count: ($value-end - $value-start) / $step;
-  $width-step: ($width-end - $width-start) / $count;
-  $max-bp: $width-end - $width-step / 2;
+  $count: math.div($value-end - $value-start, $step);
+  $width-step: math.div($width-end - $width-start, $count);
+  $max-bp: $width-end - $width-step * 0.5;
 
   @include up($max-bp) {
     #{$property}: $value-end;

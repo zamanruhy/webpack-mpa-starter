@@ -19,7 +19,8 @@ export default function styleguide() {
 
   swiperEl.addEventListener('mount', () => {
     swiperEl.component.$on('update', (e) => {
-      slideIndex.set(e.detail)
+      const [swiper] = e.detail
+      slideIndex.set(swiper.realIndex)
     })
   })
 

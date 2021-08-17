@@ -23,7 +23,7 @@
   max-width: $max-width;
 }
 
-// Display
+// Helpers
 .visually-hidden {
   @include visually-hidden();
 }

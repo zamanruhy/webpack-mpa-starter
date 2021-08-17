@@ -12,16 +12,20 @@ const PORT = 8080
 
 const devConfig = merge(baseConfig, {
   mode: 'development',
+  output: {
+    publicPath: '/'
+  },
   devtool: 'eval-source-map',
   devServer: {
-    clientLogLevel: 'silent',
-    hot: true,
-    contentBase: path.join(process.cwd(), 'dist'),
-    compress: true,
     host: HOST,
     port: PORT,
-    overlay: { warnings: true, errors: true },
-    quiet: true
+    hot: true,
+    static: {
+      directory: path.join(process.cwd(), 'dist')
+    },
+    watchFiles: './src/{pages,components}/**/*.ejs',
+    client: { logging: 'warn' },
+    devMiddleware: { stats: 'errors-only' }
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
 })

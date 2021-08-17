@@ -5,10 +5,8 @@
   height: 1em;
   fill: currentColor;
 
-  &_left {
-    margin-right: 0.4em;
-  }
-  &_right {
-    margin-left: 0.4em;
+  @at-root img#{&} {
+    width: auto;
+    max-width: none;
   }
 }

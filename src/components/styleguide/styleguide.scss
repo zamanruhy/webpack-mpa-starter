@@ -1,3 +1,6 @@
+@use "sass:math";
+@use '@/assets/scss/globals' as *;
+
 $styleguide-grid-gutter: 30px;
 $gallery-grid-gutter: 20px;
 
@@ -8,7 +11,7 @@ $gallery-grid-gutter: 20px;
   &__cols {
     display: flex;
     flex-wrap: wrap;
-    margin: $styleguide-grid-gutter / -2;
+    margin: math.div($styleguide-grid-gutter, -2);
 
     @supports (grid-area: auto) {
       display: grid;
@@ -25,7 +28,7 @@ $gallery-grid-gutter: 20px;
     flex: 1 1 auto;
     width: 50%;
     min-width: 0;
-    padding: $styleguide-grid-gutter / 2;
+    padding: $styleguide-grid-gutter * 0.5;
 
     @include down(md) {
       width: 100%;
@@ -72,7 +75,7 @@ $gallery-grid-gutter: 20px;
   &__gallery {
     display: flex;
     flex-wrap: wrap;
-    margin: $gallery-grid-gutter / -2;
+    margin: math.div($gallery-grid-gutter, -2);
 
     @supports (grid-area: auto) {
       display: grid;
@@ -86,7 +89,7 @@ $gallery-grid-gutter: 20px;
     overflow: hidden;
     flex: 0 0 auto;
     width: calc(100% / 3 - #{$gallery-grid-gutter});
-    margin: $gallery-grid-gutter / 2;
+    margin: $gallery-grid-gutter * 0.5;
     background-color: #eeeeee;
 
     @supports (grid-area: auto) {

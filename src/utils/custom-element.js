@@ -93,13 +93,15 @@ export default function customElement(
     }
 
     connectedCallback() {
-      if (this.isConnected && !this.component) {
+      if (!this.component) {
         this.mount()
       }
     }
 
-    disconnectedCallback() {
-      if (this.component) {
+    async disconnectedCallback() {
+      // wait to check if it's a move or a removal
+      await Promise.resolve()
+      if (!this.isConnected && this.component) {
         this.destroy()
       }
     }
@@ -150,7 +152,7 @@ export default function customElement(
         this.props[prop] = value
 
         if (this.component) {
-          this.component[prop] = value
+          this.component.$set({ [prop]: value })
         }
       }
     })

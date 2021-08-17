@@ -110,10 +110,10 @@
   }
   function focusActiveTab() {
     const activeTabEl = $activeTab.el
-    // const listEl = activeTabEl.parentNode
-    // const scrollLeft = listEl.scrollLeft
+    const listEl = activeTabEl.closest('.tabs__list')
+    const scrollLeft = listEl.scrollLeft
     activeTabEl.focus()
-    // listEl.scrollLeft = scrollLeft
+    listEl.scrollLeft = scrollLeft
   }
   function onTabKeydown(e, tab) {
     const key = e.key
@@ -121,10 +121,10 @@
     if (key === ' ') {
       e.preventDefault()
       index = i
-    } else if (key === 'ArrowDown' || key === 'ArrowLeft') {
+    } else if (key === 'ArrowUp' || key === 'ArrowLeft') {
       e.preventDefault()
       index = Math.max(index - 1, 0)
-    } else if (key === 'ArrowUp' || key === 'ArrowRight') {
+    } else if (key === 'ArrowDown' || key === 'ArrowRight') {
       e.preventDefault()
       index = Math.min(index + 1, tabs.length - 1)
     } else if (key === 'Home') {
@@ -156,6 +156,9 @@
 </div>
 
 <style lang="scss" global>
+  $scrollbar-track-color: #ededee;
+  $scrollbar-color: #ceced1;
+
   .tabs {
     &__list {
       display: flex;
@@ -163,6 +166,26 @@
       margin-bottom: -1px;
       position: relative;
       scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: $scrollbar-color $scrollbar-track-color;
+
+      @media (pointer: fine) {
+        &::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+          background-color: $scrollbar-track-color;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: $scrollbar-color;
+
+          &:hover {
+            background-color: darken($scrollbar-color, 10%);
+          }
+          &:active {
+            background-color: darken($scrollbar-color, 20%);
+          }
+        }
+      }
     }
     &__tab {
       color: $color-primary;
@@ -182,7 +205,11 @@
       &_active {
         color: #495057;
         background-color: #fff;
-        border-color: #dee2e6 #dee2e6 #fff;
+        border-color: #dee2e6 #dee2e6 #ffffff;
+      }
+
+      &:hover {
+        color: #495057;
       }
     }
     &__panel {
@@ -197,15 +224,9 @@
     }
   }
 
-  app-tabs:defined {
-    display: contents;
-  }
-  app-tab-list:defined {
-    display: contents;
-  }
-  app-tab:defined {
-    display: contents;
-  }
+  app-tabs:defined,
+  app-tab-list:defined,
+  app-tab:defined,
   app-tab-panel:defined {
     display: contents;
   }
@@ -213,41 +234,49 @@
   app-tabs:not(:defined) {
     display: block;
 
-    @for $n from 1 through 20 {
-      &[index='#{$n - 1}'] {
-        > app-tab-list > app-tab {
-          &:nth-of-type(#{$n}) {
-            @extend .tabs__tab_active;
-          }
-        }
-        > app-tab-panel {
-          &:nth-of-type(#{$n}) {
-            @extend .tabs__panel_active;
-          }
-        }
-      }
-    }
+    // @for $n from 1 through 20 {
+    //   &[index='#{$n - 1}'] {
+    //     > app-tab-list > app-tab {
+    //       &:nth-of-type(#{$n}) {
+    //         @extend .tabs__tab_active;
+    //       }
+    //     }
+    //     > app-tab-panel {
+    //       &:nth-of-type(#{$n}) {
+    //         @extend .tabs__panel_active;
+    //       }
+    //     }
+    //   }
+    // }
 
-    &:not([index]) {
-      > app-tab-list > app-tab {
-        &:nth-of-type(1) {
-          @extend .tabs__tab_active;
-        }
-      }
-      > app-tab-panel {
-        &:nth-of-type(1) {
-          @extend .tabs__panel_active;
-        }
-      }
-    }
+    // &:not([index]) {
+    //   > app-tab-list > app-tab {
+    //     &:nth-of-type(1) {
+    //       @extend .tabs__tab_active;
+    //     }
+    //   }
+    //   > app-tab-panel {
+    //     &:nth-of-type(1) {
+    //       @extend .tabs__panel_active;
+    //     }
+    //   }
+    // }
   }
   app-tab-list:not(:defined) {
     @extend .tabs__list;
   }
   app-tab:not(:defined) {
     @extend .tabs__tab;
+
+    &:nth-of-type(1) {
+      @extend .tabs__tab_active;
+    }
   }
   app-tab-panel:not(:defined) {
     @extend .tabs__panel;
+
+    &:nth-of-type(1) {
+      @extend .tabs__panel_active;
+    }
   }
 </style>

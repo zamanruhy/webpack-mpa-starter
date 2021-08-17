@@ -1,3 +1,5 @@
+@use '@/assets/scss/globals' as *;
+
 .header {
   &__container {
     color: $color-primary;

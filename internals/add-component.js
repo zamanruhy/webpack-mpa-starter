@@ -1,13 +1,12 @@
-/* eslint-disable prefer-promise-reject-errors */
 'use strict'
 
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
-const BLOCKS_DIR = path.join(process.cwd(), 'src/components')
+const blocksDir = path.join(process.cwd(), 'src/components')
 const fileSources = {
   ejs: `<div class="{blockName}"></div>`,
-  scss: `.{blockName} {}`,
+  scss: `@use '@/assets/scss/globals' as *;\n\n.{blockName} {}`,
   js: `export default function {blockNameCamel}() {
   const el = document.querySelector('.{blockName}')
 
@@ -37,7 +36,7 @@ function directoryExist(blockPath, blockName) {
       if (notExist) {
         resolve()
       } else {
-        reject(`ERR>>> The block '${blockName}' already exists`)
+        reject(new Error(`ERR>>> The block '${blockName}' already exists`))
       }
     })
   })
@@ -47,7 +46,7 @@ function createDir(dirPath) {
   return new Promise((resolve, reject) => {
     fs.mkdir(dirPath, (err) => {
       if (err) {
-        reject(`ERR>>> Failed to create a folder '${dirPath}'`)
+        reject(new Error(`ERR>>> Failed to create a folder '${dirPath}'`))
       } else {
         resolve()
       }
@@ -55,9 +54,12 @@ function createDir(dirPath) {
   })
 }
 
-function createFiles(blocksPath, blockName) {
+function createFiles(blocksPath, blockName, needJs) {
   const promises = []
   Object.keys(fileSources).forEach((ext) => {
+    if (ext === 'js' && !needJs) {
+      return
+    }
     const blockNameCamel = blockName.replace(/-(\w)/g, (_, c) => {
       return c ? c.toUpperCase() : ''
     })
@@ -71,7 +73,7 @@ function createFiles(blocksPath, blockName) {
       new Promise((resolve, reject) => {
         fs.writeFile(filePath, fileSource, 'utf8', (err) => {
           if (err) {
-            reject(`ERR>>> Failed to create a file '${filePath}'`)
+            reject(new Error(`ERR>>> Failed to create a file '${filePath}'`))
           } else {
             resolve()
           }
@@ -87,7 +89,11 @@ function getFiles(blockPath) {
   return new Promise((resolve, reject) => {
     fs.readdir(blockPath, (err, files) => {
       if (err) {
-        reject(`ERR>>> Failed to get a file list from a folder '${blockPath}'`)
+        reject(
+          new Error(
+            `ERR>>> Failed to get a file list from a folder '${blockPath}'`
+          )
+        )
       } else {
         resolve(files)
       }
@@ -95,39 +101,61 @@ function getFiles(blockPath) {
   })
 }
 
+function appendStyleImport(blockName) {
+  return new Promise((resolve, reject) => {
+    fs.appendFile(
+      path.join(process.cwd(), 'src/assets/scss/main.scss'),
+      `@use "@/components/${blockName}/${blockName}.scss";\n`,
+      (err) => {
+        if (err) {
+          reject(new Error('ERR>>> Failed to append style import to main.scss'))
+        } else {
+          resolve()
+        }
+      }
+    )
+  })
+}
+
 function printErrorMessage(errText) {
   console.log(chalk.red(errText) + '\n')
 }
 
-function makeBlock(blockName) {
-  const blockPath = path.join(BLOCKS_DIR, blockName)
+async function makeBlock(blockName, needJs) {
+  const blockPath = path.join(blocksDir, blockName)
   const line = '-'.repeat(51 + blockName.length)
 
-  return validateBlockName(blockName)
-    .then(() => directoryExist(blockPath, blockName))
-    .then(() => createDir(blockPath))
-    .then(() => createFiles(blockPath, blockName))
-    .then(() => getFiles(blockPath))
-    .then((files) => {
-      console.log(
-        chalk.greenBright(
-          `The block has just been created in 'src/components/${blockName}'`
-        )
+  try {
+    await validateBlockName(blockName)
+    await directoryExist(blockPath, blockName)
+    await createDir(blockPath)
+    await createFiles(blockPath, blockName, needJs)
+    const files = await getFiles(blockPath)
+
+    console.log(
+      chalk.greenBright(
+        `The block has just been created in 'src/components/${blockName}'`
       )
-      console.log(chalk.green(line))
+    )
+    console.log(chalk.green(line))
 
-      files.forEach((file) => console.log(chalk.greenBright(file)))
+    files.forEach((file) => console.log(chalk.greenBright(file)))
 
-      console.log('')
-    })
-    .catch(printErrorMessage)
+    console.log('')
+
+    await appendStyleImport(blockName)
+  } catch (e) {
+    printErrorMessage(e)
+  }
 }
 
 // Command line arguments
-const blockNames = process.argv.slice(2)
+const args = process.argv.slice(2)
+const blockNames = args.filter((arg) => !arg.startsWith('-'))
+const needJs = args.includes('--js')
 
 if (blockNames.length) {
-  blockNames.forEach(makeBlock)
+  blockNames.forEach((name) => makeBlock(name, needJs))
 } else {
   printErrorMessage('ERR>>> Block name not passed')
 }

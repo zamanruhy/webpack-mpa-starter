@@ -1,45 +1,35 @@
-<% const icon=require('../icon/icon.ejs') %>
+<%
+  const icon = require('@/components/icon/icon.ejs')
+  const houseIcon = require('@/assets/svg/house.svg').default
+  const logoIcon = require('@/assets/svg/logo.svg').default
+  const closeIcon = require('@/assets/svg/close.svg').default
+  const lockIcon = require('@/assets/svg/lock.svg').default
+  const inIcon = require('@/assets/svg/in.svg').default
+%>
 
-  <div class="styleguide">
-    <div class="container">
-      <!--    <h1 class="styleguide__title styleguide__title_one">Example title</h1>-->
-      <!--    <h1 class="styleguide__title styleguide__title_two">Example title</h1>-->
-      <h1 class="styleguide__title">Styleguide</h1>
-      <div class="styleguide__cols">
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Hamburger</h2>
-          <app-hamburger></app-hamburger>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle" data-modal="main-modal" role="button" tabindex="0">Modal</h2>
-          <app-button variant="primary" data-modal="main-modal">Open Modal</app-button>
-          <app-modal .id="other-modal">
-            <p>
-              <app-button variant="primary" data-collapse="other-collapse">Toggle</app-button>
-            </p>
-            <app-collapse .id="other-collapse" visible>
-              <div class="styleguide__slide"></div>
-            </app-collapse>
-          </app-modal>
-          <app-modal .id="main-modal" class="main-modal">
-            <app-swiper class="styleguide__modal-swiper">
-              <% for (let i=0; i < 10; i++) { %>
-                <app-swiper-slide>
-                  <div class="styleguide__slide">
-                    <%= i + 1 %>
-                  </div>
-                </app-swiper-slide>
-                <% } %>
-            </app-swiper>
-            <br>
-            <p>
-              <app-button variant="primary" data-modal="other-modal">Open Other</app-button>
-            </p>
-          </app-modal>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Swiper</h2>
-          <app-swiper class="styleguide__main-swiper">
+<div class="styleguide">
+  <div class="container">
+    <!--    <h1 class="styleguide__title styleguide__title_one">Example title</h1>-->
+    <!--    <h1 class="styleguide__title styleguide__title_two">Example title</h1>-->
+    <h1 class="styleguide__title">Styleguide</h1>
+    <div class="styleguide__cols">
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Hamburger</h2>
+        <app-hamburger></app-hamburger>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle" data-modal="main-modal" role="button" tabindex="0">Modal</h2>
+        <app-button variant="primary" data-modal="main-modal">Open Modal</app-button>
+        <app-modal .id="other-modal">
+          <p>
+            <app-button variant="primary" data-collapse="other-collapse">Toggle</app-button>
+          </p>
+          <app-collapse .id="other-collapse" visible>
+            <div class="styleguide__slide"></div>
+          </app-collapse>
+        </app-modal>
+        <app-modal .id="main-modal" class="main-modal">
+          <app-swiper class="styleguide__modal-swiper">
             <% for (let i=0; i < 10; i++) { %>
               <app-swiper-slide>
                 <div class="styleguide__slide">
@@ -48,164 +38,189 @@
               </app-swiper-slide>
               <% } %>
           </app-swiper>
-          <p style="margin-top: 5px;">
-            <app-button variant="primary" class="styleguide__prev">
-              <%= icon({ name: 'close' }) %>
-            </app-button>
-            <app-button variant="primary" class="styleguide__next">
-              <%= icon({ name: 'house' }) %>
-            </app-button>
-          </p>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle" data-collapse="main-collapse" role="button" tabindex="0">Collapse</h2>
+          <br>
           <p>
-            <app-button variant="primary" data-collapse="main-collapse" data-class="collapsed__class">Toggle
+            <app-button variant="primary" data-modal="other-modal">Open Other</app-button>
+          </p>
+        </app-modal>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Swiper</h2>
+        <app-swiper class="styleguide__main-swiper">
+          <% for (let i=0; i < 10; i++) { %>
+            <app-swiper-slide>
+              <div class="styleguide__slide">
+                <%= i + 1 %>
+              </div>
+            </app-swiper-slide>
+          <% } %>
+        </app-swiper>
+        <p style="margin-top: 5px;">
+          <app-button variant="primary" class="styleguide__prev">
+            <%= icon({ data: closeIcon }) %>
+          </app-button>
+          <app-button variant="primary" class="styleguide__next">
+            <%= icon({ data: houseIcon }) %>
+          </app-button>
+        </p>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle" data-collapse="main-collapse" role="button" tabindex="0">Collapse</h2>
+        <p>
+          <app-button variant="primary" data-collapse="main-collapse" data-class="collapsed__class">Toggle
+          </app-button>
+        </p>
+        <app-collapse .id="main-collapse" visible accordion="collapse">
+          <div class="styleguide__slide"></div>
+        </app-collapse>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Button</h2>
+        <div class="styleguide__buttons">
+          <div class="styleguide__button">
+            <app-button variant="primary">Default</app-button>
+          </div>
+          <div class="styleguide__button">
+            <app-button variant="primary" loading>With spinner</app-button>
+          </div>
+          <div class="styleguide__button">
+            <app-button variant="primary" size="small">Small</app-button>
+          </div>
+          <div class="styleguide__button">
+            <app-button variant="primary" size="large" disabled>
+              Large disabled
+              <%= icon({ data: houseIcon }) %>
             </app-button>
-          </p>
-          <app-collapse .id="main-collapse" visible accordion="collapse">
-            <div class="styleguide__slide"></div>
-          </app-collapse>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Button</h2>
-          <div class="styleguide__buttons">
-            <div class="styleguide__button">
-              <app-button variant="primary">Default</app-button>
-            </div>
-            <div class="styleguide__button">
-              <app-button variant="primary" loading>With spinner</app-button>
-            </div>
-            <div class="styleguide__button">
-              <app-button variant="primary" size="small">Small</app-button>
-            </div>
-            <div class="styleguide__button">
-              <app-button variant="primary" size="large" disabled>
-                Large disabled
-                <%= icon({ name: 'house' , right: true }) %>
-              </app-button>
-            </div>
           </div>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Spinner</h2>
-          <app-spinner size="60" width="2"></app-spinner>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Lazy Image in text</h2>
-          <p>
-            <img src="https://picsum.photos/id/122/1072/708" class="styleguide__img-in-text" alt="#" width="1072"
-              height="708" loading="lazy">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. A asperiores delectus deserunt, dicta doloribus
-            eligendi iusto nemo officia perferendis, praesentium provident recusandae, rerum ullam. Alias blanditiis,
-            deserunt dolor esse ex incidunt labore nihil officia omnis placeat quaerat quas rem sint! Aut cum dicta
-            expedita, hic labore quod ullam. Iusto, repellendus vitae. Deleniti itaque quam qui quisquam quo? Ab aperiam
-            asperiores consequuntur deleniti dolore dolorum ducimus est et illum incidunt ipsa itaque iure laborum magni
-            necessitatibus neque optio quod repellat reprehenderit, sequi sint soluta tempore vero. Atque dignissimos
-            est facere impedit ipsam maiores minima, nesciunt nihil non quae qui repudiandae voluptatem.
-          </p>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Tabs</h2>
-          <app-tabs index="3">
-            <app-tab-list>
-              <app-tab>one</app-tab>
-              <app-tab>two</app-tab>
-              <app-tab>three</app-tab>
-              <app-tab>one</app-tab>
-              <app-tab>two</app-tab>
-              <app-tab>three</app-tab>
-              <app-tab>one</app-tab>
-              <app-tab>two</app-tab>
-              <app-tab>three</app-tab>
-              <app-tab>one</app-tab>
-              <app-tab>two</app-tab>
-              <app-tab>three</app-tab>
-            </app-tab-list>
-            <app-tab-panel>
-              <app-swiper .options="{ pagination: true, navigation: true }">
-                <% for (let i=0; i < 10; i++) { %>
-                  <app-swiper-slide>
-                    <div class="styleguide__slide">
-                      <%= i + 1 %>
-                    </div>
-                  </app-swiper-slide>
-                  <% } %>
-              </app-swiper>
-            </app-tab-panel>
-            <app-tab-panel>Second panel</app-tab-panel>
-            <app-tab-panel>Third panel</app-tab-panel>
-            <app-tab-panel>
-              <app-tabs index="1">
-                <app-tab-list>
-                  <app-tab>one</app-tab>
-                  <app-tab>two</app-tab>
-                  <app-tab>three</app-tab>
-                  <app-tab>one</app-tab>
-                </app-tab-list>
-                <app-tab-panel>First panel</app-tab-panel>
-                <app-tab-panel>Second panel</app-tab-panel>
-                <app-tab-panel>Third panel</app-tab-panel>
-                <app-tab-panel>Fourth panel</app-tab-panel>
-              </app-tabs>
-            </app-tab-panel>
-            <app-tab-panel>Second panel</app-tab-panel>
-            <app-tab-panel>Third panel</app-tab-panel>
-            <app-tab-panel>First panel</app-tab-panel>
-            <app-tab-panel>Second panel</app-tab-panel>
-            <app-tab-panel>Third panel</app-tab-panel>
-            <app-tab-panel>First panel</app-tab-panel>
-            <app-tab-panel>Second panel</app-tab-panel>
-            <app-tab-panel>Third panel</app-tab-panel>
-          </app-tabs>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Icon</h2>
-          <p style="font-size: 30px">
-            <%= icon({ name: 'logo' , img: true, left: true, style: 'margin: 0' , attrs: { 'data-modal' : 'main-modal' ,
-              role: 'button' , tabindex: 0, 'aria-label' : 'Open main modal' } }) %>
-              <%= icon({ name: 'house' , className: 'block__element' }) %>
-                <%= icon({ name: 'lock' , img: true, attrs: { 'aria-hidden' : 'true' } }) %>
-                  <%= icon({ name: 'close' , right: true }) %>
-          </p>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Input</h2>
-          <app-field label="Name" label-for="some-id" hint="Some additional message">
-            <app-input .id="some-id" value="default value" placeholder="Type your name" name="name"></app-input>
-          </app-field>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">File Input</h2>
-          <app-field label="Select file" label-for="file-id">
-            <app-file-input .id="file-id"></app-file-input>
-          </app-field>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Checkbox</h2>
-          <div class="styleguide__options">
-            <div class="styleguide__option">
-              <app-checkbox label="Checkbox one" name="checkbox[]" value="checkbox-a" checked></app-checkbox>
-            </div>
-            <div class="styleguide__option">
-              <app-checkbox label="Checkbox two" name="checkbox[]" value="checkbox-b"></app-checkbox>
-            </div>
-          </div>
-        </div>
-        <div class="styleguide__col">
-          <h2 class="styleguide__subtitle">Radio</h2>
-          <app-field label="Radio group">
-            <div class="styleguide__options">
-              <div class="styleguide__option">
-                <app-radio label="Radio one" name="radio" value="radio-a"></app-radio>
-              </div>
-              <div class="styleguide__option">
-                <app-radio label="Radio two" name="radio" value="radio-b" checked></app-radio>
-              </div>
-            </div>
-          </app-field>
         </div>
       </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Spinner</h2>
+        <app-spinner size="60" width="2"></app-spinner>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Lazy Image in text</h2>
+        <p>
+          <img src="https://picsum.photos/id/122/1072/708" class="styleguide__img-in-text" alt="#" width="1072"
+            height="708" loading="lazy">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. A asperiores delectus deserunt, dicta doloribus
+          eligendi iusto nemo officia perferendis, praesentium provident recusandae, rerum ullam. Alias blanditiis,
+          deserunt dolor esse ex incidunt labore nihil officia omnis placeat quaerat quas rem sint! Aut cum dicta
+          expedita, hic labore quod ullam. Iusto, repellendus vitae. Deleniti itaque quam qui quisquam quo? Ab aperiam
+          asperiores consequuntur deleniti dolore dolorum ducimus est et illum incidunt ipsa itaque iure laborum magni
+          necessitatibus neque optio quod repellat reprehenderit, sequi sint soluta tempore vero. Atque dignissimos
+          est facere impedit ipsam maiores minima, nesciunt nihil non quae qui repudiandae voluptatem.
+        </p>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Tabs</h2>
+        <app-tabs index="3">
+          <app-tab-list>
+            <app-tab>one</app-tab>
+            <app-tab>two</app-tab>
+            <app-tab>three</app-tab>
+            <app-tab>one</app-tab>
+            <app-tab>two</app-tab>
+            <app-tab>three</app-tab>
+            <app-tab>one</app-tab>
+            <app-tab>two</app-tab>
+            <app-tab>three</app-tab>
+            <app-tab>one</app-tab>
+            <app-tab>two</app-tab>
+            <app-tab>three</app-tab>
+          </app-tab-list>
+          <app-tab-panel>
+            <app-swiper>
+              <% for (let i=0; i < 10; i++) { %>
+                <app-swiper-slide>
+                  <div class="styleguide__slide">
+                    <%= i + 1 %>
+                  </div>
+                </app-swiper-slide>
+                <% } %>
+            </app-swiper>
+          </app-tab-panel>
+          <app-tab-panel>Second panel</app-tab-panel>
+          <app-tab-panel>Third panel</app-tab-panel>
+          <app-tab-panel>
+            <app-tabs index="1">
+              <app-tab-list>
+                <app-tab>one</app-tab>
+                <app-tab>two</app-tab>
+                <app-tab>three</app-tab>
+                <app-tab>one</app-tab>
+              </app-tab-list>
+              <app-tab-panel>First panel</app-tab-panel>
+              <app-tab-panel>Second panel</app-tab-panel>
+              <app-tab-panel>Third panel</app-tab-panel>
+              <app-tab-panel>Fourth panel</app-tab-panel>
+            </app-tabs>
+          </app-tab-panel>
+          <app-tab-panel>Second panel</app-tab-panel>
+          <app-tab-panel>Third panel</app-tab-panel>
+          <app-tab-panel>First panel</app-tab-panel>
+          <app-tab-panel>Second panel</app-tab-panel>
+          <app-tab-panel>Third panel</app-tab-panel>
+          <app-tab-panel>First panel</app-tab-panel>
+          <app-tab-panel>Second panel</app-tab-panel>
+          <app-tab-panel>Third panel</app-tab-panel>
+        </app-tabs>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Icon</h2>
+        <p style="font-size: 30px">
+          <%= icon({
+              data: logoIcon,
+              img: true,
+              attrs: {
+                style: 'margin: 0',
+                'data-modal': 'main-modal',
+                'aria-label': 'Open main modal'
+              }
+            })
+          %>
+          <%= icon({ data: houseIcon , className: 'block__element' }) %>
+          <%= icon({ data: lockIcon , img: true, attrs: { 'aria-hidden': 'true' } }) %>
+          <%= icon({ data: closeIcon }) %>
+        </p>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Input</h2>
+        <app-field label="Name" label-for="some-id" hint="Some additional message">
+          <app-input .id="some-id" value="default value" placeholder="Type your name" name="name"></app-input>
+        </app-field>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">File Input</h2>
+        <app-field label="Select file" label-for="file-id">
+          <app-file-input .id="file-id"></app-file-input>
+        </app-field>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Checkbox</h2>
+        <div class="styleguide__options">
+          <div class="styleguide__option">
+            <app-checkbox label="Checkbox one" name="checkbox[]" value="checkbox-a" checked></app-checkbox>
+          </div>
+          <div class="styleguide__option">
+            <app-checkbox label="Checkbox two" name="checkbox[]" value="checkbox-b"></app-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="styleguide__col">
+        <h2 class="styleguide__subtitle">Radio</h2>
+        <app-field label="Radio group">
+          <div class="styleguide__options">
+            <div class="styleguide__option">
+              <app-radio label="Radio one" name="radio" value="radio-a"></app-radio>
+            </div>
+            <div class="styleguide__option">
+              <app-radio label="Radio two" name="radio" value="radio-b" checked></app-radio>
+            </div>
+          </div>
+        </app-field>
+      </div>
     </div>
-    <app-to-top></app-to-top>
   </div>
+  <app-to-top></app-to-top>
+</div>

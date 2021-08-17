@@ -14,7 +14,6 @@
     tick,
     createEventDispatcher
   } from 'svelte'
-  import events from './events'
 
   Swiper.use([Navigation, Pagination, Scrollbar, A11y, Keyboard])
 
@@ -53,9 +52,11 @@
     scrollbar: {
       el: scrollbarEl,
       ...options.scrollbar
+    },
+    onAny(event, ...args) {
+      dispatch(event, args)
     }
   }
-  $: dispatch('update', index)
   $: if (swiper && swiper.realIndex !== index) {
     swiper.slideToLoop(index)
   }
@@ -71,14 +72,6 @@
     })
     swiper.on('slideChange', () => {
       index = swiper.realIndex
-    })
-    bindSwiperEvents()
-  }
-  function bindSwiperEvents() {
-    events.forEach((event) => {
-      swiper.on(event, (...args) => {
-        dispatch(event, args)
-      })
     })
   }
   function destroySwiper() {
@@ -143,6 +136,13 @@
 
   :root {
     --swiper-theme-color: #{$color-primary};
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    &::after {
+      display: none;
+    }
   }
 
   app-swiper:defined {
