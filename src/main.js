@@ -1,6 +1,6 @@
 import './assets/scss/main.scss'
-import { customElements } from './helpers/custom-elements'
-import { dataModal, dataCollapse } from './helpers/data-attributes'
+import './assets/scss/some.postcss'
+import { customElements, dataModal, dataCollapse } from './helpers/mpa'
 import header from './components/header/header'
 import styleguide from './components/styleguide/styleguide'
 

@@ -73,22 +73,4 @@
       margin-left: 5px;
     }
   }
-
-  app-file-input:defined {
-    display: contents;
-  }
-
-  app-file-input:not(:defined) {
-    @extend .file-input__field;
-
-    &:before {
-      @extend .file-input__input;
-      content: '';
-      display: block;
-    }
-    &:after {
-      @extend .file-input__button;
-      content: 'Browse';
-    }
-  }
 </style>

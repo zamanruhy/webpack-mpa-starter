@@ -39,6 +39,8 @@ export default function header() {
   //   console.log(prevEl.el.outerHTML, nextEl.el.outerHTML)
   // })
 
+  // swiperEl.id = 'some-id'
+
   function onNavMount() {
     if (!prevEl.el || !nextEl.el) {
       return

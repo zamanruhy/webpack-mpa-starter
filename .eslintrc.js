@@ -5,20 +5,26 @@ module.exports = {
     browser: true,
     es6: true
   },
-  extends: ['standard', 'plugin:prettier/recommended'],
   parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module'
   },
-  plugins: ['svelte3'],
   rules: {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   },
   overrides: [
     {
+      files: ['*.js'],
+      extends: ['standard', 'plugin:prettier/recommended']
+    },
+    {
       files: ['**/*.svelte'],
-      processor: 'svelte3/svelte3'
+      plugins: ['svelte3'],
+      processor: 'svelte3/svelte3',
+      settings: {
+        'svelte3/ignore-styles': () => true
+      }
     }
   ]
 }

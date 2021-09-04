@@ -1,4 +1,4 @@
-import { camelize, hyphenate, createSlots, hasOwn } from '@/utils'
+import { camelize, hyphenate, hasOwn } from '@/utils'
 
 export default function customElement(
   name,
@@ -42,7 +42,7 @@ export default function customElement(
 
         if (attrsList.includes(name)) {
           name = camelize(name)
-          value = value === '' ? true : Number(value) || value
+          value = value === '' ? true : isNaN(value) ? value : Number(value)
         } else {
           value = value === '' ? true : value
         }
@@ -85,7 +85,7 @@ export default function customElement(
       let el = this.parentElement
 
       do {
-        if (el.context) return el.context
+        if (el.__context__) return el.__context__
         el = el.parentElement
       } while (el !== null)
 
@@ -107,7 +107,7 @@ export default function customElement(
     }
 
     mount() {
-      this.context = new Map(this.parentContext || [])
+      this.__context__ = new Map(this.parentContext || [])
 
       this.handleAttributes()
       this.handleChildren()
@@ -124,7 +124,7 @@ export default function customElement(
 
       events.forEach((event) => {
         this.component.$on(event, (e) => {
-          this.dispatchEvent(e)
+          this.dispatchEvent(new CustomEvent(event, { detail: e.detail }))
         })
       })
 
@@ -159,4 +159,36 @@ export default function customElement(
   })
 
   window.customElements.define(name, SvelteElement)
+}
+
+// eslint-disable-next-line import/first
+import { detach, insert, noop } from 'svelte/internal'
+
+function createSlots(slots) {
+  const svelteSlots = {}
+
+  for (const name in slots) {
+    svelteSlots[name] = [createSlotFn(slots[name])]
+  }
+
+  return svelteSlots
+}
+
+function createSlotFn(nodes) {
+  return () => {
+    return {
+      c: noop,
+      m: function mount(target, anchor) {
+        const frag = document.createDocumentFragment()
+        nodes.forEach((node) => frag.appendChild(node))
+        insert(target, frag, anchor)
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          nodes.forEach((node) => detach(node))
+        }
+      },
+      l: noop
+    }
+  }
 }

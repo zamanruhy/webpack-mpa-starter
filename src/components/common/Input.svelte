@@ -66,24 +66,4 @@
       }
     }
   }
-
-  app-input:defined {
-    display: contents;
-  }
-
-  app-input:not(:defined) {
-    display: block;
-
-    &:after {
-      @extend .input__control;
-      content: '';
-      display: block;
-    }
-  }
-
-  app-file-input:not(:defined) {
-    &:before {
-      @extend .input__control;
-    }
-  }
 </style>

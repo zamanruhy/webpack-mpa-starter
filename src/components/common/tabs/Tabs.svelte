@@ -138,10 +138,6 @@
 
   setContext(TABS, context)
 
-  if (window.__currentElement__) {
-    __currentElement__.context.set(TABS, context)
-  }
-
   onMount(() => {
     mounted = true
   })
@@ -221,62 +217,6 @@
       &_active {
         display: block;
       }
-    }
-  }
-
-  app-tabs:defined,
-  app-tab-list:defined,
-  app-tab:defined,
-  app-tab-panel:defined {
-    display: contents;
-  }
-
-  app-tabs:not(:defined) {
-    display: block;
-
-    // @for $n from 1 through 20 {
-    //   &[index='#{$n - 1}'] {
-    //     > app-tab-list > app-tab {
-    //       &:nth-of-type(#{$n}) {
-    //         @extend .tabs__tab_active;
-    //       }
-    //     }
-    //     > app-tab-panel {
-    //       &:nth-of-type(#{$n}) {
-    //         @extend .tabs__panel_active;
-    //       }
-    //     }
-    //   }
-    // }
-
-    // &:not([index]) {
-    //   > app-tab-list > app-tab {
-    //     &:nth-of-type(1) {
-    //       @extend .tabs__tab_active;
-    //     }
-    //   }
-    //   > app-tab-panel {
-    //     &:nth-of-type(1) {
-    //       @extend .tabs__panel_active;
-    //     }
-    //   }
-    // }
-  }
-  app-tab-list:not(:defined) {
-    @extend .tabs__list;
-  }
-  app-tab:not(:defined) {
-    @extend .tabs__tab;
-
-    &:nth-of-type(1) {
-      @extend .tabs__tab_active;
-    }
-  }
-  app-tab-panel:not(:defined) {
-    @extend .tabs__panel;
-
-    &:nth-of-type(1) {
-      @extend .tabs__panel_active;
     }
   }
 </style>

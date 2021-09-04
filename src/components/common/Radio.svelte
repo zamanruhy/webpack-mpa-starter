@@ -93,24 +93,4 @@
       color: #6c757d;
     }
   }
-
-  app-radio:defined {
-    display: contents;
-  }
-
-  app-radio:not(:defined) {
-    @extend .radio;
-
-    &:before {
-      @extend .radio__box;
-      content: '';
-    }
-    &:not([label]):before {
-      top: 0;
-    }
-    &[label]:after {
-      @extend .radio__label;
-      content: attr(label);
-    }
-  }
 </style>

@@ -112,24 +112,4 @@
       color: #6c757d;
     }
   }
-
-  app-checkbox:defined {
-    display: contents;
-  }
-
-  app-checkbox:not(:defined) {
-    @extend .checkbox;
-
-    &:before {
-      @extend .checkbox__box;
-      content: '';
-    }
-    &:not([label]):before {
-      top: 0;
-    }
-    &[label]:after {
-      @extend .checkbox__label;
-      content: attr(label);
-    }
-  }
 </style>

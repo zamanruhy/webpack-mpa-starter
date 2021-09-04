@@ -13,9 +13,10 @@
   import Drawer from './Drawer.svelte'
   import Range from './Range.svelte'
   import Field from './Field.svelte'
-  import VerticalRhythm from './VerticalRhythm.svelte'
+  import Spinner from './Spinner.svelte'
+  // import VerticalRhythm from './VerticalRhythm.svelte'
   import { bp } from '@/helpers/bp'
-  import { collapse, modal, portal, intersect } from '@/actions'
+  import { collapse, modal, portal, intersect, actions } from '@/actions'
   // import '@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg'
   import houseIcon from '@/assets/svg/house.svg'
   import logoIcon from '@/assets/svg/logo.svg'
@@ -80,10 +81,10 @@
   $: step = switched ? 2 : 7
   $: swiperOptions = {
     navigation: {
-      prevEl: prev && prev.el,
-      nextEl: next && next.el
+      prevEl: prev?.el,
+      nextEl: next?.el
     },
-    pagination: {},
+    pagination: true,
     slidesPerView: 2,
     spaceBetween: 20,
     keyboard: true
@@ -92,12 +93,63 @@
   function onEvent(e) {
     console.log(e)
   }
-  window.togglePlacement = function () {
+  window.togglePlacement = () => {
     placement = placement === 'left' ? 'right' : 'left'
+  }
+
+  let arrobj = [
+    {
+      id: 'first-trigger',
+      name: 'First trigger',
+      text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis soluta ab fugit eius itaque expedita cumque nostrum eaque earum fugiat.'
+    },
+    {
+      id: 'second-trigger',
+      name: 'Second trigger',
+      text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis soluta ab fugit eius itaque expedita cumque nostrum eaque earum fugiat.'
+    },
+    {
+      id: 'third-trigger',
+      name: 'Third trigger',
+      text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis soluta ab fugit eius itaque expedita cumque nostrum eaque earum fugiat.'
+    }
+  ]
+
+  let lazyComp
+  function loadComp() {
+    console.log('loadComp')
+    lazyComp = import(
+      /* webpackChunkName: "rhythm" */ './VerticalRhythm.svelte'
+    )
   }
 </script>
 
-<!-- <VerticalRhythm /> -->
+{#if lazyComp}
+  {#await lazyComp}
+    <Spinner size={36} width={2} />
+  {:then { default: VerticalRhythm }}
+    <VerticalRhythm />
+  {:catch e}
+    {e}
+  {/await}
+{:else}
+  <Button variant="primary" on:click={loadComp}>Load</Button>
+{/if}
+
+<!-- {#each arrobj as obj (obj.id)}
+  <Button
+    variant="primary"
+    style="display: flex"
+    use={[[collapse, { id: obj.id }]]}
+  >
+    {obj.name}
+  </Button>
+  <Collapse id={obj.id} accordion="trigger" visible>
+    {obj.text}
+  </Collapse>
+{/each} -->
+
+<hr />
 
 <Range {step} bind:values min={0} max={100} float />
 <hr />
@@ -132,12 +184,14 @@
   variant="primary"
   on:click={() => {
     window.dispatchEvent(
-      new window.CustomEvent('open:drawer', {
+      new window.CustomEvent('open-drawer', {
         detail: { id: 'content-drawer' }
       })
     )
-  }}>Open Drawer</Button
+  }}
 >
+  Open Drawer
+</Button>
 <Drawer id="content-drawer" {placement} let:close>
   Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero, laboriosam
   deleniti? Ipsum aliquid maiores placeat iure obcaecati, accusamus cum, dolores
@@ -237,13 +291,7 @@
   {slideIndex}
 </p>
 <Collapse id="test-collapse" visible>
-  <Swiper
-    bind:index={slideIndex}
-    options={swiperOptions}
-    on:slideChange={(e) => console.log('slideChange', e.detail)}
-    on:beforeTransitionStart={(e) =>
-      console.log('beforeTransitionStart', e.detail)}
-  >
+  <Swiper bind:index={slideIndex} options={swiperOptions}>
     {#each [...Array(range).keys()] as num}
       <SwiperSlide>
         <div class="styleguide__slide">{num + 1}</div>
@@ -255,6 +303,14 @@
     <Button variant="primary" bind:this={next}>Next</Button>
   </p>
 </Collapse>
+
+<!-- <Swiper options={{ navigation: true }}>
+  {#each [...Array(range).keys()] as num}
+    <SwiperSlide>
+      <div class="styleguide__slide">{num + 1}</div>
+    </SwiperSlide>
+  {/each}
+</Swiper> -->
 
 <br />
 
@@ -331,19 +387,23 @@
         </label>
       </div>
     </footer>
-    <!-- <Input bind:value={modalInputValue} autofocus style="margin-bottom: 15px" />
-    <Swiper
-      bind:index={slideIndex}
-      options={{ loop: true, navigation: true, pagination: true }}
-    >
-      {#each [...Array(range).keys()] as num}
-        <SwiperSlide>
-          <div class="styleguide__slide">{num + 1} {modalInputValue}</div>
-        </SwiperSlide>
-      {/each}
-    </Swiper> -->
   </Modal>
 </p>
+
+<!-- <Swiper
+  loop
+  slidesPerView={3}
+  spaceBetween={20}
+  on:swiper={(e) => console.log('on:swiper', e.detail[0])}
+>
+  {#each [...Array(range).keys()] as num}
+    <SwiperSlide>
+      <div class="styleguide__slide">{num + 1}</div>
+    </SwiperSlide>
+  {/each}
+</Swiper>
+
+<hr /> -->
 
 <p style="margin-bottom: 150px; display: flex; align-items: center; gap: 16px;">
   <Button variant="primary" on:click={() => (intersectOnce = !intersectOnce)}
@@ -387,6 +447,8 @@
       src="https://picsum.photos/id/237/1072/708"
       class="styleguide__gallery-img"
       alt="#"
+      width="1072"
+      height="708"
       loading="lazy"
     />
   </div>
@@ -404,6 +466,8 @@
         src="https://picsum.photos/id/866/1072/708"
         alt="#"
         class="styleguide__gallery-img"
+        width="1072"
+        height="708"
         loading="lazy"
       />
     </picture>
@@ -416,9 +480,11 @@
       https://picsum.photos/id/1018/600/396 600w,
       https://picsum.photos/id/354/800/528 800w,
       https://picsum.photos/id/1032/1072/708 1072w"
-      sizes="(max-width: 767px) 33.333vw, 16.666vw"
+      sizes="(min-width: 520px) 33.333vw, (min-width: 350px) 50vw, 100vw"
       class="styleguide__gallery-img"
       alt="#"
+      width="1072"
+      height="708"
       loading="lazy"
     />
   </div>
@@ -430,6 +496,8 @@
       https://picsum.photos/id/1018/1072/708 3x"
       class="styleguide__gallery-img"
       alt="#"
+      width="1072"
+      height="708"
       loading="lazy"
     />
   </div>

@@ -66,8 +66,10 @@
 
 @mixin down($max) {
   @if type-of($max) == string {
-    $max: map-get($breakpoints, $max) - 1;
+    $max: map-get($breakpoints, $max);
   }
+
+  $max: $max - 0.02;
 
   @if $max > 0 {
     @media (max-width: $max) {

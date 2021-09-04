@@ -34,6 +34,7 @@
     {id}
     {checked}
     {value}
+    role="switch"
     {...$$restProps}
     on:change={(e) => handleChange(e.target.checked)}
     on:change
@@ -45,18 +46,21 @@
 </label>
 
 <style lang="scss" global>
-  $switch-width: 40px;
-  $switch-height: 20px;
-  $switch-space: 2px;
-  $switch-size: $switch-height - $switch-space * 2;
-  $switch-translate: $switch-width - $switch-space * 2 - $switch-size;
-  $switch-transition: 0.15s map-get($easings, fast-out-slow-in);
-
   .switch {
+    --switch-width: 40px;
+    --switch-height: 20px;
+    --switch-size: 16px;
+    --switch-space: calc((var(--switch-height) - var(--switch-size)) / 2);
+    --switch-translate: calc(
+      var(--switch-width) - var(--switch-space) * 2 - var(--switch-size)
+    );
+    --switch-transition: 0.15s #{map-get($easings, fast-out-slow-in)};
+
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
     user-select: none;
+    cursor: pointer;
 
     &__control {
       @include visually-hidden();
@@ -64,49 +68,32 @@
     &__box {
       display: inline-block;
       position: relative;
-      background-color: #ccc;
-      border-radius: $switch-height;
-      height: $switch-height;
-      width: $switch-width;
-      cursor: pointer;
-
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: inherit;
-        background-color: $color-primary;
-        opacity: 0;
-        transition: opacity $switch-transition;
-        will-change: opacity;
-      }
+      background-color: #cccccc;
+      border-radius: var(--switch-height);
+      height: var(--switch-height);
+      width: var(--switch-width);
+      transition: background-color var(--switch-transition);
 
       &:after {
         content: '';
         position: absolute;
-        top: $switch-space;
-        left: $switch-space;
-        width: $switch-size;
-        height: $switch-size;
+        top: var(--switch-space);
+        left: var(--switch-space);
+        width: var(--switch-size);
+        height: var(--switch-size);
         background-color: #ffffff;
         border-radius: 50%;
-        transition: transform $switch-transition;
-        will-change: transform;
+        transition: transform var(--switch-transition);
       }
     }
     &__control:focus-visible ~ &__box {
       @include focus-ring();
     }
     &__control:checked ~ &__box {
-      &:before {
-        opacity: 1;
-      }
+      background-color: $color-primary;
 
       &:after {
-        transform: translateX($switch-translate);
+        transform: translateX(var(--switch-translate));
       }
     }
     &__control:disabled ~ &__box {
@@ -122,22 +109,4 @@
       color: #6c757d;
     }
   }
-
-  app-switch:defined {
-    display: contents;
-  }
-
-  // app-switch:not(:defined) {
-  //   @extend .switch;
-
-  //   &:before {
-  //     content: '';
-  //     height: $switch-height;
-  //     width: $switch-width;
-  //   }
-  //   &[label]:after {
-  //     @extend .switch__label;
-  //     content: attr(label);
-  //   }
-  // }
 </style>

@@ -25,7 +25,7 @@
 
   $: classes = [
     'drawer',
-    placement && `drawer_${placement}`,
+    `drawer_${placement}`,
     variant && `drawer_${variant}`,
     visible && 'drawer_visible',
     className
@@ -61,7 +61,7 @@
     tick().then(afterClose)
   }
   function afterClose() {
-    returnFocus.focus()
+    returnFocus.focus?.()
     returnFocus = null
     unregisterPopup(drawer)
   }
@@ -109,7 +109,10 @@
   })
 </script>
 
-<svelte:window on:open:drawer={openHandler} on:close:drawer={closeHandler} />
+<svelte:window
+  on:open-drawer={id ? openHandler : null}
+  on:close-drawer={id ? closeHandler : null}
+/>
 
 {#if visible && mounted}
   <div class="drawer-container" use:portal>
@@ -210,9 +213,5 @@
     & ~ .backdrop {
       z-index: map-get($z-indexes, fixed) - 1;
     }
-  }
-
-  app-drawer:not(:defined) {
-    display: none;
   }
 </style>

@@ -3,8 +3,7 @@
   import { TABS } from './Tabs.svelte'
 
   const tab = {}
-  const { registerTab, activeTab, onTabKeydown } =
-    getContext(TABS) || __currentElement__.context.get(TABS)
+  const { registerTab, activeTab, onTabKeydown } = getContext(TABS)
   const id = registerTab(tab)
 </script>
 

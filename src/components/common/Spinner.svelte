@@ -30,7 +30,7 @@
   </svg>
 </div>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .spinner {
     position: relative;
     display: inline-block;
@@ -78,15 +78,5 @@
         }
       }
     }
-  }
-
-  app-spinner:defined {
-    display: contents;
-  }
-
-  app-spinner:not(:defined) {
-    @extend .spinner;
-    width: 1em;
-    height: 1em;
   }
 </style>

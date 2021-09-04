@@ -14,11 +14,11 @@
   $: dispatch('update', visible)
   $: if (id && mounted) {
     window.dispatchEvent(
-      new CustomEvent('collapse:update', { detail: { id, visible } })
+      new CustomEvent('collapse-update', { detail: { id, visible } })
     )
     if (accordion && visible) {
       window.dispatchEvent(
-        new CustomEvent('collapse:accordion', { detail: { id, accordion } })
+        new CustomEvent('collapse-accordion', { detail: { id, accordion } })
       )
     }
   }
@@ -29,7 +29,7 @@
     }
   }
   function accordionHandler({ detail }) {
-    if (id && id !== detail.id && accordion === detail.accordion) {
+    if (id !== detail.id && accordion === detail.accordion) {
       visible = false
     }
   }
@@ -52,8 +52,8 @@
 </script>
 
 <svelte:window
-  on:toggle:collapse={toggleHandler}
-  on:collapse:accordion={accordionHandler}
+  on:toggle-collapse={id ? toggleHandler : null}
+  on:collapse-accordion={id && accordion ? accordionHandler : null}
 />
 
 {#if visible}
@@ -69,16 +69,4 @@
   </div>
 {/if}
 
-<style lang="scss" global>
-  app-collapse:defined {
-    display: contents;
-  }
-
-  app-collapse:not(:defined) {
-    display: block;
-
-    &:not([visible]) {
-      display: none;
-    }
-  }
-</style>
+<style lang="scss" global></style>

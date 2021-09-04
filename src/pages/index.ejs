@@ -1,29 +1,6 @@
 <%
   const styleguide = require('@/components/styleguide/styleguide.ejs')
-  const example = require('@/components/example/example.ejs')
-  const icon = require('@/components/icon/icon.ejs')
-  const houseIcon = require('@/assets/svg/house.svg').default
-  const inIcon = require('@/assets/svg/in.svg').default
-  const closeIcon = require('@/assets/svg/close.svg').default
 %>
-
-<div class="container examples" style="display1: none;">
-  <%= example({
-    title: 'First',
-    slot: `<div class="truncate">Достаточнодавноза&shy;нимаюсь разработкой на Vue.js, но вот упаковывать компоненты для публикации как то не приходилось.
-    Недавно пришла идея интересного компонента, и я решил поделиться им с сообществом.</div>`
-  }) %>
-  <%= example({
-    title: 'Second',
-    showSlot: true,
-    slot: `
-      <app-button variant="primary" data-modal="main-modal">
-        ${icon({ data: inIcon, attrs: { style: 'margin-right: 4px;' } })}
-        Slot for second
-      </app-button>
-    `
-  }) %>
-</div>
 
 <%= styleguide() %>
 

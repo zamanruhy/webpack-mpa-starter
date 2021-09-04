@@ -1,8 +1,5 @@
 <%
-  className = typeof className !== 'undefined' ? className : ''
-  img = typeof img !== 'undefined' ? img : false
-  attrs = typeof attrs !== 'undefined' ? attrs : {}
-
+  const { className = '', img = false, attrs = {}, data } = props
   const attrsStr = Object.entries(attrs)
     .map((p) => `${p[0]}="${p[1]}"`)
     .join(' ')

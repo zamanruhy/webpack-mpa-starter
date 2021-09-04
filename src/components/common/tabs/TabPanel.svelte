@@ -3,8 +3,7 @@
   import { TABS } from './Tabs.svelte'
 
   const panel = {}
-  const { registerPanel, activePanel } =
-    getContext(TABS) || __currentElement__.context.get(TABS)
+  const { registerPanel, activePanel } = getContext(TABS)
   const id = registerPanel(panel)
 </script>
 

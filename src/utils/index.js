@@ -1,6 +1,5 @@
 export * from './easing'
 export { default as customElement } from './custom-element'
-export { default as createSlots } from './create-slots'
 
 export function camelize(str) {
   return str.replace(/-(\w)/g, (_, c) => {

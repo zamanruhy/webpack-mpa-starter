@@ -1,12 +1,5 @@
 <script>
-  import {
-    Swiper,
-    Navigation,
-    Pagination,
-    Scrollbar,
-    A11y,
-    Keyboard
-  } from 'swiper'
+  import Swiper, { Navigation, Pagination, A11y, Keyboard } from 'swiper'
   import {
     onMount,
     afterUpdate,
@@ -15,8 +8,10 @@
     createEventDispatcher
   } from 'svelte'
 
-  Swiper.use([Navigation, Pagination, Scrollbar, A11y, Keyboard])
+  Swiper.use([Navigation, Pagination, A11y, Keyboard])
 
+  let className = ''
+  export { className as class }
   export let index = 0
   export let options = {}
   export let swiper = null
@@ -53,6 +48,7 @@
       el: scrollbarEl,
       ...options.scrollbar
     },
+    a11y: {},
     onAny(event, ...args) {
       dispatch(event, args)
     }
@@ -104,7 +100,7 @@
   })
 </script>
 
-<div class="swiper-container" bind:this={el}>
+<div class="swiper {className}" bind:this={el}>
   <slot name="before-wrapper" />
 
   <div class="swiper-wrapper" bind:this={wrapperEl}>
@@ -129,43 +125,12 @@
 
 <style lang="scss" global>
   @use 'swiper/swiper.min.css';
-  @use 'swiper/components/navigation/navigation.min.css';
-  @use 'swiper/components/pagination/pagination.min.css';
-  @use 'swiper/components/scrollbar/scrollbar.min.css';
-  @use 'swiper/components/a11y/a11y.min.css';
+  @use 'swiper/modules/navigation/navigation.min.css';
+  @use 'swiper/modules/pagination/pagination.min.css';
+  @use 'swiper/modules/a11y/a11y.min.css';
+  @use 'swiper/modules/keyboard/keyboard.min.css';
 
   :root {
     --swiper-theme-color: #{$color-primary};
-  }
-
-  .swiper-button-prev,
-  .swiper-button-next {
-    &::after {
-      display: none;
-    }
-  }
-
-  app-swiper:defined {
-    display: contents;
-  }
-
-  app-swiper-slide:defined {
-    display: none;
-  }
-
-  app-swiper:not(:defined) {
-    display: flex;
-    overflow: hidden;
-    margin: 0 auto;
-
-    > [slot] {
-      display: none;
-    }
-  }
-
-  app-swiper-slide:not(:defined) {
-    display: block;
-    flex: none;
-    width: 100%;
   }
 </style>

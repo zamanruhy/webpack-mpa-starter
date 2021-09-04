@@ -6,6 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
+const sveltePreprocess = require('svelte-preprocess')
+const mpaPreprocess = require('./mpa-preprocess')
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -16,7 +18,6 @@ function resolve(dir) {
 }
 
 module.exports = {
-  // target: isDev ? 'web' : 'browserslist',
   entry: {
     app: resolve('src/main.js')
   },
@@ -34,7 +35,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.(js|svelte)$/,
         enforce: 'pre',
         exclude: /node_modules/,
         loader: 'eslint-loader',
@@ -61,14 +62,17 @@ module.exports = {
               },
               emitCss: !isDev,
               // hotReload: isDev,
-              preprocess: require('svelte-preprocess')({
-                sourceMap: isDev,
-                postcss: true,
-                scss: {
-                  prependData: scssData,
-                  renderSync: true
-                }
-              })
+              preprocess: [
+                mpaPreprocess(),
+                sveltePreprocess({
+                  sourceMap: isDev,
+                  postcss: true,
+                  scss: {
+                    prependData: scssData,
+                    renderSync: true
+                  }
+                })
+              ]
             }
           }
         ]
@@ -151,7 +155,13 @@ module.exports = {
           },
           {
             loader: 'sass-loader',
-            options: { sourceMap: isDev, additionalData: scssData }
+            options: {
+              sourceMap: isDev,
+              additionalData: scssData,
+              sassOptions: {
+                outputStyle: 'expanded'
+              }
+            }
           }
         ]
       },
@@ -159,7 +169,7 @@ module.exports = {
         test: /\.ejs$/,
         loader: 'ejs-loader',
         options: {
-          // variable: 'data',
+          variable: 'props',
           esModule: false
         }
       }

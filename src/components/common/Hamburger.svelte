@@ -28,19 +28,19 @@
 </button>
 
 <style lang="scss" global>
-  @use "sass:math";
-
-  $hamburger-width: 26px;
-  $hamburger-height: 22px;
-  $hamburger-bar-height: 2px;
-  $hamburger-bar-radius: 0;
-  $hamburger-bar-offset: math.div($hamburger-height - $hamburger-bar-height, 2);
-  $hamburger-transition: 0.3s map-get($easings, fast-in-fast-out);
-  $hamburger-color: #222222;
-
   .hamburger {
-    width: $hamburger-width;
-    height: $hamburger-height;
+    --hamburger-width: 26px;
+    --hamburger-height: 22px;
+    --hamburger-bar-height: 2px;
+    --hamburger-bar-radius: 0;
+    --hamburger-bar-offset: calc(
+      (var(--hamburger-height) - var(--hamburger-bar-height)) / 2
+    );
+    --hamburger-transition: 0.3s #{map-get($easings, fast-in-fast-out)};
+    --hamburger-color: #222222;
+
+    width: var(--hamburger-width);
+    height: var(--hamburger-height);
     display: inline-flex;
     flex-direction: column;
     justify-content: space-between;
@@ -72,12 +72,12 @@
     }
 
     &__bar {
-      height: $hamburger-bar-height;
-      background-color: $hamburger-color;
+      height: var(--hamburger-bar-height);
+      background-color: var(--hamburger-color);
       width: 100%;
       display: block;
-      border-radius: $hamburger-bar-radius;
-      transition: $hamburger-transition;
+      border-radius: var(--hamburger-bar-radius);
+      transition: var(--hamburger-transition);
       transition-property: transform;
       will-change: transform;
       position: relative;
@@ -91,40 +91,16 @@
 
     &_active &__bar {
       &:nth-child(1) {
-        transform: translateY($hamburger-bar-offset) rotate(45deg) scaleX(1.1);
+        transform: translateY(var(--hamburger-bar-offset)) rotate(45deg)
+          scaleX(1.1);
       }
       &:nth-child(3) {
-        transform: translateY($hamburger-bar-offset * -1) rotate(-45deg)
-          scaleX(1.1);
+        transform: translateY(calc(var(--hamburger-bar-offset) * -1))
+          rotate(-45deg) scaleX(1.1);
       }
       &:nth-child(2) {
         opacity: 0;
       }
-    }
-  }
-
-  app-hamburger:defined {
-    display: contents;
-  }
-
-  app-hamburger:not(:defined) {
-    width: $hamburger-width;
-    height: $hamburger-height;
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-
-    &:before,
-    &:after {
-      content: '';
-      display: block;
-      height: $hamburger-bar-height;
-      border-radius: $hamburger-bar-radius;
-      background-color: $hamburger-color;
-    }
-    &:before {
-      box-shadow: 0 $hamburger-bar-offset $hamburger-color;
     }
   }
 </style>

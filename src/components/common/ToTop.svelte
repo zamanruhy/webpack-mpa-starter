@@ -91,8 +91,4 @@
       vertical-align: middle;
     }
   }
-
-  app-to-top:not(:defined) {
-    display: none;
-  }
 </style>

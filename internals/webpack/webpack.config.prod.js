@@ -8,7 +8,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const BundleAnalyzerPlugin =
   require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const HtmlPrettifyPlugin = require('html-prettify-webpack-plugin')
+const HtmlBeautifierPlugin = require('html-beautifier-webpack-plugin')
 
 module.exports = merge(baseConfig, {
   mode: 'production',
@@ -43,6 +43,6 @@ module.exports = merge(baseConfig, {
       filename: 'static/css/[name].css?[contenthash:8]',
       chunkFilename: 'static/css/[name].chunk.css?[contenthash:8]'
     }),
-    new HtmlPrettifyPlugin()
+    new HtmlBeautifierPlugin()
   ].concat(process.env.BUNDLE_ANALYZE ? new BundleAnalyzerPlugin() : [])
 })

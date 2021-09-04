@@ -24,23 +24,5 @@
 }
 
 // Helpers
-.visually-hidden {
-  @include visually-hidden();
-}
-
-@each $bp in map-keys($breakpoints) {
-  @if $bp != xs {
-    .hidden-#{$bp}-up {
-      @include up($bp) {
-        display: none !important;
-      }
-    }
-    .hidden-#{$bp}-down {
-      @include down($bp) {
-        display: none !important;
-      }
-    }
-  }
-}
 
 // Components

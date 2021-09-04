@@ -253,8 +253,6 @@
     switch (e.key) {
       case 'PageUp':
         add *= 10
-      case 'Right':
-      case 'Up':
       case 'ArrowRight':
       case 'ArrowUp':
         moveHandle(i, values[i] + add)
@@ -262,8 +260,6 @@
         break
       case 'PageDown':
         add *= 10
-      case 'Left':
-      case 'Down':
       case 'ArrowLeft':
       case 'ArrowDown':
         moveHandle(i, values[i] - add)

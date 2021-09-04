@@ -1,7 +1,7 @@
 const popups = new Set()
 let offsetElements = null
 let scrollbarWidth = null
-const appEl = document.querySelector('.app')
+const appEl = typeof window !== 'undefined' && document.querySelector('.app')
 
 export function registerPopup(popup) {
   if (popups.has(popup)) {

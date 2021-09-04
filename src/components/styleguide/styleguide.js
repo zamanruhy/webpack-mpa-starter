@@ -27,4 +27,10 @@ export default function styleguide() {
   slideIndex.subscribe((index) => {
     swiperEl.index = index
   })
+
+  const tabSwiperEl = document.querySelector('.styleguide__tab-swiper')
+
+  tabSwiperEl.options = {
+    navigation: true
+  }
 }

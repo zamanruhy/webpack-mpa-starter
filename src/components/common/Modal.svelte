@@ -135,8 +135,8 @@
 </script>
 
 <svelte:window
-  on:open:modal={openHandler}
-  on:close:modal={closeHandler}
+  on:open-modal={id ? openHandler : null}
+  on:close-modal={id ? closeHandler : null}
   on:resize={visible ? checkOverflow : null}
 />
 
@@ -228,9 +228,6 @@
       max-width: 720px;
       min-width: 0;
       padding: 40px 40px 40px;
-      // transform: translateY(
-      //   calc(max(100vh - 100% - var(--modal-margin) * 2, 0px) / 2 * 0.1 * -1)
-      // );
     }
 
     &__close {
@@ -253,9 +250,5 @@
         fill: currentColor;
       }
     }
-  }
-
-  app-modal:not(:defined) {
-    display: none;
   }
 </style>

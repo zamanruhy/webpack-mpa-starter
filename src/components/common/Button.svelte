@@ -84,6 +84,10 @@
       text-decoration: none;
     }
 
+    &:focus-visible {
+      z-index: 1;
+    }
+
     &[disabled] {
       pointer-events: none;
       opacity: 0.65;
@@ -139,34 +143,6 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-    }
-  }
-
-  app-button:defined {
-    display: contents;
-  }
-
-  app-button:not(:defined) {
-    @extend .button;
-    -webkit-appearance: none !important;
-
-    &[variant='primary'] {
-      @extend .button_primary;
-    }
-
-    &[size='small'] {
-      @extend .button_small;
-    }
-
-    &[size='large'] {
-      @extend .button_large;
-    }
-  }
-
-  app-file-input:not(:defined) {
-    &:after {
-      @extend .button;
-      @extend .button_primary;
     }
   }
 </style>
