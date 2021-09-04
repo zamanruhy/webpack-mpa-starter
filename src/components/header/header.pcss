@@ -1,11 +1,9 @@
-@use '@/assets/scss/globals' as *;
-
 .header {
   &__container {
-    color: $color-primary;
+    color: var(--color-primary);
 
-    @include down(lg) {
-      color: red;
+    @mixin down lg {
+      color: blue;
     }
   }
   &__inner {

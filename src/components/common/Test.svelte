@@ -569,9 +569,9 @@ Second -->
 {inputValue}
 {file}
 
-<style lang="scss" global>
+<style lang="postcss" global>
   body {
-    // background: url(@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg);
+    /* background: url(@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg); */
   }
   img {
     /*max-width: 100%;*/

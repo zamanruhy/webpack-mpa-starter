@@ -45,7 +45,7 @@
   />
 </div>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .input {
     &__control {
       width: 100%;
@@ -53,11 +53,11 @@
       color: #495057;
       border-radius: 2px;
       padding: 6px 12px;
-      height: calc(1.5em + #{6px * 2} + 2px);
+      height: calc(1.5em + 6px * 2 + 2px);
       background-color: #ffffff;
 
       &:focus {
-        @include focus-ring(2px, -1px);
+        @mixin focus-ring 2px, -1px;
       }
 
       &::placeholder {

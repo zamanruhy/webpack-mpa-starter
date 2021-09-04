@@ -52,13 +52,13 @@
   </div>
 </div>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .file-input {
     &__control {
-      @include visually-hidden();
+      @mixin visually-hidden;
     }
     &__control:focus + &__field .input__control {
-      @include focus-ring(2px, -1px);
+      @mixin focus-ring 2px, -1px;
     }
     &__field {
       position: relative;

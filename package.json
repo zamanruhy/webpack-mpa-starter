@@ -8,13 +8,13 @@
     "build:serve": "npm run build && serve dist -l 8080 -n -c ../internals/serve.json",
     "build:analyze": "cross-env BUNDLE_ANALYZE=true npm run build",
     "lint": "eslint --ext .js,.svelte .",
-    "prettify": "prettier --write \"**/*.{js,json,md,scss,svelte}\"",
+    "prettify": "prettier --write \"**/*.{js,json,md,pcss,svelte}\"",
     "add": "node internals/add-component.js"
   },
   "keywords": [
     "webpack",
     "svelte",
-    "scss",
+    "pcss",
     "svg",
     "ejs",
     "mpa",
@@ -49,6 +49,7 @@
     "chalk": "^4.1.2",
     "copy-webpack-plugin": "^9.0.1",
     "cross-env": "^7.0.3",
+    "css-color-converter": "^2.0.0",
     "css-loader": "^6.2.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
     "ejs-loader": "^0.5.0",
@@ -72,15 +73,20 @@
     "ora": "^5.4.1",
     "portfinder": "^1.0.28",
     "postcss": "^8.3.6",
+    "postcss-calc": "^8.0.0",
+    "postcss-extend": "^1.0.5",
+    "postcss-functions": "^4.0.2",
+    "postcss-import": "^14.0.2",
+    "postcss-import-ext-glob": "^2.0.1",
     "postcss-load-config": "^3.1.0",
     "postcss-loader": "^6.1.1",
+    "postcss-mixins": "^8.1.0",
     "postcss-nested": "^5.0.6",
     "postcss-pxtorem": "^6.0.0",
+    "postcss-simple-vars": "^6.0.3",
     "prettier": "^2.3.2",
     "prettier-plugin-svelte": "^2.4.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.38.2",
-    "sass-loader": "^12.1.0",
     "serve": "^12.0.0",
     "style-loader": "^3.2.1",
     "svelte-loader": "^3.1.2",
@@ -102,7 +108,7 @@
   },
   "lint-staged": {
     "*{.js,.md,.svelte}": "eslint --ext",
-    "**/*.{js,json,md,scss,svelte}": [
+    "**/*.{js,json,md,pcss,svelte}": [
       "prettier --write",
       "git add"
     ]

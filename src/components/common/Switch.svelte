@@ -45,7 +45,7 @@
   {/if}
 </label>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .switch {
     --switch-width: 40px;
     --switch-height: 20px;
@@ -54,7 +54,7 @@
     --switch-translate: calc(
       var(--switch-width) - var(--switch-space) * 2 - var(--switch-size)
     );
-    --switch-transition: 0.15s #{map-get($easings, fast-out-slow-in)};
+    --switch-transition: 0.15s var(--fast-out-slow-in);
 
     display: inline-flex;
     align-items: center;
@@ -63,7 +63,7 @@
     cursor: pointer;
 
     &__control {
-      @include visually-hidden();
+      @mixin visually-hidden;
     }
     &__box {
       display: inline-block;
@@ -87,7 +87,7 @@
       }
     }
     &__control:focus-visible ~ &__box {
-      @include focus-ring();
+      @mixin focus-ring;
     }
     &__control:checked ~ &__box {
       background-color: $color-primary;

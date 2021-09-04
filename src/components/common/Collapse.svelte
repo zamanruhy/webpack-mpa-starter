@@ -69,4 +69,4 @@
   </div>
 {/if}
 
-<style lang="scss" global></style>
+<style lang="postcss" global></style>

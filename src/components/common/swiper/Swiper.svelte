@@ -123,14 +123,14 @@
   <slot name="after-wrapper" />
 </div>
 
-<style lang="scss" global>
-  @use 'swiper/swiper.min.css';
-  @use 'swiper/modules/navigation/navigation.min.css';
-  @use 'swiper/modules/pagination/pagination.min.css';
-  @use 'swiper/modules/a11y/a11y.min.css';
-  @use 'swiper/modules/keyboard/keyboard.min.css';
+<style lang="postcss" global>
+  @import 'swiper/swiper.min.css';
+  @import 'swiper/modules/navigation/navigation.min.css';
+  @import 'swiper/modules/pagination/pagination.min.css';
+  @import 'swiper/modules/a11y/a11y.min.css';
+  @import 'swiper/modules/keyboard/keyboard.min.css';
 
   :root {
-    --swiper-theme-color: #{$color-primary};
+    --swiper-theme-color: var(--color-primary);
   }
 </style>

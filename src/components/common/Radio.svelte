@@ -38,7 +38,7 @@
   {/if}
 </label>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .radio {
     display: inline-flex;
     align-items: flex-start;
@@ -46,7 +46,7 @@
     user-select: none;
 
     &__control {
-      @include visually-hidden();
+      @mixin visually-hidden;
     }
     &__box {
       display: inline-flex;
@@ -62,7 +62,7 @@
       top: 4px;
     }
     &__control:focus-visible ~ &__box {
-      @include focus-ring();
+      @mixin focus-ring;
     }
     &__control:checked ~ &__box {
       &:before {

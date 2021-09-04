@@ -186,10 +186,10 @@
   </div>
 {/if}
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .modal-container {
     position: relative;
-    z-index: map-get($z-indexes, modal);
+    z-index: var(--z-index-modal);
   }
 
   .modal {
@@ -201,10 +201,10 @@
     left: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    z-index: map-get($z-indexes, modal);
+    z-index: var(--z-index-modal);
     outline: 0;
 
-    @include down(sm) {
+    @mixin down sm {
       --modal-margin: 8px;
     }
 

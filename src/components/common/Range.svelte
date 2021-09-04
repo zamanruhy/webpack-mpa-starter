@@ -435,11 +435,9 @@
   on:keydown={bodyKeyDown}
 />
 
-<style lang="scss" global>
-  @use "sass:math";
-
+<style lang="postcss" global>
   $range-thumb-size: 20px;
-  $range-thumb-margin: math.div($range-thumb-size, -2);
+  $range-thumb-margin: calc($range-thumb-size / -2);
 
   .range {
     min-height: 24px;
@@ -478,7 +476,7 @@
       border-radius: 50%;
     }
   }
-  // .rangeSlider {
+  /* // .rangeSlider {
   //   --slider: var(--range-slider, #d7dada);
   //   --handle-inactive: var(--range-handle-inactive, #99a2a2);
   //   --handle: var(--range-handle, #838de7);
@@ -645,5 +643,5 @@
   // .rangeSlider.focus .rangeFloat {
   //   background-color: #4a40d4;
   //   background-color: var(--float);
-  // }
+  // } */
 </style>

@@ -151,7 +151,7 @@
   <slot />
 </div>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   $scrollbar-track-color: #ededee;
   $scrollbar-color: #ceced1;
 
@@ -175,16 +175,16 @@
           background-color: $scrollbar-color;
 
           &:hover {
-            background-color: darken($scrollbar-color, 10%);
+            background-color: darken($scrollbar-color, 0.1);
           }
           &:active {
-            background-color: darken($scrollbar-color, 20%);
+            background-color: darken($scrollbar-color, 0.2);
           }
         }
       }
     }
     &__tab {
-      color: $color-primary;
+      color: var(--color-primary);
       cursor: pointer;
       flex: 0 0 auto;
       display: flex;

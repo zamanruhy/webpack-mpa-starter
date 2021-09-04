@@ -6,7 +6,7 @@ const chalk = require('chalk')
 const blocksDir = path.join(process.cwd(), 'src/components')
 const fileSources = {
   ejs: `<div class="{blockName}"></div>`,
-  scss: `@use '@/assets/scss/globals' as *;\n\n.{blockName} {}`,
+  pcss: `.{blockName} {}`,
   js: `export default function {blockNameCamel}() {
   const el = document.querySelector('.{blockName}')
 
@@ -101,22 +101,6 @@ function getFiles(blockPath) {
   })
 }
 
-function appendStyleImport(blockName) {
-  return new Promise((resolve, reject) => {
-    fs.appendFile(
-      path.join(process.cwd(), 'src/assets/scss/main.scss'),
-      `@use "@/components/${blockName}/${blockName}.scss";\n`,
-      (err) => {
-        if (err) {
-          reject(new Error('ERR>>> Failed to append style import to main.scss'))
-        } else {
-          resolve()
-        }
-      }
-    )
-  })
-}
-
 function printErrorMessage(errText) {
   console.log(chalk.red(errText) + '\n')
 }
@@ -142,8 +126,6 @@ async function makeBlock(blockName, needJs) {
     files.forEach((file) => console.log(chalk.greenBright(file)))
 
     console.log('')
-
-    await appendStyleImport(blockName)
   } catch (e) {
     printErrorMessage(e)
   }

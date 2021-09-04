@@ -26,7 +26,7 @@
   </div>
 </div>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .field {
     &__label {
       display: inline-block;

@@ -27,17 +27,17 @@
   </svg>
 {/if}
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .icon {
     display: inline-block;
     vertical-align: middle;
     flex: 0 0 auto;
     height: 1em;
     fill: currentColor;
+  }
 
-    @at-root img#{&} {
-      width: auto;
-      max-width: none;
-    }
+  img.icon {
+    width: auto;
+    max-width: none;
   }
 </style>

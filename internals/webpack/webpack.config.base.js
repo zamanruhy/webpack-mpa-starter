@@ -11,8 +11,6 @@ const mpaPreprocess = require('./mpa-preprocess')
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const scssData = '@use "./src/assets/scss/_globals.scss" as *;'
-
 function resolve(dir) {
   return path.join(process.cwd(), dir)
 }
@@ -66,11 +64,7 @@ module.exports = {
                 mpaPreprocess(),
                 sveltePreprocess({
                   sourceMap: isDev,
-                  postcss: true,
-                  scss: {
-                    prependData: scssData,
-                    renderSync: true
-                  }
+                  postcss: true
                 })
               ]
             }
@@ -137,7 +131,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(scss|css)$/,
+        test: /\.(css|pcss|postcss)$/,
         use: [
           isDev
             ? 'style-loader'
@@ -152,16 +146,6 @@ module.exports = {
           {
             loader: 'postcss-loader',
             options: { sourceMap: isDev }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: isDev,
-              additionalData: scssData,
-              sassOptions: {
-                outputStyle: 'expanded'
-              }
-            }
           }
         ]
       },

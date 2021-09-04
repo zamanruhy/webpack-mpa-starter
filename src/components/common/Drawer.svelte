@@ -154,7 +154,7 @@
   </div>
 {/if}
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .drawer {
     background-color: #ffffff;
     position: fixed;
@@ -164,7 +164,7 @@
     max-width: 100%;
     height: 100%;
     outline: 0;
-    z-index: map-get($z-indexes, fixed);
+    z-index: var(--z-index-fixed);
     will-change: transform;
 
     &_right {
@@ -211,7 +211,7 @@
     }
 
     & ~ .backdrop {
-      z-index: map-get($z-indexes, fixed) - 1;
+      z-index: calc(var(--z-index-fixed) - 1);
     }
   }
 </style>

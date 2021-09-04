@@ -27,7 +27,7 @@
   <span class="hamburger__bar" />
 </button>
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .hamburger {
     --hamburger-width: 26px;
     --hamburger-height: 22px;
@@ -36,7 +36,7 @@
     --hamburger-bar-offset: calc(
       (var(--hamburger-height) - var(--hamburger-bar-height)) / 2
     );
-    --hamburger-transition: 0.3s #{map-get($easings, fast-in-fast-out)};
+    --hamburger-transition: 0.3s var(--fast-in-fast-out);
     --hamburger-color: #222222;
 
     width: var(--hamburger-width);

@@ -47,7 +47,7 @@
   </button>
 {/if}
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .to-top {
     width: 60px;
     height: 60px;
@@ -57,8 +57,8 @@
     border: none;
     right: 40px;
     bottom: 40px;
-    z-index: map-get($z-indexes, sticky) - 1;
-    transition: $transition;
+    z-index: calc(var(--z-index-sticky) - 1);
+    transition: var(--transition);
     transition-property: background-color;
     cursor: pointer;
     display: flex;
@@ -67,7 +67,7 @@
     color: #ffffff;
     font-size: 18px;
 
-    @include down(md) {
+    @mixin down md {
       width: 55px;
       height: 55px;
       right: 20px;
@@ -75,13 +75,13 @@
     }
 
     &:hover {
-      background-color: lighten($color-primary, 4%);
-      border-color: lighten($color-primary, 4%);
+      background-color: lighten($color-primary, 0.05);
+      border-color: lighten($color-primary, 0.05);
     }
 
     &:active {
-      background-color: darken($color-primary, 4%);
-      border-color: darken($color-primary, 4%);
+      background-color: darken($color-primary, 0.05);
+      border-color: darken($color-primary, 0.05);
       padding: 0;
     }
 

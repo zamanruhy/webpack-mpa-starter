@@ -57,7 +57,7 @@
   </button>
 {/if}
 
-<style lang="scss" global>
+<style lang="postcss" global>
   .button {
     cursor: pointer;
     display: inline-flex;
@@ -65,15 +65,15 @@
     align-items: center;
     vertical-align: middle;
     text-align: center;
-    color: $body-color;
+    color: var(--body-color);
     user-select: none;
     background-color: transparent;
     border: 1px solid transparent;
-    line-height: $line-height;
+    line-height: var(--line-height);
     font-size: 16px;
     padding: 6px 12px;
     border-radius: 4px;
-    transition: 0.25s map-get($easings, fast-out-slow-in);
+    transition: 0.25s var(--fast-out-slow-in);
     transition-property: color, background-color, border-color, box-shadow;
     max-width: 100%;
     min-width: 48px;
@@ -99,13 +99,13 @@
       border-color: $color-primary;
 
       &:hover {
-        background-color: lighten($color-primary, 4%);
-        border-color: lighten($color-primary, 4%);
+        background-color: lighten($color-primary, 0.05);
+        border-color: lighten($color-primary, 0.05);
       }
 
       &:active {
-        background-color: darken($color-primary, 4%);
-        border-color: darken($color-primary, 4%);
+        background-color: darken($color-primary, 0.05);
+        border-color: darken($color-primary, 0.05);
       }
     }
 
