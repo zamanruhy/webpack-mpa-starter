@@ -57,7 +57,7 @@
     border: none;
     right: 40px;
     bottom: 40px;
-    z-index: calc(var(--z-index-sticky) - 1);
+    z-index: var(--z-index-fixed);
     transition: var(--transition);
     transition-property: background-color;
     cursor: pointer;

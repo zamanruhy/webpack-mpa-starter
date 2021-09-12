@@ -88,7 +88,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif|svg|webp|avif)$/,
         exclude: resolve('src/assets/svg'),
         type: 'asset/resource',
         generator: {
@@ -117,21 +117,21 @@ module.exports = {
         ]
       },
       {
-        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/,
         type: 'asset/resource',
         generator: {
           filename: 'static/media/[name][ext]'
         }
       },
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        test: /\.(woff2?|eot|ttf|otf)$/,
         type: 'asset/resource',
         generator: {
           filename: 'static/fonts/[name][ext]'
         }
       },
       {
-        test: /\.(css|pcss|postcss)$/,
+        test: /\.(css|pcss)$/,
         use: [
           isDev
             ? 'style-loader'
@@ -141,7 +141,7 @@ module.exports = {
               },
           {
             loader: 'css-loader',
-            options: { sourceMap: isDev, importLoaders: 1 }
+            options: { sourceMap: isDev }
           },
           {
             loader: 'postcss-loader',

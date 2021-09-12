@@ -86,7 +86,7 @@ $gallery-grid-gutter: 20px;
     overflow: hidden;
     flex: 0 0 auto;
     width: calc(100% / 3 - $gallery-grid-gutter);
-    margin: $gallery-grid-gutter * 0.5;
+    margin: calc($gallery-grid-gutter * 0.5);
     background-color: #eeeeee;
 
     @supports (grid-area: auto) {
@@ -95,7 +95,7 @@ $gallery-grid-gutter: 20px;
     }
 
     &:before {
-      content: '';
+      content: "";
       display: block;
       height: 0;
       padding-bottom: 100%;
@@ -134,8 +134,4 @@ $gallery-grid-gutter: 20px;
     margin: 0 15px 0 0;
     float: left;
   }
-}
-
-.truncate {
-  @mixin truncate 4, 1.5;
 }

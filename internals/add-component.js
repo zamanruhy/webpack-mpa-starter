@@ -101,6 +101,27 @@ function getFiles(blockPath) {
   })
 }
 
+async function forcePostcssCompile() {
+  const file = path.join(process.cwd(), 'src/assets/styles/main.pcss')
+  const error = 'ERR>>> Failed to force postcss to build'
+
+  const content = await new Promise((resolve, reject) => {
+    fs.readFile(file, 'UTF8', (err, data) => {
+      err ? reject(new Error(error)) : resolve(data)
+    })
+  })
+  await new Promise((resolve, reject) => {
+    fs.writeFile(file, content + ' ', (err) => {
+      err ? reject(new Error(error)) : resolve()
+    })
+  })
+  await new Promise((resolve, reject) => {
+    fs.writeFile(file, content, (err) => {
+      err ? reject(new Error(error)) : resolve()
+    })
+  })
+}
+
 function printErrorMessage(errText) {
   console.log(chalk.red(errText) + '\n')
 }
@@ -126,6 +147,8 @@ async function makeBlock(blockName, needJs) {
     files.forEach((file) => console.log(chalk.greenBright(file)))
 
     console.log('')
+
+    await forcePostcssCompile()
   } catch (e) {
     printErrorMessage(e)
   }

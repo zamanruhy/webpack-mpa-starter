@@ -31,8 +31,10 @@ const functions = {
     const b = rgba[2] * darken
     return fromRgb([r, g, b]).toHexString()
   },
-  em(value, context) {
-    return `${parseFloat(value) / parseFloat(context)}em`
+  'to-rgba'(value, alpha = 1) {
+    alpha = parseFloat(alpha)
+    const [r, g, b] = fromString(value).toRgbaArray()
+    return `rgba(${[r, g, b, alpha]})`
   },
   linear(v1, v2, w1, w2, unit) {
     if (!['vh', 'vmin', 'vmax'].includes(unit)) {
@@ -56,8 +58,23 @@ const functions = {
 
 // Mixins
 const mixins = {
-  up: (_, min) => {
-    min = breakpoints[min] ?? parseFloat(min)
+  'font-face'(_, name, path, weight, style, exts = 'woff2 woff') {
+    const src = exts
+      .split(' ')
+      .map((ext) => `url("${path}.${ext}") format("${ext}")`)
+      .join(',')
+    return {
+      '@font-face': {
+        'font-family': `"${name}"`,
+        'font-weight': weight,
+        'font-style': style,
+        'font-display': 'swap',
+        src
+      }
+    }
+  },
+  up(_, min) {
+    min = breakpoints[min] || parseFloat(min)
     return min > 0
       ? {
           [`@media (min-width: ${min}px)`]: {
@@ -68,8 +85,8 @@ const mixins = {
           '@mixin-content': {}
         }
   },
-  down: (_, max) => {
-    max = breakpoints[max] ?? parseFloat(max)
+  down(_, max) {
+    max = breakpoints[max] || parseFloat(max)
     max = max - 0.02
     return max > 0
       ? {
@@ -79,7 +96,7 @@ const mixins = {
         }
       : {}
   },
-  between: (_, min, max) => {
+  between(_, min, max) {
     return {
       [`@mixin up ${min}`]: {
         [`@mixin down ${max}`]: {
@@ -88,7 +105,7 @@ const mixins = {
       }
     }
   },
-  truncate: (_, lines = 1, lineHeight) => {
+  truncate(_, lines = 1, lineHeight) {
     return parseInt(lines) === 1
       ? {
           overflow: 'hidden',
@@ -105,7 +122,7 @@ const mixins = {
           'text-overflow': 'ellipsis'
         }
   },
-  'focus-ring': (_, width = '3px', offset = '2px') => {
+  'focus-ring'(_, width = '3px', offset = '2px') {
     return {
       outline: `${width} solid #f2ab24`,
       'outline-offset': offset
@@ -121,7 +138,7 @@ const mixins = {
     clip: 'rect(0, 0, 0, 0)',
     border: 0
   },
-  steps: (_, property, v1, v2, w1, w2, step = 1) => {
+  steps(_, property, v1, v2, w1, w2, step = 1) {
     const vUnit = v1.match(/\d+(.*)$/)?.[1] ?? ''
     ;[v1, v2, w1, w2, step] = [v1, v2, w1, w2, step].map((v) => parseFloat(v))
     const count = (v2 - v1) / step

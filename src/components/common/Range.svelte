@@ -80,6 +80,13 @@
       100 - percentOf(values[single ? 0 : 1]) + '%'
   })
 
+  $: trackStyle = `
+    ${vertical ? 'top' : 'left'}: ${single ? 0 : percentOf(values[0])}%;
+    ${vertical ? 'bottom' : 'right'}: ${
+    100 - percentOf(values[single ? 0 : 1])
+  }%;
+  `
+
   $: thumbStyle = (i) =>
     objectToStyle({
       [vertical ? 'top' : 'left']: percentOf(values[i]) + '%',

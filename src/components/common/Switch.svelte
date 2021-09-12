@@ -90,7 +90,7 @@
       @mixin focus-ring;
     }
     &__control:checked ~ &__box {
-      background-color: $color-primary;
+      background-color: var(--color-primary);
 
       &:after {
         transform: translateX(var(--switch-translate));
