@@ -1,11 +1,6 @@
 <script>
   import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte'
-  import {
-    getScrollbarWidth,
-    registerPopup,
-    unregisterPopup,
-    trapFocus
-  } from '@/helpers/popup'
+  import { registerPopup, unregisterPopup, trapFocus } from '@/helpers/popup'
   import { portalAction } from '@/actions'
   import { fastOutSlowIn } from '@/utils'
   import Backdrop from './Backdrop.svelte'
@@ -101,7 +96,6 @@
 
   onMount(() => {
     mounted = true
-    getScrollbarWidth()
   })
 
   onDestroy(() => {
@@ -119,9 +113,9 @@
     <div
       {id}
       class={classes}
-      {...$$restProps}
       role="dialog"
       aria-modal="true"
+      {...$$restProps}
       tabindex="-1"
       transition:slide|local
       bind:this={el}

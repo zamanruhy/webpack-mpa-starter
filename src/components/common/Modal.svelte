@@ -1,18 +1,12 @@
 <script>
   import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte'
-  import {
-    getScrollbarWidth,
-    registerPopup,
-    unregisterPopup,
-    trapFocus
-  } from '@/helpers/popup'
+  import { registerPopup, unregisterPopup, trapFocus } from '@/helpers/popup'
   import { portalAction } from '@/actions'
   import { fastInFastOut } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
   let className = ''
   export { className as class }
-  export let style = ''
   export let id = ''
   export let visible = false
   export let noCloseOnBackdrop = false
@@ -24,9 +18,7 @@
 
   let el
   let contentEl
-  let isOverflowing = false
   let returnFocus = null
-  let observer = null
   let mounted = false
   const modal = {}
   const dispatch = createEventDispatcher()
@@ -34,10 +26,6 @@
   $: classes = ['modal', variant && `modal_${variant}`, className]
     .filter(Boolean)
     .join(' ')
-  $: styles = `
-    ${style ? `${style};` : ''}
-    ${isOverflowing ? `padding-left: ${getScrollbarWidth()}px;` : ''}
-  `
   $: dispatch('update', visible)
   $: visible && mounted && beforeOpen()
 
@@ -53,8 +41,6 @@
   }
   function onOpen() {
     dispatch('open')
-    observeSize()
-    checkOverflow()
   }
   function onOpened() {
     dispatch('opened')
@@ -62,7 +48,6 @@
   }
   function onClose() {
     dispatch('close')
-    unobserveSize()
   }
   function onClosed() {
     dispatch('closed')
@@ -99,22 +84,6 @@
       el.focus()
     }
   }
-  function checkOverflow() {
-    isOverflowing = el.scrollHeight > document.documentElement.clientHeight
-  }
-  function observeSize() {
-    if (!('ResizeObserver' in window)) {
-      return
-    }
-    observer = new ResizeObserver(checkOverflow)
-    observer.observe(contentEl)
-  }
-  function unobserveSize() {
-    if (observer) {
-      observer.disconnect()
-      observer = null
-    }
-  }
   function openHandler({ detail }) {
     if (id === detail.id) {
       open()
@@ -128,11 +97,9 @@
 
   onMount(() => {
     mounted = true
-    getScrollbarWidth()
   })
 
   onDestroy(() => {
-    unobserveSize()
     unregisterPopup(modal)
   })
 </script>
@@ -140,7 +107,6 @@
 <svelte:window
   on:open-modal={id && openHandler}
   on:close-modal={id && closeHandler}
-  on:resize={visible && checkOverflow}
 />
 
 {#if visible && mounted}
@@ -148,10 +114,9 @@
     <div
       {id}
       class={classes}
-      style={styles}
-      {...$$restProps}
       role="dialog"
       aria-modal="true"
+      {...$$restProps}
       tabindex="-1"
       bind:this={el}
       on:click={onClickOut}
@@ -207,6 +172,7 @@
     left: 0;
     overflow-x: hidden;
     overflow-y: auto;
+    overflow-y: overlay;
     z-index: var(--z-index-modal);
     outline: 0;
 
