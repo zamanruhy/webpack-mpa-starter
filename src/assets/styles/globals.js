@@ -10,7 +10,7 @@ const breakpoints = {
 
 // Variables
 const variables = {
-  'color-primary': '#a17d78'
+  'color-primary': '#1976d2' // #a17d78
 }
 
 // Functions

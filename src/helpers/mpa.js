@@ -43,7 +43,7 @@ export function customElements() {
 }
 
 // eslint-disable-next-line import/first
-import { collapse, modal } from '@/actions'
+import { collapseAction, modalAction } from '@/actions'
 
 export function dataModal() {
   Array.from(document.querySelectorAll('[data-modal]')).forEach((el) => {
@@ -51,9 +51,9 @@ export function dataModal() {
 
     if (el.tagName.startsWith('APP-')) {
       el.use = el.use || []
-      el.use.push([modal, id])
+      el.use.push([modalAction, id])
     } else {
-      modal(el, id)
+      modalAction(el, id)
     }
   })
 }
@@ -66,9 +66,9 @@ export function dataCollapse() {
     }
     if (el.tagName.startsWith('APP-')) {
       el.use = el.use || []
-      el.use.push([collapse, options])
+      el.use.push([collapseAction, options])
     } else {
-      collapse(el, options)
+      collapseAction(el, options)
     }
   })
 }

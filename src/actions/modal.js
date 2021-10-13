@@ -1,4 +1,4 @@
-export default function modal(node, id) {
+export default function modalAction(node, id) {
   if (node.tagName !== 'BUTTON') {
     if (!node.hasAttribute('role')) {
       node.setAttribute('role', 'button')

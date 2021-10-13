@@ -29,8 +29,7 @@
 
 <style lang="postcss" global>
   .icon {
-    display: inline-block;
-    vertical-align: middle;
+    display: block;
     flex: 0 0 auto;
     height: 1em;
     fill: currentColor;

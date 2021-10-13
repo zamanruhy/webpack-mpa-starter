@@ -1,43 +1,37 @@
-export default function actions(node, actions) {
+export default function actionsAction(node, actions) {
   const objects = []
 
   if (actions) {
-    for (let i = 0; i < actions.length; i++) {
-      const isArray = Array.isArray(actions[i])
-      const action = isArray ? actions[i][0] : actions[i]
-      if (isArray && actions[i].length > 1) {
-        objects.push(action(node, actions[i][1]))
+    actions.forEach((item) => {
+      const isArray = Array.isArray(item)
+      const action = isArray ? item[0] : item
+      if (isArray && item.length > 1) {
+        objects.push(action(node, item[1]))
       } else {
         objects.push(action(node))
       }
-    }
+    })
   }
 
   return {
     update(actions) {
-      if (((actions && actions.length) || 0) !== objects.length) {
+      if (actions?.length !== objects.length) {
         throw new Error('You must not change the length of an actions array.')
       }
 
       if (actions) {
-        for (let i = 0; i < actions.length; i++) {
-          if (objects[i] && 'update' in objects[i]) {
-            const isArray = Array.isArray(actions[i])
-            if (isArray && actions[i].length > 1) {
-              objects[i].update(actions[i][1])
-            } else {
-              objects[i].update()
-            }
+        actions.forEach((item, i) => {
+          const isArray = Array.isArray(item)
+          if (isArray && item.length > 1) {
+            objects[i]?.update?.(item[1])
+          } else {
+            objects[i]?.update?.()
           }
-        }
+        })
       }
     },
     destroy() {
-      for (let i = 0; i < objects.length; i++) {
-        if (objects[i] && 'destroy' in objects[i]) {
-          objects[i].destroy()
-        }
-      }
+      objects.forEach((obj) => obj?.destroy?.())
     }
   }
 }

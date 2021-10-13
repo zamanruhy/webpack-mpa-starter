@@ -121,10 +121,10 @@
     if (key === ' ') {
       e.preventDefault()
       index = i
-    } else if (key === 'ArrowUp' || key === 'ArrowLeft') {
+    } else if (['ArrowDown', 'ArrowLeft'].includes(key)) {
       e.preventDefault()
       index = Math.max(index - 1, 0)
-    } else if (key === 'ArrowDown' || key === 'ArrowRight') {
+    } else if (['ArrowUp', 'ArrowRight'].includes(key)) {
       e.preventDefault()
       index = Math.min(index + 1, tabs.length - 1)
     } else if (key === 'Home') {

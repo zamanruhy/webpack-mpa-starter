@@ -1,97 +1,129 @@
-<script>
-  // import { spring } from 'svelte/motion'
-  // import RangePips from './RangePips.svelte'
-  import { objectToStyle } from '@/utils'
+<svelte:options immutable />
 
-  // range slider props
+<script>
+  import { createEventDispatcher } from 'svelte'
+  import { focusVisibleAction } from '@/actions'
+
+  let className = ''
+  export { className as class }
   export let min = 0
   export let max = 100
   export let step = 1
-  export let values = (max + min) / 2
+  export let value = (max + min) / 2 // number | Array<number>
   export let vertical = false
-  export let float = false
-  export let hover = true
+  export let disabled = false
+  export let reversed = false
+  export let name = null
+  export let marks = false // bool | array
+  export let track = 'normal' // 'normal' | false | 'inverted'
+  export let tooltipDisplay = 'auto' // 'always' |'auto' | 'never'
+  export let tooltipFormat = (v) => v
+  export let scale = (x) => x
+  export let getAriaLabel = null
+  export let getAriaValueText = null
 
-  // range pips / values props
-  // export let pips = false
-  // export let pipstep = undefined
-  // export let all = undefined
-  // export let first = undefined
-  // export let last = undefined
-  // export let rest = undefined
+  let el
+  let thumbEls = []
+  let pressed = false
+  let dragging = false
+  let focusVisibleIndex = -1
+  let activeIndex = -1
+  let hoveredIndex = -1
+  let moveCount = 0
+  const dispatch = createEventDispatcher()
 
-  // formatting props
-  // export let id = undefined
-  export let formatter = (v) => v
-  export let handleFormatter = formatter
+  $: values = [].concat(value).sort((a, b) => a - b)
 
-  // stylistic props
-  // export let precision = 2
-
-  // dom references
-  let sliderEl
-
-  // state management
-  let focus = false
-  let handleActivated = false
-  let handlePressed = false
-  let keyboardActive = false
-  let activeHandle = values.length - 1
-
-  // watch the values array, and trim / clamp the values to the steps
-  // and boundaries set up in the slider on change
-  $: values = [].concat(values).slice(0, 2).map(alignToStep)
+  $: values = values.map(constrainValue)
 
   $: single = values.length === 1
 
-  $: percentOf = (val) => {
-    const perc = ((val - min) / (max - min)) * 100
-    return perc > 100 ? 100 : perc < 0 ? 0 : round(perc, 4)
-  }
+  $: emitValue(values)
 
-  $: clamp = (val) => {
-    return val < min ? min : val > max ? max : val
-  }
+  $: percentOf = (val) => round(((val - min) / (max - min)) * 100, 4)
 
-  $: precision = Math.max(...[min, step].map(getPrecision))
+  $: precision =
+    step !== null ? Math.max(...[min, max, step].map(getPrecision)) : 0
 
-  $: alignToStep = (val) => {
-    if (val <= min) {
-      return min
-    } else if (val >= max) {
-      return max
+  $: constrainValue = (val) => {
+    if (val >= max) return max
+    if (val <= min) return min
+    if (step !== null) {
+      let constrained = Math.round((val - min) / step) * step + min
+      constrained = Math.min(Math.max(constrained, min), max)
+      return round(constrained, precision)
+    } else {
+      return marks.reduce((a, b) => {
+        return Math.abs(b.value - val) < Math.abs(a.value - val) ? b : a
+      }).value
     }
-
-    const remainder = (val - min) % step
-    let aligned = val - remainder
-
-    if (Math.abs(remainder) * 2 >= step) {
-      aligned += remainder > 0 ? step : -step
-    }
-
-    aligned = clamp(aligned)
-
-    return round(aligned, precision)
   }
 
-  $: trackStyle = objectToStyle({
-    [vertical ? 'top' : 'left']: single ? 0 : percentOf(values[0]) + '%',
-    [vertical ? 'bottom' : 'right']:
-      100 - percentOf(values[single ? 0 : 1]) + '%'
-  })
+  $: side =
+    (vertical && reversed && 'top') ||
+    (vertical && 'bottom') ||
+    (reversed && 'right') ||
+    'left'
 
   $: trackStyle = `
-    ${vertical ? 'top' : 'left'}: ${single ? 0 : percentOf(values[0])}%;
-    ${vertical ? 'bottom' : 'right'}: ${
-    100 - percentOf(values[single ? 0 : 1])
+      ${side}: ${percentOf(single ? min : values[0])}%;
+      ${vertical ? 'height' : 'width'}: ${
+    percentOf(values[values.length - 1]) - percentOf(single ? min : values[0])
   }%;
   `
+    .replace(/\s+/g, ' ')
+    .trim()
 
-  $: thumbStyle = (i) =>
-    objectToStyle({
-      [vertical ? 'top' : 'left']: percentOf(values[i]) + '%',
-      zIndex: activeHandle === i ? 2 : 1
-    })
+  $: thumbStyle = (i) => `${side}: ${percentOf(values[i])}%;`
+
+  $: markStyle = (val) => `${side}: ${percentOf(val)}%;`
+
+  $: classes = [
+    'range',
+    vertical && 'range_vertical',
+    reversed && 'range_reversed',
+    disabled && 'range_disabled',
+    dragging && 'range_dragging',
+    track === 'inverted' && 'range_track-inverted',
+    labelledMarks.length && 'range_marked',
+    className
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  $: ({
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-valuetext': ariaValuetext,
+    ...restProps
+  } = $$restProps)
+
+  $: computedMarks =
+    marks === true && step !== null
+      ? [...Array(Math.floor((max - min) / step) + 1)].map((_, k) => ({
+          value: round(min + step * k, precision)
+        }))
+      : marks || []
+
+  $: labelledMarks = computedMarks.filter((m) => m.label)
+
+  $: isActiveMark = (val) => {
+    if (track === false) {
+      return values.includes(val)
+    }
+    if (track === 'inverted') {
+      return single
+        ? val >= values[0]
+        : val <= values[0] || val >= values[values.length - 1]
+    }
+    return single
+      ? val <= values[0]
+      : val >= values[0] && val <= values[values.length - 1]
+  }
+
+  $: if (!pressed) {
+    activeIndex = focusVisibleIndex
+  }
 
   function round(val, p = 0) {
     const m = 10 ** p
@@ -109,546 +141,446 @@
     return p
   }
 
-  /**
-   * helper func to get the index of an element in it's DOM container
-   * @param {object} el dom object reference we want the index of
-   * @returns {number} the index of the input element
-   **/
-  function index(el) {
-    if (!el) return -1
-    var i = 0
-    while ((el = el.previousElementSibling)) {
-      i++
-    }
-    return i
-  }
-
-  /**
-   * noramlise a mouse or touch event to return the
-   * client (x/y) object for that event
-   * @param {event} e a mouse/touch event to normalise
-   * @returns {object} normalised event client object (x,y)
-   **/
-  function normalisedClient(e) {
-    if (e.type.includes('touch')) {
-      return e.touches[0]
-    } else {
-      return e
+  function emitValue(vals) {
+    const val = single ? vals[0] : [...vals]
+    if (String(value) !== String(val)) {
+      value = val
+      dispatch('update', { value: val, activeIndex })
     }
   }
 
-  /**
-   * get the position (x/y) of a mouse/touch event on the screen
-   * @param {event} e a mouse/touch event
-   * @returns {object} position on screen (x,y)
-   **/
-  function eventPosition(e) {
-    // console.log(e.type, e.currentTarget, normalisedClient(e).clientX)
-    return vertical ? normalisedClient(e).clientY : normalisedClient(e).clientX
-  }
-
-  /**
-   * check if an element is a handle on the slider
-   * @param {object} el dom object reference we want to check
-   * @returns {boolean}
-   **/
-  function targetIsHandle(el) {
-    const handles = sliderEl.querySelectorAll('.handle')
-    const isHandle = Array.prototype.includes.call(handles, el)
-    const isChild = Array.prototype.some.call(handles, (e) => e.contains(el))
-    return isHandle || isChild
-  }
-
-  /**
-   * helper to return the slider dimensions for finding
-   * the closest handle to user interaction
-   * @return {object} the range slider DOM client rect
-   **/
-  // function getSliderDimensions() {
-  //   return sliderEl.getBoundingClientRect()
-  // }
-
-  /**
-   * helper to return closest handle to user interaction
-   * @param {number} clientPos the pixel (clientX/Y) to check against
-   * @return {number} the index of the closest handle to clientPos
-   **/
-  function getClosestHandle(clientPos) {
-    const rect = sliderEl.getBoundingClientRect()
-    const pos = clientPos - (vertical ? rect.top : rect.left)
-    const ratio = pos / (vertical ? rect.height : rect.width)
-    const val = (max - min) * ratio + min
-
-    if (single) {
-      return 0
-    } else if (values[0] === values[1]) {
-      return val > values[1] ? 1 : 0
-    } else {
-      return Math.abs(val - values[0]) < Math.abs(val - values[1]) ? 0 : 1
-    }
-  }
-
-  /**
-   * take the interaction position on the slider, convert
-   * it to a value on the range, and then send that value
-   * through to the moveHandle() method to set the active
-   * handle's position
-   * @param {number} clientPos the clientX/Y of the interaction
-   **/
-  function handleInteract(clientPos) {
-    // first make sure we have the latest dimensions
-    // of the slider, as it may have changed size
-    const rect = sliderEl.getBoundingClientRect()
-    // calculate the interaction position, ratio and value
-    const pos = clientPos - (vertical ? rect.top : rect.left)
-    const ratio = pos / (vertical ? rect.height : rect.width)
-    const val = (max - min) * ratio + min
-    // move handle to the value
-    moveHandle(activeHandle, val)
-  }
-
-  /**
-   * move a handle to a specific value, respecting the clamp/align rules
-   * @param {number} index the index of the handle we want to move
-   * @param {number} value the value to move the handle to
-   * @return {number} the value that was moved to (after alignment/clamping)
-   **/
-  function moveHandle(index, value) {
-    if (index === 0 && value > values[1]) {
-      values[1] = value
-      // index = activeHandle = 1
-    } else if (index === 1 && value < values[0]) {
-      values[0] = value
-      // index = activeHandle = 0
-    }
-
-    // set the value for the handle, and align/clamp it
-    values[index] = value
-  }
-
-  /**
-   * when the user has unfocussed (blurred) from the
-   * slider, deactivated all handles
-   * @param {event} e the event from browser
-   **/
-  function sliderBlurHandle(e) {
-    if (keyboardActive) {
-      focus = false
-      handleActivated = false
-      handlePressed = false
-    }
-  }
-
-  /**
-   * when the user focusses the handle of a slider
-   * set it to be active
-   * @param {event} e the event from browser
-   **/
-  function sliderFocusHandle(e) {
-    // activeHandle = index(e.target)
-    focus = true
-  }
-
-  /**
-   * handle the keyboard accessible features by checking the
-   * input type, and modfier key then moving handle by appropriate amount
-   * @param {event} e the event from browser
-   **/
-  function onKeydown(e, i) {
-    let add = e.ctrlKey || e.metaKey || e.shiftKey ? step * 10 : step
-
-    switch (e.key) {
-      case 'PageUp':
-        add *= 10
-      case 'ArrowRight':
-      case 'ArrowUp':
-        moveHandle(i, values[i] + add)
-        e.preventDefault()
-        break
-      case 'PageDown':
-        add *= 10
-      case 'ArrowLeft':
-      case 'ArrowDown':
-        moveHandle(i, values[i] - add)
-        e.preventDefault()
-        break
-      case 'Home':
-        moveHandle(i, min)
-        e.preventDefault()
-        break
-      case 'End':
-        moveHandle(i, max)
-        e.preventDefault()
-        break
-    }
-  }
-
-  /**
-   * function to run when the user touches
-   * down on the slider element anywhere
-   * @param {event} e the event from browser
-   **/
-  function sliderInteractStart(e) {
-    const p = eventPosition(e)
-    // set the closest handle as active
-    focus = true
-    handleActivated = true
-    handlePressed = true
-    activeHandle = getClosestHandle(p)
-    // for touch devices we want the handle to instantly
-    // move to the position touched for more responsive feeling
-    // if (e.type === 'touchstart') {
-    handleInteract(p)
-    // }
-  }
-
-  /**
-   * function to run when the user stops touching
-   * down on the slider element anywhere
-   * @param {event} e the event from browser
-   **/
-  function sliderInteractEnd(e) {
-    handlePressed = false
-  }
-
-  /**
-   * unfocus the slider if the user clicked off of
-   * it, somewhere else on the screen
-   * @param {event} e the event from browser
-   **/
-  function bodyInteractStart(e) {
-    keyboardActive = false
-    if (focus && e.target !== sliderEl && !sliderEl.contains(e.target)) {
-      focus = false
-    }
-  }
-
-  /**
-   * send the clientX through to handle the interaction
-   * whenever the user moves acros screen while active
-   * @param {event} e the event from browser
-   **/
-  function bodyInteract(e) {
-    if (handleActivated) {
-      handleInteract(eventPosition(e))
-    }
-  }
-
-  /**
-   * if user triggers mouseup on the body while
-   * a handle is active (without moving) then we
-   * trigger an interact event there
-   * @param {event} e the event from browser
-   **/
-  function bodyMouseUp(e) {
-    const el = e.target
-    // this only works if a handle is active, which can
-    // only happen if there was sliderInteractStart triggered
-    // on the slider, already
-    if (handleActivated && (el === sliderEl || sliderEl.contains(el))) {
-      focus = true
-      if (!targetIsHandle(el)) {
-        handleInteract(eventPosition(e))
+  function setValues(i, val) {
+    values = values.map((v, k) => {
+      if ((v < val && k > i) || (v > val && k < i) || i === k) {
+        return val
       }
-    }
-    handleActivated = false
-    handlePressed = false
+      return v
+    })
   }
 
-  /**
-   * if user triggers touchend on the body then we
-   * defocus the slider completely
-   * @param {event} e the event from browser
-   **/
-  function bodyTouchEnd(e) {
-    handleActivated = false
-    handlePressed = false
+  function toSiblingStep(i, dir) {
+    if (step !== null) {
+      setValues(i, values[i] + step * dir)
+    } else {
+      const vals = marks.map((m) => m.value)
+      let ind = vals.indexOf(values[i])
+      ind = Math.min(Math.max(ind + dir, 0), vals.length - 1)
+      setValues(i, vals[ind])
+    }
   }
 
-  function bodyKeyDown(e) {
-    if (e.target === sliderEl || sliderEl.contains(e.target)) {
-      keyboardActive = true
+  function onThumbKeydown(e, i) {
+    const key = e.key
+    const less = [
+      reversed && vertical ? 'ArrowUp' : 'ArrowDown',
+      reversed && !vertical ? 'ArrowRight' : 'ArrowLeft'
+    ]
+    const more = [
+      less[0] === 'ArrowUp' ? 'ArrowDown' : 'ArrowUp',
+      less[1] === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight'
+    ]
+    if (less.includes(key)) {
+      toSiblingStep(i, -1)
+      e.preventDefault()
+    } else if (more.includes(key)) {
+      toSiblingStep(i, 1)
+      e.preventDefault()
+    } else if (key === 'Home') {
+      setValues(i, min)
+      e.preventDefault()
+    } else if (key === 'End') {
+      setValues(i, max)
+      e.preventDefault()
     }
+  }
+
+  function posToVal({ clientX, clientY }) {
+    const { width, height, bottom, left } = el.getBoundingClientRect()
+    const pos = vertical ? bottom - clientY : clientX - left
+    let ratio = pos / (vertical ? height : width)
+    ratio = reversed ? 1 - ratio : ratio
+    return (max - min) * ratio + min
+  }
+
+  function getClosestIndex(e) {
+    if (single) return 0
+
+    const val = posToVal(e)
+
+    const { index } = values.reduce((acc, v, i) => {
+      const d = Math.abs(val - v)
+      if (i === 0 || d < acc.d || (d === acc.d && val > v)) {
+        return { d, index: i }
+      }
+      return acc
+    }, null)
+
+    return index
+  }
+
+  function handleInteract(e) {
+    setValues(activeIndex, posToVal(e))
+  }
+
+  function onPointerdown(e) {
+    moveCount = 0
+
+    if (e.pointerType === 'mouse' && e.button !== 0) {
+      return
+    }
+
+    pressed = true
+    activeIndex = getClosestIndex(e)
+    el.setPointerCapture(e.pointerId)
+    handleInteract(e)
+    thumbEls[activeIndex].focus()
+  }
+
+  function onPointermove(e) {
+    moveCount += 1
+
+    if (!dragging && moveCount > 2) {
+      dragging = true
+    }
+
+    handleInteract(e)
+  }
+
+  function onPointerup() {
+    pressed = false
+    dragging = false
+    activeIndex = -1
   }
 </script>
 
-<div>{activeHandle}</div>
 <div
-  class="range"
-  class:range_vertical={vertical}
-  bind:this={sliderEl}
-  on:touchstart|preventDefault={sliderInteractStart}
-  on:mousedown|preventDefault={sliderInteractStart}
-  on:touchend={sliderInteractEnd}
-  on:mouseup={sliderInteractEnd}
+  class={classes}
+  {...restProps}
+  bind:this={el}
+  on:pointerdown|preventDefault={onPointerdown}
+  on:pointermove|preventDefault={pressed && onPointermove}
+  on:pointerup|preventDefault={pressed && onPointerup}
 >
-  <div class="range__container">
+  <div class="range__base">
     <div class="range__rail" />
-    <div class="range__track" style={trackStyle} />
-    <!-- marks -->
-    {#each values as value, index}
+    {#if track !== false}
+      <div class="range__track" style={trackStyle} />
+    {/if}
+    {#each values as value, i (i)}
+      <input type="hidden" {name} {value} {disabled} />
+    {/each}
+    {#if computedMarks.length}
+      <div class="range__marks">
+        {#each computedMarks as mark (mark.value)}
+          <div
+            class="range__mark"
+            class:range__mark_active={isActiveMark(mark.value)}
+            style={markStyle(mark.value)}
+          />
+        {/each}
+      </div>
+    {/if}
+    {#if labelledMarks.length}
+      <div class="range__mark-labels">
+        {#each labelledMarks as mark (mark.value)}
+          <div
+            class="range__mark-label"
+            class:range__mark-label_active={isActiveMark(mark.value)}
+            style={markStyle(mark.value)}
+            aria-hidden="true"
+          >
+            {mark.label}
+          </div>
+        {/each}
+      </div>
+    {/if}
+    {#each values as value, i (i)}
       <div
         class="range__thumb"
+        class:range__thumb_focus-visible={focusVisibleIndex === i}
+        class:range__thumb_active={activeIndex === i}
+        class:range__thumb_tooltip-open={tooltipDisplay !== 'never' &&
+          (tooltipDisplay === 'always' ||
+            activeIndex === i ||
+            hoveredIndex === i)}
         role="slider"
-        tabindex="0"
-        class:hoverable={hover}
-        class:active={focus && activeHandle === index}
-        class:press={handlePressed && activeHandle === index}
-        on:blur={sliderBlurHandle}
-        on:focus={sliderFocusHandle}
-        on:keydown={(e) => onKeydown(e, index)}
-        style={thumbStyle(index)}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuenow={value}
-        aria-valuetext={handleFormatter(value)}
+        tabindex={disabled ? null : 0}
+        style={thumbStyle(i)}
         aria-orientation={vertical ? 'vertical' : 'horizontal'}
+        aria-valuemin={scale(min)}
+        aria-valuemax={scale(max)}
+        aria-valuenow={scale(value)}
+        aria-valuetext={getAriaValueText?.(scale(value), i) || ariaValuetext}
+        aria-label={getAriaLabel?.(i) || ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        use:focusVisibleAction={(v) => (focusVisibleIndex = v ? i : -1)}
+        bind:this={thumbEls[i]}
+        on:keydown={(e) => onThumbKeydown(e, i)}
+        on:pointerenter={() => (hoveredIndex = i)}
+        on:pointerleave={() => (hoveredIndex = -1)}
       >
-        <span class="rangeNub" />
-        {#if float}<span class="rangeFloat">{handleFormatter(value)}</span>{/if}
+        <slot name="thumb" index={i}>
+          <div class="range__thumb-inner" />
+        </slot>
+        {#if tooltipDisplay !== 'never'}
+          <div class="range__tooltip" aria-hidden="true">
+            <slot name="tooltip" value={scale(value)} index={i}>
+              <div class="range__tooltip-value">
+                {tooltipFormat(scale(value), i)}
+              </div>
+              <div class="range__tooltip-arrow" />
+            </slot>
+          </div>
+        {/if}
       </div>
     {/each}
-
-    <!-- {#if pips}
-      <div
-        {values}
-        {min}
-        {max}
-        {step}
-        {range}
-        {vertical}
-        {all}
-        {first}
-        {last}
-        {rest}
-        {pipstep}
-        {prefix}
-        {suffix}
-        {formatter}
-        {focus}
-        {percentOf}
-      />
-    {/if} -->
   </div>
 </div>
 
-<svelte:window
-  on:mousedown={bodyInteractStart}
-  on:touchstart={bodyInteractStart}
-  on:mousemove={bodyInteract}
-  on:touchmove={bodyInteract}
-  on:mouseup={bodyMouseUp}
-  on:touchend={bodyTouchEnd}
-  on:keydown={bodyKeyDown}
-/>
-
 <style lang="postcss" global>
-  $range-thumb-size: 20px;
-  $range-thumb-margin: calc($range-thumb-size / -2);
-
   .range {
-    min-height: 24px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    --range-size: 32px;
+    --range-margin: 24px;
+    --range-color: var(--color-primary, darkcyan);
+    --range-transition: 150ms var(--fast-out-slow-in, ease);
+    --range-base-size: 4px;
+    --range-rail-opacity: 0.38;
+    --range-track-size: 100%;
+    --range-thumb-size: 18px;
+    --range-thumb-active-scale: 1.25;
+    --range-tooltip-bg-color: #757575;
+    --range-mark-size: 100%;
+    --range-mark-thickness: 2px;
+    --range-mark-offset: 0px;
+    --range-mark-label-offset: 20px;
 
-    &__container {
-      height: 4px;
+    height: var(--range-size);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &_vertical {
+      width: var(--range-size);
+      height: 100%;
+    }
+
+    &_marked {
+      margin-bottom: var(--range-margin);
+    }
+    &_vertical&_marked {
+      margin-right: var(--range-margin);
+      margin-bottom: auto;
+    }
+
+    &_disabled {
+      --range-color: #bdbdbd;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    &__base {
+      height: var(--range-base-size);
       position: relative;
-      border-radius: 3px;
+      border-radius: 1px;
+      width: 100%;
+    }
+    &_vertical &__base {
+      width: var(--range-base-size);
+      height: 100%;
     }
     &__rail {
       position: absolute;
       width: 100%;
       height: 100%;
       border-radius: inherit;
-      background-color: $color-primary;
-      opacity: 0.38;
+      background-color: var(--range-color);
+      opacity: var(--range-rail-opacity);
+    }
+    &_track-inverted &__rail {
+      opacity: 1;
     }
     &__track {
       position: absolute;
-      height: 100%;
+      height: var(--range-track-size);
       border-radius: inherit;
-      background-color: $color-primary;
+      background-color: var(--range-color);
+      top: 50%;
+      transform: translateY(-50%);
+      transition: var(--range-transition);
+      transition-property: left, right, top, bottom, width, height;
+    }
+    &_vertical &__track {
+      width: var(--range-track-size);
+      height: auto;
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    &_track-inverted &__track {
+      background-color: #ffffff;
+
+      &::before {
+        content: '';
+        display: block;
+        height: 100%;
+        width: 100%;
+        border-radius: inherit;
+        background-color: var(--range-color);
+        opacity: var(--range-rail-opacity);
+      }
+    }
+    &_dragging &__track {
+      transition: none;
     }
     &__thumb {
       position: absolute;
       top: 50%;
-      left: 0;
-      width: $range-thumb-size;
-      height: $range-thumb-size;
-      margin: $range-thumb-margin 0 0 $range-thumb-margin;
-      background-color: $color-primary;
+      transform: translate(-50%, -50%);
       border-radius: 50%;
+      outline: 0;
+      display: flex;
+      z-index: 1;
+      transition: var(--range-transition);
+      transition-property: left, right, top, bottom;
+
+      &_active {
+        z-index: 2;
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 42px;
+        height: 42px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: inherit;
+      }
+    }
+    &_reversed &__thumb {
+      transform: translate(50%, -50%);
+    }
+    &_vertical &__thumb {
+      transform: translate(-50%, 50%);
+      left: 50%;
+      top: auto;
+    }
+    &_reversed&_vertical &__thumb {
+      transform: translate(-50%, -50%);
+    }
+    &_dragging &__thumb {
+      transition: none;
+    }
+    &__thumb-inner {
+      width: var(--range-thumb-size);
+      height: var(--range-thumb-size);
+      background-color: var(--range-color);
+      transition: transform var(--range-transition);
+      border-radius: inherit;
+    }
+    &__thumb_active &__thumb-inner {
+      transform: scale(var(--range-thumb-active-scale));
+    }
+    &_disabled &__thumb-inner {
+      transform: scale(0.8);
+    }
+    &__tooltip {
+      position: absolute;
+      bottom: 100%;
+      display: flex;
+      flex-direction: column;
+      left: 50%;
+      padding-bottom: 6px;
+      min-width: 40px;
+      transition: var(--range-transition);
+      transition-property: transform, opacity, visibility;
+      transform-origin: center bottom;
+      transform: translateX(-50%) translateY(5px);
+      opacity: 0;
+      visibility: hidden;
+    }
+    &__thumb_tooltip-open &__tooltip {
+      transform: translateX(-50%);
+      opacity: 1;
+      visibility: visible;
+    }
+    &__tooltip-value {
+      padding: 4px 8px;
+      border-radius: 2px;
+      background-color: var(--range-tooltip-bg-color);
+      color: #ffffff;
+      font-size: 14px;
+      white-space: nowrap;
+      min-width: 30px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+    }
+    &__tooltip-arrow {
+      width: 14px;
+      height: 7px;
+      background-color: var(--range-tooltip-bg-color);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      margin-top: -1px;
+      align-self: center;
+    }
+    &__marks {
+    }
+    &__mark {
+      width: var(--range-mark-thickness);
+      height: var(--range-mark-size);
+      top: var(--range-mark-offset);
+      position: absolute;
+      border-radius: 1px;
+      background-color: var(--range-color);
+      opacity: 0.8;
+      margin: 0 calc(var(--range-mark-thickness) / -2);
+
+      &_active {
+        opacity: 0.6;
+        background-color: #ffffff;
+      }
+    }
+    &_vertical &__mark {
+      height: var(--range-mark-thickness);
+      width: var(--range-mark-size);
+      left: var(--range-mark-offset);
+      top: auto;
+      margin: calc(var(--range-mark-thickness) / -2) 0;
+    }
+    &__mark-labels {
+    }
+    &__mark-label {
+      top: var(--range-mark-label-offset);
+      color: #757575;
+      position: absolute;
+      font-size: 14px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+
+      &_active {
+        color: #212121;
+      }
+    }
+    &_reversed &__mark-label {
+      transform: translateX(50%);
+    }
+    &_vertical &__mark-label {
+      top: auto;
+      left: var(--range-mark-label-offset);
+      transform: translateY(50%);
+    }
+    &_vertical&_reversed &__mark-label {
+      transform: translateY(-50%);
+    }
+    &_disabled &__mark-label {
+      opacity: 0.7;
     }
   }
-  /* // .rangeSlider {
-  //   --slider: var(--range-slider, #d7dada);
-  //   --handle-inactive: var(--range-handle-inactive, #99a2a2);
-  //   --handle: var(--range-handle, #838de7);
-  //   --handle-focus: var(--range-handle-focus, #4a40d4);
-  //   --handle-border: var(--range-handle-border, var(--handle));
-  //   --range-inactive: var(--range-range-inactive, var(--handle-inactive));
-  //   --range: var(--range-range, var(--handle-focus));
-  //   --float-inactive: var(--range-float-inactive, var(--handle-inactive));
-  //   --float: var(--range-float, var(--handle-focus));
-  //   --float-text: var(--range-float-text, white);
-  // }
-  // .rangeSlider {
-  //   position: relative;
-  //   border-radius: 100px;
-  //   height: 0.5em;
-  //   margin: 1em;
-  // }
-  // .rangeSlider,
-  // .rangeSlider * {
-  //   user-select: none;
-  // }
-  // .rangeSlider.pips {
-  //   margin-bottom: 1.8em;
-  // }
-  // .rangeSlider.pip-labels {
-  //   margin-bottom: 2.8em;
-  // }
-  // .rangeSlider.vertical {
-  //   display: inline-block;
-  //   border-radius: 100px;
-  //   width: 0.5em;
-  //   min-height: 200px;
-  // }
-  // .rangeSlider.vertical.pips {
-  //   margin-right: 1.8em;
-  //   margin-bottom: 1em;
-  // }
-  // .rangeSlider.vertical.pip-labels {
-  //   margin-right: 2.8em;
-  //   margin-bottom: 1em;
-  // }
-  // .rangeSlider .rangeHandle {
-  //   position: absolute;
-  //   display: block;
-  //   height: 1.4em;
-  //   width: 1.4em;
-  //   top: 0.25em;
-  //   left: 0.25em;
-  //   transform: translateY(-50%) translateX(-50%);
-  //   z-index: 2;
-  // }
-  // .rangeSlider .rangeNub,
-  // .rangeSlider .rangeHandle:before {
-  //   position: absolute;
-  //   left: 0;
-  //   top: 0;
-  //   display: block;
-  //   border-radius: 10em;
-  //   height: 100%;
-  //   width: 100%;
-  //   transition: all 0.2s ease;
-  // }
-  // .rangeSlider .rangeHandle:before {
-  //   content: '';
-  //   left: 1px;
-  //   top: 1px;
-  //   bottom: 1px;
-  //   right: 1px;
-  //   height: auto;
-  //   width: auto;
-  //   box-shadow: 0 0 0 0px var(--handle-border);
-  //   opacity: 0;
-  // }
-  // .rangeSlider .rangeHandle.hoverable:hover:before {
-  //   box-shadow: 0 0 0 8px var(--handle-border);
-  //   opacity: 0.2;
-  // }
-  // .rangeSlider .rangeHandle.hoverable.press:before,
-  // .rangeSlider .rangeHandle.hoverable.press:hover:before {
-  //   box-shadow: 0 0 0 12px var(--handle-border);
-  //   opacity: 0.4;
-  // }
-  // .rangeSlider.range:not(.min):not(.max) .rangeNub {
-  //   // border-radius: 10em 10em 10em 1.6em;
-  // }
-  // .rangeSlider.range .rangeHandle:nth-of-type(1) .rangeNub {
-  //   transform: rotate(-135deg);
-  // }
-  // .rangeSlider.range .rangeHandle:nth-of-type(2) .rangeNub {
-  //   transform: rotate(45deg);
-  // }
-  // .rangeSlider.range.vertical .rangeHandle:nth-of-type(1) .rangeNub {
-  //   transform: rotate(-45deg);
-  // }
-  // .rangeSlider.range.vertical .rangeHandle:nth-of-type(2) .rangeNub {
-  //   transform: rotate(135deg);
-  // }
-  // .rangeSlider .rangeFloat {
-  //   display: block;
-  //   position: absolute;
-  //   left: 50%;
-  //   top: -0.5em;
-  //   transform: translate(-50%, -100%);
-  //   font-size: 1em;
-  //   text-align: center;
-  //   opacity: 0;
-  //   // pointer-events: none;
-  //   white-space: nowrap;
-  //   transition: all 0.2s ease;
-  //   font-size: 0.9em;
-  //   padding: 0.2em 0.4em;
-  //   border-radius: 0.2em;
-  // }
-  // .rangeSlider .rangeHandle.active .rangeFloat,
-  // .rangeSlider .rangeHandle.hoverable:hover .rangeFloat {
-  //   opacity: 1;
-  //   top: -0.2em;
-  //   transform: translate(-50%, -100%);
-  // }
-  // .rangeSlider .rangeBar {
-  //   position: absolute;
-  //   display: block;
-  //   transition: background 0.2s ease;
-  //   border-radius: 1em;
-  //   height: 0.5em;
-  //   top: 0;
-  //   user-select: none;
-  //   z-index: 1;
-  // }
-  // .rangeSlider.vertical .rangeBar {
-  //   width: 0.5em;
-  //   height: auto;
-  // }
-  // .rangeSlider {
-  //   background-color: #d7dada;
-  //   background-color: var(--slider);
-  // }
-  // .rangeSlider .rangeBar {
-  //   background-color: #99a2a2;
-  //   background-color: var(--range-inactive);
-  // }
-  // .rangeSlider.focus .rangeBar {
-  //   background-color: #838de7;
-  //   background-color: var(--range);
-  // }
-  // .rangeSlider .rangeNub {
-  //   background-color: #99a2a2;
-  //   background-color: var(--handle-inactive);
-  // }
-  // .rangeSlider.focus .rangeNub {
-  //   background-color: #838de7;
-  //   background-color: var(--handle);
-  // }
-  // .rangeSlider .rangeHandle.active .rangeNub {
-  //   background-color: #4a40d4;
-  //   background-color: var(--handle-focus);
-  // }
-  // .rangeSlider .rangeFloat {
-  //   color: white;
-  //   color: var(--float-text);
-  //   background-color: #99a2a2;
-  //   background-color: var(--float-inactive);
-  // }
-  // .rangeSlider.focus .rangeFloat {
-  //   background-color: #4a40d4;
-  //   background-color: var(--float);
-  // } */
 </style>

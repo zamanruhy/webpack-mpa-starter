@@ -1,4 +1,4 @@
-export default function collapse(node, options = {}) {
+export default function collapseAction(node, options = {}) {
   if (typeof options !== 'object') {
     options = { id: options }
   }

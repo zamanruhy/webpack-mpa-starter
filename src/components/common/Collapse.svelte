@@ -29,7 +29,7 @@
     }
   }
   function accordionHandler({ detail }) {
-    if (id !== detail.id && accordion === detail.accordion) {
+    if (accordion === detail.accordion && id !== detail.id) {
       visible = false
     }
   }
@@ -52,8 +52,8 @@
 </script>
 
 <svelte:window
-  on:toggle-collapse={id ? toggleHandler : null}
-  on:collapse-accordion={id && accordion ? accordionHandler : null}
+  on:toggle-collapse={id && toggleHandler}
+  on:collapse-accordion={id && accordion && accordionHandler}
 />
 
 {#if visible}

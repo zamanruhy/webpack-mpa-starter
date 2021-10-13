@@ -32,42 +32,44 @@
     --hamburger-width: 26px;
     --hamburger-height: 22px;
     --hamburger-bar-height: 2px;
-    --hamburger-bar-radius: 0;
+    --hamburger-bar-radius: 0px;
     --hamburger-bar-offset: calc(
       (var(--hamburger-height) - var(--hamburger-bar-height)) / 2
     );
-    --hamburger-transition: 0.3s var(--fast-in-fast-out);
+    --hamburger-transition: 0.3s var(--fast-in-fast-out, ease);
     --hamburger-color: #222222;
 
     width: var(--hamburger-width);
     height: var(--hamburger-height);
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    vertical-align: middle;
     background-color: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
     position: relative;
     outline-offset: 4px;
+    border-radius: 1px;
+    -webkit-tap-highlight-color: transparent;
 
     &:before {
       content: '';
       display: block;
       position: absolute;
-      width: 24px;
-      height: 24px;
+      width: 30px;
+      height: 30px;
       min-width: 100%;
       min-height: 100%;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      border-radius: inherit;
 
       @media (pointer: coarse) {
-        width: 48px;
-        height: 48px;
+        width: 42px;
+        height: 42px;
       }
     }
 

@@ -1,4 +1,4 @@
-export default function intersect(node, options) {
+export default function intersectAction(node, options) {
   let observer
 
   function update(_options = {}) {

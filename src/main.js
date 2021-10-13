@@ -1,4 +1,5 @@
 import './assets/styles/main.pcss'
+import './helpers/focus-visible'
 import { customElements, dataModal, dataCollapse } from './helpers/mpa'
 import header from './components/header/header'
 import styleguide from './components/styleguide/styleguide'

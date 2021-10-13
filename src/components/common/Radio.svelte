@@ -1,96 +1,173 @@
 <script>
+  import { onMount } from 'svelte'
+  import { focusVisibleAction } from '@/actions'
+
   let className = ''
   export { className as class }
   export let style = ''
   export let value = ''
   export let checked = false
+  export let disabled = false
   export let group = undefined
   export let label = ''
   export let id = undefined
+  export let name = undefined
+  export let inputEl = undefined
+
+  let focusVisible = false
 
   $: if (group !== undefined) {
     checked = group === value
   }
 
-  function handleChange(on) {
+  $: classes = [
+    'radio',
+    checked && 'radio_checked',
+    disabled && 'radio_disabled',
+    focusVisible && 'radio_focus-visible',
+    className
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  $: uncontrolled = name && group === undefined && checked
+
+  $: if (uncontrolled && typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('radio-check', { detail: { name, value } })
+    )
+  }
+
+  function handleChange() {
     if (group !== undefined) {
       group = value
     } else {
-      checked = on
+      checked = true
+    }
+  }
+
+  function onRadioCheck({ detail }) {
+    if (name === detail.name && value !== detail.value) {
+      checked = false
     }
   }
 </script>
 
-<label class="radio {className}" class:radio_single={!label} {style}>
+<svelte:window on:radio-check={uncontrolled && onRadioCheck} />
+
+<label class={classes} {style}>
   <input
-    class="radio__control"
+    class="radio__input"
     type="radio"
     {id}
     {checked}
     {value}
+    {disabled}
+    {name}
     {...$$restProps}
-    on:change={(e) => handleChange(e.target.checked)}
+    bind:this={inputEl}
+    use:focusVisibleAction={(v) => (focusVisible = v)}
+    on:change={handleChange}
     on:change
   />
-  <span class="radio__box" />
-  {#if label}
-    <span class="radio__label">{label}</span>
+  <span class="radio__base">
+    <slot name="base" {checked} {disabled}>
+      <span class="radio__box" />
+    </slot>
+  </span>
+  {#if $$slots.default || label}
+    <span class="radio__label">
+      <slot {disabled}>{label}</slot>
+    </span>
   {/if}
 </label>
 
 <style lang="postcss" global>
   .radio {
-    display: inline-flex;
-    align-items: flex-start;
-    vertical-align: middle;
-    user-select: none;
+    --radio-size: 20px;
+    --radio-unchecked-color: #666666;
+    --radio-checked-color: var(--color-primary, darkcyan);
+    --radio-disabled-color: #bdbdbd;
+    --radio-dot-size: 8px;
+    --radio-label-line-height: var(--line-height, 1.5);
+    --radio-label-offset: calc(
+      (var(--radio-label-line-height) * 1em - var(--radio-size)) / -2
+    );
 
-    &__control {
+    display: flex;
+    align-items: flex-start;
+    width: fit-content;
+    user-select: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    &_disabled {
+      pointer-events: none;
+      cursor: default;
+    }
+
+    &__input {
       @mixin visually-hidden;
     }
-    &__box {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    &__base {
       flex: 0 0 auto;
-      width: 16px;
-      height: 16px;
-      border: 1px solid #adb5bd;
+      font-size: var(--radio-size);
+      color: var(--radio-unchecked-color);
       border-radius: 50%;
-      background-color: #ffffff;
       position: relative;
-      top: 4px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        min-width: 100%;
+        min-height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: inherit;
+      }
     }
-    &__control:focus-visible ~ &__box {
+    &_checked &__base {
+      color: var(--radio-checked-color);
+    }
+    &_disabled &__base {
+      color: var(--radio-disabled-color);
+    }
+    &_focus-visible &__base {
       @mixin focus-ring;
     }
-    &__control:checked ~ &__box {
-      &:before {
+    &__box {
+      display: block;
+      width: var(--radio-size);
+      height: var(--radio-size);
+      border: 1px solid currentColor;
+      border-radius: inherit;
+      position: relative;
+    }
+    &_checked &__box {
+      &::before {
         content: '';
-        display: block;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background-color: #666666;
+        position: absolute;
+        width: var(--radio-dot-size);
+        height: var(--radio-dot-size);
+        border-radius: inherit;
+        background-color: currentColor;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
-    }
-    &__control:disabled ~ &__box {
-      background-color: #e9ecef;
-
-      &:before {
-        background-color: rgba(0, 0, 0, 0.26);
-      }
-    }
-    &_single &__box {
-      top: 0;
     }
     &__label {
       display: inline-block;
       flex: 0 1 auto;
-      margin-left: 8px;
+      margin-inline-start: 8px;
+      line-height: var(--radio-label-line-height);
+      margin-block-start: var(--radio-label-offset);
     }
-    &__control:disabled ~ &__label {
-      color: #6c757d;
+    &_disabled &__label {
+      opacity: 0.5;
     }
   }
 </style>

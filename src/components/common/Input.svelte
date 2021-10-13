@@ -8,8 +8,7 @@
   export let value = ''
   export let type = 'text'
   export let autofocus = false
-
-  let inputEl
+  export let inputEl = undefined
 
   $: if (
     !['email', 'number', 'password', 'search', 'tel', 'text', 'url'].includes(
@@ -33,7 +32,7 @@
 
 <div class={classes} {style}>
   <input
-    class="input__control"
+    class="input__input"
     {id}
     {type}
     {value}
@@ -41,13 +40,14 @@
     bind:this={inputEl}
     on:input={onInput}
     on:input
+    on:change
     on:click
   />
 </div>
 
 <style lang="postcss" global>
   .input {
-    &__control {
+    &__input {
       width: 100%;
       border: 1px solid #ced4da;
       color: #495057;

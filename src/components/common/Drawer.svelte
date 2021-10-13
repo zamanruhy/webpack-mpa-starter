@@ -6,7 +6,7 @@
     unregisterPopup,
     trapFocus
   } from '@/helpers/popup'
-  import { portal } from '@/actions'
+  import { portalAction } from '@/actions'
   import { fastOutSlowIn } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
@@ -110,12 +110,12 @@
 </script>
 
 <svelte:window
-  on:open-drawer={id ? openHandler : null}
-  on:close-drawer={id ? closeHandler : null}
+  on:open-drawer={id && openHandler}
+  on:close-drawer={id && closeHandler}
 />
 
 {#if visible && mounted}
-  <div class="drawer-container" use:portal>
+  <div class="drawer-container" use:portalAction>
     <div
       {id}
       class={classes}

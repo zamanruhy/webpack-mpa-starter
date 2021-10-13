@@ -1,7 +1,6 @@
 'use strict'
 
 const path = require('path')
-const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
@@ -26,8 +25,7 @@ const devConfig = merge(baseConfig, {
     watchFiles: './src/{pages,components}/**/*.ejs',
     client: { logging: 'warn' },
     devMiddleware: { stats: 'errors-only' }
-  },
-  plugins: [new webpack.HotModuleReplacementPlugin()]
+  }
 })
 
 module.exports = new Promise((resolve, reject) => {

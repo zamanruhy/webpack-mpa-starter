@@ -1,6 +1,6 @@
 <script>
   import Spinner from './Spinner.svelte'
-  import { actions } from '@/actions'
+  import { actionsAction } from '@/actions'
 
   let className = ''
   export { className as class }
@@ -9,13 +9,15 @@
   export let loading = false
   export let type = 'button'
   export let href = ''
-  export let use = []
+  export let use = null
+  export let disabled = false
   export let el = undefined
 
   $: classes = [
     'button',
     variant && `button_${variant}`,
     size && `button_${size}`,
+    disabled && 'button_disabled',
     loading && 'button_loading',
     className
   ]
@@ -26,10 +28,10 @@
 {#if href}
   <a
     class={classes}
-    {href}
+    href={disabled ? undefined : href}
     {...$$restProps}
     bind:this={el}
-    use:actions={use}
+    use:actionsAction={use}
     on:click
   >
     <span class="button__content">
@@ -43,9 +45,10 @@
   <button
     class={classes}
     {type}
+    {disabled}
     {...$$restProps}
     bind:this={el}
-    use:actions={use}
+    use:actionsAction={use}
     on:click
   >
     <span class="button__content">
@@ -88,7 +91,7 @@
       z-index: 1;
     }
 
-    &[disabled] {
+    &_disabled {
       pointer-events: none;
       opacity: 0.65;
     }

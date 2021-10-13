@@ -6,7 +6,7 @@
     unregisterPopup,
     trapFocus
   } from '@/helpers/popup'
-  import { portal } from '@/actions'
+  import { portalAction } from '@/actions'
   import { fastInFastOut } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
@@ -18,6 +18,9 @@
   export let noCloseOnBackdrop = false
   export let noCloseOnEsc = false
   export let variant = ''
+  export let inTransition = scale
+  export let outTransition = scale
+  export let closeAriaLabel = 'Close modal'
 
   let el
   let contentEl
@@ -135,13 +138,13 @@
 </script>
 
 <svelte:window
-  on:open-modal={id ? openHandler : null}
-  on:close-modal={id ? closeHandler : null}
-  on:resize={visible ? checkOverflow : null}
+  on:open-modal={id && openHandler}
+  on:close-modal={id && closeHandler}
+  on:resize={visible && checkOverflow}
 />
 
 {#if visible && mounted}
-  <div class="modal-container" use:portal>
+  <div class="modal-container" use:portalAction>
     <div
       {id}
       class={classes}
@@ -157,7 +160,8 @@
     >
       <div
         class="modal__dialog"
-        transition:scale|local
+        in:inTransition|local
+        out:outTransition|local
         on:introstart={onOpen}
         on:introend={onOpened}
         on:outrostart={onClose}
@@ -167,16 +171,18 @@
           <button
             class="modal__close"
             type="button"
-            aria-label="Close"
+            aria-label={closeAriaLabel}
             on:click={close}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 371.23 371.23">
-              <path
-                d="M371.23 21.213L350.018 0 185.615 164.402 21.213 0 0
+            <slot name="close-icon">
+              <svg viewBox="0 0 371.23 371.23">
+                <path
+                  d="M371.23 21.213L350.018 0 185.615 164.402 21.213 0 0
                 21.213l164.402 164.402L0 350.018l21.213 21.212
                 164.402-164.402L350.018 371.23l21.212-21.212-164.402-164.403z"
-              />
-            </svg>
+                />
+              </svg>
+            </slot>
           </button>
           <slot {close} />
         </div>
@@ -231,8 +237,6 @@
     }
 
     &__close {
-      display: flex;
-      flex-direction: column;
       position: absolute;
       top: 16px;
       right: 16px;
@@ -245,8 +249,8 @@
       padding: 0;
 
       svg {
+        display: block;
         height: 1em;
-        vertical-align: middle;
         fill: currentColor;
       }
     }

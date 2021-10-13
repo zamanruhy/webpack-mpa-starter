@@ -158,7 +158,9 @@ export default function customElement(
     })
   })
 
-  window.customElements.define(name, SvelteElement)
+  if (!window.customElements.get(name)) {
+    window.customElements.define(name, SvelteElement)
+  }
 }
 
 // eslint-disable-next-line import/first

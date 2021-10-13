@@ -16,7 +16,12 @@
   import Spinner from './Spinner.svelte'
   // import VerticalRhythm from './VerticalRhythm.svelte'
   import { bp } from '@/helpers/bp'
-  import { collapse, modal, portal, intersect, actions } from '@/actions'
+  import {
+    collapseAction,
+    modalAction,
+    portalAction,
+    intersectAction
+  } from '@/actions'
   // import '@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg'
   import houseIcon from '@/assets/svg/house.svg'
   import logoIcon from '@/assets/svg/logo.svg'
@@ -28,8 +33,10 @@
   let inputValue = ''
   let checked = true
   let check = true
-  let group = []
-  let radio = 1
+  let switchChecked = false
+  let group = [1]
+  let nativeGroup = [1]
+  let radio = 2
   let flavours = ['Orange', 'Grape', 'Apple', 'Lime', 'Very Berry']
   let selected = []
   let allSelected = false
@@ -72,7 +79,7 @@
   let buttonDisabled = false
   let buttonText = 'More icons more'
   let switched = true
-  let values = [25, 75]
+  let value = 33
   let intersectOnce = false
   let intersected = false
   let placement = 'left'
@@ -122,6 +129,88 @@
       /* webpackChunkName: "rhythm" */ './VerticalRhythm.svelte'
     )
   }
+
+  // $: console.log('value from Test.svelte', value)
+
+  function getMarks() {
+    const min = 0
+    const max = 10000
+    const marks = []
+    let step = 200
+
+    for (let n = min; n <= max; n += step) {
+      step = (n < 1000 && 200) || (n < 5000 && 500) || 1000
+      marks.push({ value: n, label: [min, max].includes(n) ? `${n}` : null })
+      // marks.push({ value: n, label: `${n}` })
+    }
+
+    return marks
+  }
+
+  const marks = getMarks()
+
+  const marksAnother = [
+    {
+      value: 13,
+      label: '13°C'
+    },
+    {
+      value: 20
+    },
+    {
+      value: 33,
+      label: '33°C'
+    },
+    {
+      value: 47
+    },
+    {
+      value: 62,
+      label: '62°C'
+    },
+    {
+      value: 86,
+      label: '86°C'
+    },
+    {
+      value: 100,
+      label: '100°C'
+    }
+  ]
+
+  let rangeValue = [20, 50]
+  const minDistance = 10
+  function rangeUpdate({ detail: { value, activeIndex } }) {
+    if (value[1] - value[0] < minDistance) {
+      if (activeIndex === 0) {
+        const clamped = Math.min(value[0], 100 - minDistance)
+        rangeValue = [clamped, clamped + minDistance]
+      } else {
+        const clamped = Math.max(value[1], minDistance)
+        rangeValue = [clamped - minDistance, clamped]
+      }
+    } else {
+      rangeValue = value
+    }
+  }
+
+  function valueLabelFormat(value) {
+    const units = ['KB', 'MB', 'GB', 'TB']
+
+    let unitIndex = 0
+    let scaledValue = value
+
+    while (scaledValue >= 1024 && unitIndex < units.length - 1) {
+      unitIndex += 1
+      scaledValue /= 1024
+    }
+
+    return `${scaledValue} ${units[unitIndex]}`
+  }
+
+  function calculateValue(value) {
+    return 2 ** value
+  }
 </script>
 
 {#if lazyComp}
@@ -150,29 +239,154 @@
 {/each} -->
 
 <hr />
-
-<Range {step} bind:values min={0} max={100} float />
+<Range
+  value={10}
+  min={5}
+  step={1}
+  max={30}
+  marks
+  scale={calculateValue}
+  getAriaValueText={valueLabelFormat}
+  tooltipFormat={valueLabelFormat}
+  tooltipDisplay="auto"
+  aria-labelledby="non-linear-slider"
+/>
 <hr />
-<div>{JSON.stringify(values)}</div>
+
+<Range
+  reversed
+  step={null}
+  value={[marks[10].value, marks[16].value]}
+  min={marks[0].value}
+  max={marks[marks.length - 1].value}
+  tooltipDisplay="never"
+  tooltipFormat1={(v) => marks.findIndex((m) => m.value === v) + 1}
+  {marks}
+  track={'inverted'}
+  scale1={(x) => (x < 50 ? x / 2 : x * 2)}
+  disabled1
+>
+  <!-- <div
+    slot="tooltip"
+    let:value
+    style="display: contents"
+    on:pointerdown|stopPropagation
+  >
+    <Switch checked label={value} />
+  </div>
+  <Icon
+    {...icons[index]}
+    slot="thumb"
+    let:index
+    style="font-size: {1 +
+      index * 0.5}rem; background-color: #ffffff; border: 1px solid #999;"
+  /> -->
+</Range>
+<div style="height: 1px" />
+<hr />
+{JSON.stringify(rangeValue)}
+<Range
+  step={5}
+  value={rangeValue}
+  min={0}
+  max={100}
+  marks={true}
+  tooltipDisplay1={value >= 50 ? 'auto' : 'never'}
+  tooltipFormat={(v) => `${v}°C`}
+  on:update={rangeUpdate}
+/>
+<div style="height: 1px" />
+<hr />
+<Range
+  value={0.00000005}
+  getAriaLabel={(i) => `Label ${i}`}
+  getAriaValueText={(v) => `${v}°C`}
+  aria-labelledby="discrete-slider-small-steps"
+  step={0.00000001}
+  marks
+  min={-0.00000005}
+  max={0.0000001}
+  tooltipDisplay={switched ? 'auto' : 'always'}
+  name="price-range"
+  disabled={switched}
+/>
+<hr />
+<div style={switched ? `height: 300px; display: flex; gap: 48px;` : null}>
+  <Range
+    vertical={switched}
+    {step}
+    value={[33, 55, 88]}
+    min={0}
+    max={100}
+    tooltipFormat={(v) => `${v}°C`}
+    marks={marksAnother}
+  />
+  <Range
+    reversed
+    vertical={switched}
+    step={null}
+    value={77}
+    min={0}
+    max={110}
+    tooltipFormat={(v) => `${v}°C`}
+    marks={marksAnother}
+    disabled
+  />
+  <!-- <Range
+    vertical
+    value={0.00000005}
+    getAriaLabel={(i) => `Label ${i}`}
+    getAriaValueText={(value) => `${value}°C`}
+    aria-labelledby="discrete-slider-small-steps"
+    step={0.00000001}
+    marks
+    min={-0.00000005}
+    max={0.0000001}
+    thumbLabelDisplay={switched ? 'auto' : 'on'}
+    name="price-range"
+    disabled={switched}
+  /> -->
+</div>
+<hr />
+<div>{JSON.stringify(value)}</div>
 <hr />
 <Switch bind:checked={switched} label="Switch" />
 {switched}
 <hr />
 <Field label="Size">
-  <Radio bind:group={buttonSize} label="Small" value="small" />
-  <Radio bind:group={buttonSize} label="Default" value="" />
-  <Radio bind:group={buttonSize} label="Large" value="large" />
+  <div class="flex gap-16" role="radiogroup" aria-label="Size">
+    <Radio
+      bind:group={buttonSize}
+      label="Small"
+      name="button-size"
+      value="small"
+    />
+    <Radio
+      bind:group={buttonSize}
+      label="Default"
+      name="button-size"
+      value=""
+    />
+    <Radio
+      bind:group={buttonSize}
+      label="Large"
+      name="button-size"
+      value="large"
+    />
+  </div>
 </Field>
 <hr />
 <Field label="Options">
-  <Checkbox bind:checked={buttonHasIcon} label="Has icon" />
-  <Checkbox
-    bind:checked={buttonIconLeft}
-    label="Icon left"
-    disabled={!buttonHasIcon}
-  />
-  <Checkbox bind:checked={buttonLoading} label="Loading" />
-  <Checkbox bind:checked={buttonDisabled} label="Disabled" />
+  <div class="flex gap-16">
+    <Checkbox bind:checked={buttonHasIcon} label="Has icon" />
+    <Checkbox
+      bind:checked={buttonIconLeft}
+      label="Icon left"
+      disabled={!buttonHasIcon}
+    />
+    <Checkbox bind:checked={buttonLoading} label="Loading" />
+    <Checkbox bind:checked={buttonDisabled} label="Disabled" />
+  </div>
 </Field>
 <hr />
 <Field label="Button text" labelFor="form-blah">
@@ -212,6 +426,7 @@
 <hr />
 
 <Button
+  class="mb-16"
   variant="primary"
   size={buttonSize}
   loading={buttonLoading}
@@ -229,6 +444,7 @@
 
 {#each [...Array(iconsCount).keys()] as num (num)}
   <p
+    class="flex gap-16"
     style="font-size: 30px; color: rebeccapurple; --in-outer-color: red; --in-inner-color: blue; --in-dot-color: green;"
   >
     {#each icons as icon (icon.data.id)}
@@ -283,7 +499,7 @@
 <p>
   <Button
     variant="primary"
-    use={[[collapse, { id: 'test-collapse', class: 'collapsed-class' }]]}
+    use={[[collapseAction, { id: 'test-collapse', class: 'collapsed-class' }]]}
   >
     <Icon data={houseIcon} style="margin-right: 4px;" />
     Toogle
@@ -322,12 +538,15 @@
   <Button
     variant="primary"
     class="first second"
-    on:click={() => (modalVisible = !modalVisible)}
+    onclick={() => (modalVisible = !modalVisible)}
+    use={[[modalAction, 'modal-test']]}
   >
     Modal
   </Button>
-  <a href="#button" use:modal={'modal-test'}>Modal by action</a>
-  <svg use:modal={'modal-test'}><text>Modal by action on SVG</text></svg>
+  <a href="#button" use:modalAction={'modal-test'}>Modal by action</a>
+  <svg use:modalAction={'modal-test'}>
+    <text x="50" y="50">Modal by action on SVG</text>
+  </svg>
 </p>
 <p>
   <Modal
@@ -344,7 +563,7 @@
       href="#df"
       id="modal-title"
       style="margin-top: 0; cursor: pointer;"
-      use:collapse={{ id: 'modal-collapse', class: collapsedClass }}
+      use:collapseAction={{ id: 'modal-collapse', class: collapsedClass }}
     >
       Modal title
     </button>
@@ -423,7 +642,7 @@
 
 {#if $bp.lgUp}
   <div
-    use:intersect={{ once: intersectOnce, threshold: 0.5 }}
+    use:intersectAction={{ once: intersectOnce, threshold: 0.5 }}
     on:intersect={({ detail: { entry } }) => {
       intersected = entry.intersectionRatio >= 0.5
     }}
@@ -503,33 +722,227 @@
   </div>
 </div>
 
-<!--<input type="radio" bind:group={radio} value={1}>-->
-<!--<input type="radio" bind:group={radio} value={2}>-->
-<!--<input type="radio" bind:group={radio} value={3}>-->
+<input
+  type="radio"
+  bind:group={radio}
+  value={1}
+  onchange={(e) => console.log(e.target.checked)}
+/>
+<input type="radio" bind:group={radio} value={2} />
+<input type="radio" bind:group={radio} value={3} />
+{radio}
 
 <!-- <Radio label="Radio 1" bind:group={radio} value={1} />
 <Radio label="Radio 2" bind:group={radio} value={2} /> -->
+<hr />
 
-<!-- <input type="checkbox" bind:checked={check} bind:group value={1} />
+<input type="checkbox" bind:group={nativeGroup} value={1} />
 <input
   type="checkbox"
-  bind:checked={check}
-  bind:group
+  disabled={nativeGroup.includes(1)}
+  bind:group={nativeGroup}
   value={2}
-  bind:indeterminate
-/> -->
+/>
+<input type="checkbox" bind:group={nativeGroup} value={3} />
+{nativeGroup}
 <hr />
-<div>
+
+<div class="flex gap-16">
+  <Radio label="Small" name="radio-demo" value="small" />
+  <Radio label="Large" name="radio-demo" value="large" checked />
+  <Radio label="Default" name="radio-demo" value="default" />
+
+  <Radio
+    aria-label="Default"
+    name="radio-icon"
+    value="one"
+    style="--radio-size: 24px; --radio-checked-color: #f50057;"
+  >
+    <svg
+      class="icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      slot="base"
+      let:checked
+    >
+      {#if checked}
+        <path
+          d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+        />
+      {:else}
+        <path
+          d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"
+        />
+      {/if}
+    </svg>
+  </Radio>
+  <Radio
+    aria-label="Default"
+    name="radio-icon"
+    value="two"
+    style="--radio-size: 24px;"
+  >
+    <svg
+      class="icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      slot="base"
+      let:checked
+    >
+      {#if checked}
+        <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+      {:else}
+        <path
+          d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15-5-2.18L7 18V5h10v13z"
+        />
+      {/if}
+    </svg>
+  </Radio>
+</div>
+
+<hr />
+<div class="flex items-center gap-8">
+  {#each ['react', 'vue', 'svelte'] as item (item)}
+    <Radio
+      class="radio-tab"
+      value={item}
+      checked={item === 'react'}
+      name="radio-control-tab"
+    >
+      <svelte:fragment slot="base" let:checked>
+        {item}
+      </svelte:fragment>
+    </Radio>
+  {/each}
+</div>
+<hr />
+<div class="flex items-center gap-8">
+  {#each ['react', 'vue', 'svelte'] as item (item)}
+    <Checkbox value={item} checked={!item.includes('react')}>
+      <span
+        class="control-tab {checked ? 'control-tab_checked' : ''}"
+        slot="base"
+        let:checked
+      >
+        {item}
+      </span>
+    </Checkbox>
+  {/each}
+</div>
+<hr />
+<div class="flex items-center gap-16 mb-16">
+  <Checkbox
+    aria-label="Favourite"
+    checked
+    style="--checkbox-size: 24px; --checkbox-checked-color: #f50057;"
+  >
+    <svg
+      class="icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      slot="base"
+      let:checked
+    >
+      {#if checked}
+        <path
+          d="m12 21.35-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+        />
+      {:else}
+        <path
+          d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"
+        />
+      {/if}
+    </svg>
+  </Checkbox>
+  <Checkbox aria-label="Bookmark" checked style="--checkbox-size: 24px;">
+    <svg
+      class="icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      slot="base"
+      let:checked
+    >
+      {#if checked}
+        <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+      {:else}
+        <path
+          d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15-5-2.18L7 18V5h10v13z"
+        />
+      {/if}
+    </svg>
+  </Checkbox>
+  <Checkbox
+    aria-label="Like"
+    style="--checkbox-size: 24px;
+    --checkbox-unchecked-color: rgb(3, 3, 3);
+    --checkbox-checked-color: rgb(3, 3, 3)"
+  >
+    <svg
+      class="icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      slot="base"
+      let:checked
+    >
+      {#if checked}
+        <path
+          d="M3,11h3v10H3V11z M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11v10h10.43 c1.06,0,1.98-0.67,2.19-1.61l1.34-6C21.23,12.15,20.18,11,18.77,11z"
+        />
+      {:else}
+        <path
+          d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.98-0.67,2.19-1.61l1.34-6C21.23,12.15,20.18,11,18.77,11z M7,20H4v-8h3V20z M19.98,13.17l-1.34,6 C18.54,19.65,18.03,20,17.43,20H8v-8.61l5.6-6.06C13.79,5.12,14.08,5,14.38,5c0.26,0,0.5,0.11,0.63,0.3 c0.07,0.1,0.15,0.26,0.09,0.47l-1.52,4.94L13.18,12h1.35h4.23c0.41,0,0.8,0.17,1.03,0.46C19.92,12.61,20.05,12.86,19.98,13.17z"
+        />
+      {/if}
+    </svg>
+  </Checkbox>
+
+  <Checkbox class="checkbox-styled" aria-label="Checkbox styled" checked>
+    <svg viewBox="0 0 24 24" slot="checked-icon">
+      <path
+        d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"
+      />
+    </svg>
+  </Checkbox>
+  <Checkbox
+    class="checkbox-styled"
+    aria-label="Checkbox styled"
+    indeterminate
+    disabled
+  >
+    <svg viewBox="0 0 24 24" slot="checked-icon">
+      <path
+        d="M 20.292969 5.2929688 L 9 16.585938 L 4.7070312 12.292969 L 3.2929688 13.707031 L 9 19.414062 L 21.707031 6.7070312 L 20.292969 5.2929688 z"
+      />
+    </svg>
+  </Checkbox>
+</div>
+<div class="flex gap-16 mb-16">
+  <Checkbox
+    label="Lorem ipsum, dolor sit amet consectetur adipisicing elit."
+    checked
+    style="max-width: 200px; margin-bottom: 8px;"
+  />
+  <Checkbox disabled checked let:disabled>
+    Disabled <a href="#123" tabindex={disabled ? -1 : null}>Link</a>
+  </Checkbox>
+  <Checkbox label="Lorem ipsum, dolor." checked>
+    <!-- <svg viewBox="0 0 14 10.59" slot="checked-icon">
+      <path d="m5 10.42-5-5L1.41 4 5 7.59 12.59 0 14 1.42Z" />
+    </svg> -->
+  </Checkbox>
+</div>
+<div class="mb-8">
   <Checkbox
     label={allSelected ? 'Unselect All' : 'Select All'}
     checked={allSelected}
+    disabled1
     {indeterminate}
     on:change={(e) => {
       selected = e.target.checked ? [...flavours] : []
     }}
   />
 </div>
-<ul style="padding-left: 25px; margin-bottom: 5px">
+<ul class="grid gap-8 mb-8" style="padding-left: 25px;">
   {#each flavours as flavour (flavour)}
     <li>
       <Checkbox
@@ -548,8 +961,44 @@
 <!--{checked}-->
 <!--{check}-->
 <hr />
-<Switch label="First" bind:group value={1} />
-<Switch label="Second" bind:group value={2} />
+<div class="flex gap-16">
+  <!-- <button on:click={() => (switchChecked = !switchChecked)}
+    >Check {switchChecked}</button
+  > -->
+  <Switch label="First" bind:group value={1} aria-label="Switch it" />
+  <Switch
+    disabled={group.includes(1)}
+    bind:group
+    bind:checked={switchChecked}
+    value={2}
+    let:disabled
+  >
+    Disabled <a href="#123" tabindex={disabled ? -1 : null}>Link</a>
+  </Switch>
+  <Switch
+    label="Second"
+    bind:group
+    value={2}
+    style="--switch-thumb-size: 32px;
+    --switch-width: 48px;
+    --switch-height: 20px;
+    --switch-thumb-offset-x: -1px"
+  >
+    <span
+      slot="thumb"
+      let:checked
+      style="display: grid;
+      width: 100%;
+      height: 100%;
+      place-items: center;
+      font-size: {checked ? '0.8rem' : '1rem'};
+      border-radius: inherit;
+      box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
+    >
+      <Icon data={checked ? closeIcon : inIcon} />
+    </span>
+  </Switch>
+</div>
 <!-- <input type="checkbox" bind:group value={1} />
 First
 <input type="checkbox" bind:group checked value={2} />
@@ -570,10 +1019,89 @@ Second -->
 {file}
 
 <style lang="postcss" global>
+  /* :root {
+    --spacer: 16px;
+  } */
+  .grid {
+    display: grid;
+  }
+  .flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .gap-8 {
+    gap: 8px;
+  }
+  .gap-16 {
+    gap: 16px;
+  }
+  .mb-8 {
+    margin-bottom: 8px;
+  }
+  .mb-16 {
+    margin-bottom: 16px;
+  }
   body {
     /* background: url(@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg); */
   }
   img {
     /*max-width: 100%;*/
+  }
+  .checkbox-styled.checkbox {
+    --checkbox-size: 20px;
+
+    .checkbox__icon {
+      color: var(--checkbox-color);
+    }
+    &_checked .checkbox__icon {
+      font-size: 25px;
+      margin: -3px 0 0 3px;
+    }
+    &_checked .checkbox__box,
+    &_indeterminate .checkbox__box {
+      background-color: transparent;
+      border-color: var(--checkbox-unchecked-color);
+    }
+    &_disabled .checkbox__box {
+      border-color: var(--checkbox-disabled-color);
+    }
+  }
+
+  .control-tab {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
+    font-size: 16px;
+
+    &_checked {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #ffffff;
+    }
+  }
+  .radio-tab.radio {
+    .radio__base {
+      display: block;
+      padding: 6px 12px;
+      border-radius: 4px;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+        rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+      border: 1px solid #e2e8f0;
+      color: #2d3748;
+      font-size: 16px;
+    }
+    &_checked .radio__base {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #ffffff;
+    }
   }
 </style>
