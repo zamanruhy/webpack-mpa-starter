@@ -1,20 +1,20 @@
 <script>
-  import Input from './Input.svelte'
-  import Checkbox from './Checkbox.svelte'
-  import Switch from './Switch.svelte'
-  import Radio from './Radio.svelte'
-  import FileInput from './FileInput.svelte'
-  import { Swiper, SwiperSlide } from './swiper'
-  import Collapse from './Collapse.svelte'
-  import Button from './Button.svelte'
-  import { Tabs, TabList, Tab, TabPanel } from './tabs'
-  import Icon from './Icon.svelte'
-  import Modal from './Modal.svelte'
-  import Drawer from './Drawer.svelte'
-  import Range from './Range.svelte'
-  import Field from './Field.svelte'
-  import Spinner from './Spinner.svelte'
-  // import VerticalRhythm from './VerticalRhythm.svelte'
+  import Input from '@/components/common/Input.svelte'
+  import Checkbox from '@/components/common/Checkbox.svelte'
+  import Switch from '@/components/common/Switch.svelte'
+  import Radio from '@/components/common/Radio.svelte'
+  import FileInput from '@/components/common/FileInput.svelte'
+  import { Swiper, SwiperSlide } from '@/components/common/swiper'
+  import Collapse from '@/components/common/Collapse.svelte'
+  import Button from '@/components/common/Button.svelte'
+  import { Tabs, TabList, Tab, TabPanel } from '@/components/common/tabs'
+  import Icon from '@/components/common/Icon.svelte'
+  import Modal from '@/components/common/Modal.svelte'
+  import Drawer from '@/components/common/Drawer.svelte'
+  import Range from '@/components/common/Range.svelte'
+  import Field from '@/components/common/Field.svelte'
+  import Spinner from '@/components/common/Spinner.svelte'
+  import Vertical from '@/components/common/App/VerticalRhythm.svelte'
   import { bp } from '@/helpers/bp'
   import {
     collapseAction,
@@ -55,12 +55,12 @@
 
   let file
   let slideIndex = 2
-  let visible = true
+  let open = true
   let tabsRange = 10
   let tabIndex = 8
   let iconsCount = 1
   let intersecting = false
-  let modalVisible = false
+  let modalOpen = false
   let modalInputValue = ''
   let prev
   let next
@@ -82,7 +82,7 @@
   let value = 33
   let intersectOnce = false
   let intersected = false
-  let placement = 'left'
+  let placement = 'start'
   let collapsedClass = 'collapsed'
 
   $: step = switched ? 2 : 7
@@ -99,9 +99,6 @@
 
   function onEvent(e) {
     console.log(e)
-  }
-  window.togglePlacement = () => {
-    placement = placement === 'left' ? 'right' : 'left'
   }
 
   let arrobj = [
@@ -211,7 +208,19 @@
   function calculateValue(value) {
     return 2 ** value
   }
+
+  // let someEl
+  // // $: console.log('someEl:', someEl)
+  // async function someAction(node, param) {
+  //   // await Promise.resolve()
+  //   console.log('paramEl:', param())
+  // }
 </script>
+
+<!-- <p bind:this={someEl} />
+<div use:someAction={() => someEl} /> -->
+
+<!-- <Vertical {someEl} /> -->
 
 {#if lazyComp}
   {#await lazyComp}
@@ -222,7 +231,7 @@
     {e}
   {/await}
 {:else}
-  <Button variant="primary" on:click={loadComp}>Load</Button>
+  <Button variant="primary" on:click={loadComp}>Load Vertical Rhythm</Button>
 {/if}
 
 <!-- {#each arrobj as obj (obj.id)}
@@ -233,7 +242,7 @@
   >
     {obj.name}
   </Button>
-  <Collapse id={obj.id} accordion="trigger" visible>
+  <Collapse id={obj.id} accordion="trigger" open>
     {obj.text}
   </Collapse>
 {/each} -->
@@ -354,7 +363,7 @@
 {switched}
 <hr />
 <Field label="Size">
-  <div class="flex gap-16" role="radiogroup" aria-label="Size">
+  <div class="flex gap-4" role="radiogroup" aria-label="Size">
     <Radio
       bind:group={buttonSize}
       label="Small"
@@ -377,7 +386,7 @@
 </Field>
 <hr />
 <Field label="Options">
-  <div class="flex gap-16">
+  <div class="flex gap-4">
     <Checkbox bind:checked={buttonHasIcon} label="Has icon" />
     <Checkbox
       bind:checked={buttonIconLeft}
@@ -394,39 +403,36 @@
 </Field>
 <hr />
 <h6>Drawer</h6>
-<Button
-  variant="primary"
-  on:click={() => {
-    window.dispatchEvent(
-      new window.CustomEvent('open-drawer', {
-        detail: { id: 'content-drawer' }
-      })
-    )
-  }}
->
+<Button variant="primary" use={[[modalAction, 'content-drawer']]}>
   Open Drawer
 </Button>
-<Drawer id="content-drawer" {placement} let:close>
-  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero, laboriosam
-  deleniti? Ipsum aliquid maiores placeat iure obcaecati, accusamus cum, dolores
-  sunt optio, quis voluptate similique perspiciatis! Laudantium aspernatur
-  asperiores impedit necessitatibus, ex nulla tenetur. Qui ea repellendus sint
-  ex illo recusandae dolorem laboriosam, ipsa deleniti! Incidunt doloribus
-  distinctio ullam error dignissimos ad magnam ipsam sed? Dolorum temporibus
-  dicta consequatur commodi est, reiciendis sunt deserunt odio non quam sapiente
-  obcaecati eaque aliquid necessitatibus facere, ab, ratione magnam animi modi?
-  Nam deleniti eligendi, reprehenderit consectetur exercitationem dignissimos,
-  quas cumque odit amet error vel ipsum dolore. Assumenda amet ea,
-  exercitationem quasi ab quibusdam.
+<Drawer id="content-drawer" {placement} let:close getParentEl={() => false}>
+  <div>
+    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero, laboriosam
+    deleniti? Ipsum aliquid maiores placeat iure obcaecati, accusamus cum,
+    dolores sunt optio, quis voluptate similique perspiciatis! Laudantium
+    aspernatur asperiores impedit necessitatibus, ex nulla tenetur. Qui ea
+    repellendus sint ex illo recusandae dolorem laboriosam, ipsa deleniti!
+    Incidunt doloribus distinctio ullam error dignissimos ad magnam ipsam sed?
+    Dolorum temporibus dicta consequatur commodi est, reiciendis sunt deserunt
+    odio non quam sapiente obcaecati eaque aliquid necessitatibus facere, ab,
+    ratione magnam animi modi?
+  </div>
+  <div class="flex gap-4 mt-4 mb-4">
+    <Radio bind:group={placement} name="placement" value="start">Start</Radio>
+    <Radio bind:group={placement} name="placement" value="end">End</Radio>
+    <Radio bind:group={placement} name="placement" value="top">Top</Radio>
+    <Radio bind:group={placement} name="placement" value="bottom">Bottom</Radio>
+  </div>
   <footer>
-    <button type="button" on:click={close}>Close</button>
+    <Button variant="primary" on:click={close}>Close</Button>
   </footer>
 </Drawer>
 
 <hr />
 
 <Button
-  class="mb-16"
+  class="mb-4"
   variant="primary"
   size={buttonSize}
   loading={buttonLoading}
@@ -444,7 +450,7 @@
 
 {#each [...Array(iconsCount).keys()] as num (num)}
   <p
-    class="flex gap-16"
+    class="flex gap-4"
     style="font-size: 30px; color: rebeccapurple; --in-outer-color: red; --in-inner-color: blue; --in-dot-color: green;"
   >
     {#each icons as icon (icon.data.id)}
@@ -506,7 +512,7 @@
   </Button>
   {slideIndex}
 </p>
-<Collapse id="test-collapse" visible>
+<Collapse id="test-collapse" open>
   <Swiper bind:index={slideIndex} options={swiperOptions}>
     {#each [...Array(range).keys()] as num}
       <SwiperSlide>
@@ -538,7 +544,7 @@
   <Button
     variant="primary"
     class="first second"
-    onclick={() => (modalVisible = !modalVisible)}
+    onclick={() => (modalOpen = !modalOpen)}
     use={[[modalAction, 'modal-test']]}
   >
     Modal
@@ -552,30 +558,22 @@
   <Modal
     id="modal-test"
     class="some__modal"
-    style="margin: 0"
     aria-labelledby="modal-title"
-    noCloseOnBackdrop
-    bind:visible={modalVisible}
-    onopen={() => console.log('open')}
+    aria-describedby="modal-description"
+    bind:open={modalOpen}
     let:close
   >
-    <button
-      href="#df"
-      id="modal-title"
-      style="margin-top: 0; cursor: pointer;"
-      use:collapseAction={{ id: 'modal-collapse', class: collapsedClass }}
-    >
-      Modal title
-    </button>
-    <button
+    <h2 id="modal-title" class="mt-0 mb-4">Modal title</h2>
+    <!-- <button
       type="button"
       on:click={() =>
         (collapsedClass =
           collapsedClass === 'collapsed' ? 'collapsed-class' : 'collapsed')}
       >Change collapsedClass</button
-    >
-    <Collapse id="modal-collapse" visible>
-      <p style="margin: 0;">
+    > -->
+    <!-- <Collapse id="modal-collapse" open> -->
+    <div id="modal-description">
+      <p class="mb-0">
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam nemo
         possimus dolorum ducimus rerum tempora aut repudiandae necessitatibus
         adipisci, voluptatem, esse est? Alias ad error magni culpa at
@@ -588,10 +586,11 @@
         architecto nostrum, incidunt alias quis totam saepe deleniti nam tempore
         quidem natus quibusdam accusamus velit maiores fugiat! Pariatur?
       </p>
-    </Collapse>
-    <footer style="margin-top: 16px; display: none1;">
-      <button type="button" on:click={close}>Close</button>
-      <div>
+    </div>
+    <!-- </Collapse> -->
+    <div class="flex justify-end mt-4">
+      <Button variant="primary" on:click={close}>Close modal</Button>
+      <!-- <div>
         <label>
           <input type="radio" name="modal-radio" value="1" />
           One
@@ -604,8 +603,8 @@
           <input type="radio" name="modal-radio" value="3" />
           Three
         </label>
-      </div>
-    </footer>
+      </div> -->
+    </div>
   </Modal>
 </p>
 
@@ -625,8 +624,8 @@
 <hr /> -->
 
 <p style="margin-bottom: 150px; display: flex; align-items: center; gap: 16px;">
-  <Button variant="primary" on:click={() => (intersectOnce = !intersectOnce)}
-    >Change intersect
+  <Button variant="primary" on:click={() => (intersectOnce = !intersectOnce)}>
+    Change intersect
   </Button>
   <span
     style="
@@ -747,7 +746,7 @@
 {nativeGroup}
 <hr />
 
-<div class="flex gap-16">
+<div class="flex gap-4">
   <Radio label="Small" name="radio-demo" value="small" />
   <Radio label="Large" name="radio-demo" value="large" checked />
   <Radio label="Default" name="radio-demo" value="default" />
@@ -801,7 +800,7 @@
 </div>
 
 <hr />
-<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
   {#each ['react', 'vue', 'svelte'] as item (item)}
     <Radio
       class="radio-tab"
@@ -809,28 +808,15 @@
       checked={item === 'react'}
       name="radio-control-tab"
     >
-      <svelte:fragment slot="base" let:checked>
+      <svelte:fragment slot="base">
         {item}
       </svelte:fragment>
     </Radio>
   {/each}
 </div>
+
 <hr />
-<div class="flex items-center gap-8">
-  {#each ['react', 'vue', 'svelte'] as item (item)}
-    <Checkbox value={item} checked={!item.includes('react')}>
-      <span
-        class="control-tab {checked ? 'control-tab_checked' : ''}"
-        slot="base"
-        let:checked
-      >
-        {item}
-      </span>
-    </Checkbox>
-  {/each}
-</div>
-<hr />
-<div class="flex items-center gap-16 mb-16">
+<div class="flex items-center gap-4 mb-4">
   <Checkbox
     aria-label="Favourite"
     checked
@@ -916,7 +902,7 @@
     </svg>
   </Checkbox>
 </div>
-<div class="flex gap-16 mb-16">
+<div class="flex gap-4 mb-4">
   <Checkbox
     label="Lorem ipsum, dolor sit amet consectetur adipisicing elit."
     checked
@@ -931,7 +917,7 @@
     </svg> -->
   </Checkbox>
 </div>
-<div class="mb-8">
+<div class="mb-2">
   <Checkbox
     label={allSelected ? 'Unselect All' : 'Select All'}
     checked={allSelected}
@@ -942,7 +928,7 @@
     }}
   />
 </div>
-<ul class="grid gap-8 mb-8" style="padding-left: 25px;">
+<ul class="grid gap-2 mb-2" style="padding-left: 25px;">
   {#each flavours as flavour (flavour)}
     <li>
       <Checkbox
@@ -961,49 +947,9 @@
 <!--{checked}-->
 <!--{check}-->
 <hr />
-<div class="flex gap-16">
-  <!-- <button on:click={() => (switchChecked = !switchChecked)}
-    >Check {switchChecked}</button
-  > -->
-  <Switch label="First" bind:group value={1} aria-label="Switch it" />
-  <Switch
-    disabled={group.includes(1)}
-    bind:group
-    bind:checked={switchChecked}
-    value={2}
-    let:disabled
-  >
-    Disabled <a href="#123" tabindex={disabled ? -1 : null}>Link</a>
-  </Switch>
-  <Switch
-    label="Second"
-    bind:group
-    value={2}
-    style="--switch-thumb-size: 32px;
-    --switch-width: 48px;
-    --switch-height: 20px;
-    --switch-thumb-offset-x: -1px"
-  >
-    <span
-      slot="thumb"
-      let:checked
-      style="display: grid;
-      width: 100%;
-      height: 100%;
-      place-items: center;
-      font-size: {checked ? '0.8rem' : '1rem'};
-      border-radius: inherit;
-      box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
-    >
-      <Icon data={checked ? closeIcon : inIcon} />
-    </span>
-  </Switch>
-</div>
-<!-- <input type="checkbox" bind:group value={1} />
-First
-<input type="checkbox" bind:group checked value={2} />
-Second -->
+
 {JSON.stringify(group)}
+
 <hr />
 
 <Input
@@ -1028,22 +974,51 @@ Second -->
   .flex {
     display: flex;
     flex-wrap: wrap;
+  }
+  .items-start {
     align-items: flex-start;
   }
   .items-center {
     align-items: center;
   }
-  .gap-8 {
+  .justify-end {
+    justify-content: flex-end;
+  }
+  .gap-0 {
+    gap: 0;
+  }
+  .gap-1 {
+    gap: 4px;
+  }
+  .gap-2 {
     gap: 8px;
   }
-  .gap-16 {
+  .gap-4 {
     gap: 16px;
   }
-  .mb-8 {
+  .mb-0 {
+    margin-bottom: 0;
+  }
+  .mb-1 {
+    margin-bottom: 4px;
+  }
+  .mb-2 {
     margin-bottom: 8px;
   }
-  .mb-16 {
+  .mb-4 {
     margin-bottom: 16px;
+  }
+  .mt-0 {
+    margin-top: 0;
+  }
+  .mt-1 {
+    margin-top: 4px;
+  }
+  .mt-2 {
+    margin-top: 8px;
+  }
+  .mt-4 {
+    margin-top: 16px;
   }
   body {
     /* background: url(@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg); */
@@ -1071,22 +1046,6 @@ Second -->
     }
   }
 
-  .control-tab {
-    display: block;
-    padding: 6px 12px;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
-      rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-    border: 1px solid #e2e8f0;
-    color: #2d3748;
-    font-size: 16px;
-
-    &_checked {
-      background-color: var(--color-primary);
-      border-color: var(--color-primary);
-      color: #ffffff;
-    }
-  }
   .radio-tab.radio {
     .radio__base {
       display: block;
@@ -1099,8 +1058,8 @@ Second -->
       font-size: 16px;
     }
     &_checked .radio__base {
-      background-color: var(--color-primary);
-      border-color: var(--color-primary);
+      background-color: var(--theme-color);
+      border-color: var(--theme-color);
       color: #ffffff;
     }
   }

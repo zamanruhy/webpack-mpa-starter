@@ -1,67 +1,73 @@
 <script>
   import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte'
-  import { registerPopup, unregisterPopup, trapFocus } from '@/helpers/popup'
+  import { registerPopup, unregisterPopup, trapFocus } from '@/helpers/modal'
   import { portalAction } from '@/actions'
-  import { fastInFastOut } from '@/utils'
+  import { cubicOut, cubicInOut } from 'svelte/easing'
   import Backdrop from './Backdrop.svelte'
 
   let className = ''
   export { className as class }
   export let id = ''
-  export let visible = false
+  export let open = false
   export let noCloseOnBackdrop = false
   export let noCloseOnEsc = false
   export let variant = ''
   export let inTransition = scale
   export let outTransition = scale
-  export let closeAriaLabel = 'Close modal'
+  export let scrollable = false
+  export let closeButtonAriaLabel = 'Close'
+  export let getParentEl = () => document.body
 
   let el
   let contentEl
-  let returnFocus = null
+  let returnFocusEl = null
   let mounted = false
   const modal = {}
   const dispatch = createEventDispatcher()
 
-  $: classes = ['modal', variant && `modal_${variant}`, className]
+  $: classes = [
+    'modal',
+    variant && `modal_${variant}`,
+    scrollable && 'modal_scrollable',
+    open && 'modal_open',
+    className
+  ]
     .filter(Boolean)
     .join(' ')
-  $: dispatch('update', visible)
-  $: visible && mounted && beforeOpen()
+  $: dispatch('update', open)
+  $: open && mounted && beforeOpen()
 
-  function open() {
-    visible = true
-  }
   function close() {
-    visible = false
+    open = false
   }
   function beforeOpen() {
-    returnFocus = returnFocus || document.activeElement
+    returnFocusEl = returnFocusEl || document.activeElement
     registerPopup(modal)
   }
-  function onOpen() {
+  function onIntrostart() {
     dispatch('open')
   }
-  function onOpened() {
+  function onIntroend() {
     dispatch('opened')
     setFocus()
   }
-  function onClose() {
+  function onOutrostart() {
     dispatch('close')
+    el.classList.remove('modal_open')
   }
-  function onClosed() {
+  function onOutroend() {
     dispatch('closed')
     tick().then(afterClose)
   }
   function afterClose() {
-    returnFocus.focus?.()
-    returnFocus = null
+    returnFocusEl.focus?.()
+    returnFocusEl = null
     unregisterPopup(modal)
   }
-  function scale() {
+  function scale(node, { duration, easing }) {
     return {
-      duration: 300,
-      easing: fastInFastOut,
+      duration,
+      easing,
       css: (t, n) => {
         return `
           transform: scale(${0.9 + 0.1 * t}, ${0.85 + 0.15 * t});
@@ -84,14 +90,9 @@
       el.focus()
     }
   }
-  function openHandler({ detail }) {
+  function onToggleModal({ detail }) {
     if (id === detail.id) {
-      open()
-    }
-  }
-  function closeHandler({ detail }) {
-    if (id === detail.id) {
-      close()
+      open = !open
     }
   }
 
@@ -104,13 +105,10 @@
   })
 </script>
 
-<svelte:window
-  on:open-modal={id && openHandler}
-  on:close-modal={id && closeHandler}
-/>
+<svelte:window on:toggle-modal={id && onToggleModal} />
 
-{#if visible && mounted}
-  <div class="modal-container" use:portalAction>
+{#if open && mounted}
+  <div class="modal-container" use:portalAction={getParentEl()}>
     <div
       {id}
       class={classes}
@@ -124,36 +122,37 @@
       on:keydown={trapFocus}
     >
       <div
-        class="modal__dialog"
-        in:inTransition|local
-        out:outTransition|local
-        on:introstart={onOpen}
-        on:introend={onOpened}
-        on:outrostart={onClose}
-        on:outroend={onClosed}
+        class="modal__content"
+        in:inTransition|local={{ duration: 200, easing: cubicOut }}
+        out:outTransition|local={{ duration: 150, easing: cubicInOut }}
+        bind:this={contentEl}
+        on:introstart={onIntrostart}
+        on:introend={onIntroend}
+        on:outrostart={onOutrostart}
+        on:outroend={onOutroend}
       >
-        <div class="modal__content" role="document" bind:this={contentEl}>
-          <button
-            class="modal__close"
-            type="button"
-            aria-label={closeAriaLabel}
-            on:click={close}
-          >
-            <slot name="close-icon">
-              <svg viewBox="0 0 371.23 371.23">
-                <path
-                  d="M371.23 21.213L350.018 0 185.615 164.402 21.213 0 0
+        <button
+          class="modal__close"
+          type="button"
+          aria-label={closeButtonAriaLabel}
+          on:click={close}
+        >
+          <slot name="close-icon">
+            <svg viewBox="0 0 371.23 371.23">
+              <path
+                d="M371.23 21.213L350.018 0 185.615 164.402 21.213 0 0
                 21.213l164.402 164.402L0 350.018l21.213 21.212
                 164.402-164.402L350.018 371.23l21.212-21.212-164.402-164.403z"
-                />
-              </svg>
-            </slot>
-          </button>
-          <slot {close} />
-        </div>
+              />
+            </svg>
+          </slot>
+        </button>
+        <slot {close} />
       </div>
     </div>
-    <Backdrop {visible} />
+    <slot name="backdrop" {open}>
+      <Backdrop />
+    </slot>
   </div>
 {/if}
 
@@ -164,29 +163,20 @@
   }
 
   .modal {
-    --modal-margin: 28px;
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     overflow-x: hidden;
-    overflow-y: auto;
     overflow-y: overlay;
     z-index: var(--z-index-modal);
     outline: 0;
+    display: flex;
+    padding: 28px;
 
     @mixin down sm {
-      --modal-margin: 8px;
-    }
-
-    &__dialog {
-      margin: var(--modal-margin);
-      min-height: calc(100% - var(--modal-margin) * 2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      will-change: transform, opacity;
+      padding: 8px;
     }
 
     &__content {
@@ -199,9 +189,18 @@
       width: 100%;
       max-width: 720px;
       min-width: 0;
-      padding: 40px 40px 40px;
-    }
+      padding: 24px 28px 28px;
 
+      margin: auto;
+      will-change: transform, opacity;
+      display: flex;
+      flex-direction: column;
+    }
+    &_scrollable &__content {
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 100%;
+    }
     &__close {
       position: absolute;
       top: 16px;
@@ -213,6 +212,19 @@
       color: #333333;
       font-size: 20px;
       padding: 0;
+      border-radius: 1px;
+      align-self: flex-end;
+
+      &::before {
+        content: '';
+        width: max(30px, 100%);
+        height: max(30px, 100%);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: inherit;
+      }
 
       svg {
         display: block;

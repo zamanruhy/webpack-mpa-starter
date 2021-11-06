@@ -1,7 +1,6 @@
 const popups = new Set()
 let offsetElements = null
 let scrollbarWidth = null
-const appEl = typeof window !== 'undefined' && document.querySelector('.app')
 
 export function registerPopup(popup) {
   if (popups.has(popup)) {
@@ -11,7 +10,6 @@ export function registerPopup(popup) {
   if (popups.size === 1) {
     setScrollbar()
     document.body.style.overflow = 'hidden'
-    appEl.setAttribute('aria-hidden', 'true')
   }
 }
 
@@ -23,7 +21,6 @@ export function unregisterPopup(popup) {
   if (popups.size === 0) {
     resetScrollbar()
     document.body.style.overflow = ''
-    appEl.removeAttribute('aria-hidden')
   }
 }
 

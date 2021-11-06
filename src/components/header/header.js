@@ -13,7 +13,7 @@ export default function header() {
 
   toggleEl.addEventListener('mount', () => {
     toggleEl.component.$on('update', (e) => {
-      drawerEl.visible = e.detail
+      drawerEl.open = e.detail
     })
   })
 

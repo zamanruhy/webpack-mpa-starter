@@ -1,12 +1,11 @@
 # https://github.com/browserslist/browserslist#readme
 
-Chrome >= 54
-ChromeAndroid >= 54
+>= 0.5%
+last 2 major versions
+not dead
+Chrome >= 60
 Firefox >= 63
-FirefoxAndroid >= 63
-iOS >= 10.3
-Safari >= 10.1
-Edge >= 79
-Opera >= 41
-OperaMobile >= 59
-Samsung >= 5.4
+Firefox ESR
+iOS >= 12
+Safari >= 12
+not Explorer <= 11

@@ -30,9 +30,9 @@
 <style lang="postcss" global>
   .icon {
     display: block;
-    flex: 0 0 auto;
     height: 1em;
     fill: currentColor;
+    flex-shrink: 0;
   }
 
   img.icon {

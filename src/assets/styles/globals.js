@@ -10,7 +10,7 @@ const breakpoints = {
 
 // Variables
 const variables = {
-  'color-primary': '#1976d2' // #a17d78
+  // 'color-primary': '#1976d2' // #a17d78
 }
 
 // Functions
@@ -122,10 +122,10 @@ const mixins = {
           'text-overflow': 'ellipsis'
         }
   },
-  'focus-ring'(_, width = '3px', offset = '2px') {
+  'focus-ring'(_, width = '3px', offset = '2px', color = 'hsl(39 89% 55%)') {
     return {
-      outline: `${width} solid #f2ab24`,
-      'outline-offset': offset
+      outline: `var(--focus-ring-width, ${width}) solid var(--focus-ring-color, ${color})`,
+      'outline-offset': `var(--focus-ring-offset, ${offset})`
     }
   },
   'visually-hidden': {

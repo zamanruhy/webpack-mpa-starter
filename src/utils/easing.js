@@ -24,7 +24,7 @@ export function cubicBezier(x1, y1, x2, y2) {
     return r * (r * (r * ay + y2) + y1)
   }
 }
-export const fastOutSlowIn = /* #__PURE__ */ cubicBezier(0.4, 0, 0.2, 1)
-export const linearOutSlowIn = /* #__PURE__ */ cubicBezier(0, 0, 0.2, 1)
-export const fastOutLinearIn = /* #__PURE__ */ cubicBezier(0.4, 0, 1, 1)
-export const fastInFastOut = /* #__PURE__ */ cubicBezier(0.25, 0.8, 0.25, 1)
+
+export const easeInOut = /* #__PURE__ */ cubicBezier(0.4, 0, 0.2, 1)
+export const easeOut = /* #__PURE__ */ cubicBezier(0, 0, 0.2, 1)
+export const easeIn = /* #__PURE__ */ cubicBezier(0.4, 0, 1, 1)

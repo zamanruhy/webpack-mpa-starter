@@ -8,10 +8,10 @@
       <div class="header__logo">
         <img src="<%= require('@/assets/img/svelte.svg') %>" alt="Logo" width="98.1" height="118" class="header__logo-img">
       </div>
-      <app-hamburger class="header__toggle"></app-hamburger>
+      <app-hamburger class="header__toggle" aria-controls="main-drawer"></app-hamburger>
     </div>
   </div>
-  <app-drawer class="header__drawer">
+  <app-drawer id="main-drawer" class="header__drawer">
     <app-button variant="primary" data-modal="main-modal">Open Modal</app-button>
     <app-input
       label="Name"

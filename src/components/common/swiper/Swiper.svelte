@@ -131,6 +131,6 @@
   @import 'swiper/modules/keyboard/keyboard.min.css';
 
   :root {
-    --swiper-theme-color: var(--color-primary);
+    --swiper-theme-color: var(--theme-color);
   }
 </style>

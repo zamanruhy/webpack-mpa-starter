@@ -108,7 +108,7 @@
     }
   },
   "lint-staged": {
-    "*{.js,.md,.svelte}": "eslint --ext",
+    "*.{js,md,svelte}": "eslint --ext",
     "**/*.{js,json,md,pcss,svelte}": [
       "prettier --write",
       "git add"

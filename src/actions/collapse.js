@@ -33,8 +33,8 @@ export default function collapseAction(node, options = {}) {
 
   function onUpdate({ detail }) {
     if (ids.includes(detail.id)) {
-      isCollapsed = !detail.visible
-      if (detail.visible) {
+      isCollapsed = !detail.open
+      if (detail.open) {
         options.class && node.classList.remove(options.class)
         node.setAttribute('aria-expanded', 'true')
       } else {

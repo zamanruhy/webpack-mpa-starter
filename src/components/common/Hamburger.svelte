@@ -32,12 +32,10 @@
     --hamburger-width: 26px;
     --hamburger-height: 22px;
     --hamburger-bar-height: 2px;
-    --hamburger-bar-radius: 0px;
     --hamburger-bar-offset: calc(
       (var(--hamburger-height) - var(--hamburger-bar-height)) / 2
     );
-    --hamburger-transition: 0.3s var(--fast-in-fast-out, ease);
-    --hamburger-color: #222222;
+    --hamburger-transition: 150ms var(--ease-in-out, ease-in-out);
 
     width: var(--hamburger-width);
     height: var(--hamburger-height);
@@ -52,16 +50,15 @@
     position: relative;
     outline-offset: 4px;
     border-radius: 1px;
+    color: inherit;
     -webkit-tap-highlight-color: transparent;
 
     &:before {
       content: '';
       display: block;
       position: absolute;
-      width: 30px;
-      height: 30px;
-      min-width: 100%;
-      min-height: 100%;
+      width: max(30px, 100%);
+      height: max(30px, 100%);
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -75,10 +72,10 @@
 
     &__bar {
       height: var(--hamburger-bar-height);
-      background-color: var(--hamburger-color);
+      background-color: currentColor;
       width: 100%;
       display: block;
-      border-radius: var(--hamburger-bar-radius);
+      border-radius: 0px;
       transition: var(--hamburger-transition);
       transition-property: transform;
       will-change: transform;

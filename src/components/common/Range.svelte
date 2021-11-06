@@ -299,7 +299,7 @@
         class="range__thumb"
         class:range__thumb_focus-visible={focusVisibleIndex === i}
         class:range__thumb_active={activeIndex === i}
-        class:range__thumb_tooltip-open={tooltipDisplay !== 'never' &&
+        class:range__thumb_open={tooltipDisplay !== 'never' &&
           (tooltipDisplay === 'always' ||
             activeIndex === i ||
             hoveredIndex === i)}
@@ -341,14 +341,15 @@
   .range {
     --range-size: 32px;
     --range-margin: 24px;
-    --range-color: var(--color-primary, darkcyan);
-    --range-transition: 150ms var(--fast-out-slow-in, ease);
+    --range-theme-color: var(--accent-color, var(--theme-color, darkcyan));
+    --range-disabled-color: hsl(214 20% 74%);
+    --range-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --range-base-size: 4px;
-    --range-rail-opacity: 0.38;
+    --range-rail-color: hsl(214 32% 87%);
     --range-track-size: 100%;
     --range-thumb-size: 18px;
-    --range-thumb-active-scale: 1.25;
-    --range-tooltip-bg-color: #757575;
+    --range-tooltip-color: hsl(218 23% 23%);
+    --range-tooltip-text-color: hsl(0 0% 100% / 92%);
     --range-mark-size: 100%;
     --range-mark-thickness: 2px;
     --range-mark-offset: 0px;
@@ -378,7 +379,6 @@
     }
 
     &_disabled {
-      --range-color: #bdbdbd;
       cursor: default;
       pointer-events: none;
     }
@@ -398,17 +398,19 @@
       width: 100%;
       height: 100%;
       border-radius: inherit;
-      background-color: var(--range-color);
-      opacity: var(--range-rail-opacity);
+      background-color: var(--range-rail-color);
     }
     &_track-inverted &__rail {
-      opacity: 1;
+      background-color: var(--range-theme-color);
+    }
+    &_disabled&_track-inverted &__rail {
+      background-color: var(--range-disabled-color);
     }
     &__track {
       position: absolute;
       height: var(--range-track-size);
       border-radius: inherit;
-      background-color: var(--range-color);
+      background-color: var(--range-theme-color);
       top: 50%;
       transform: translateY(-50%);
       transition: var(--range-transition);
@@ -421,18 +423,11 @@
       left: 50%;
       transform: translateX(-50%);
     }
+    &_disabled &__track {
+      background-color: var(--range-disabled-color);
+    }
     &_track-inverted &__track {
-      background-color: #ffffff;
-
-      &::before {
-        content: '';
-        display: block;
-        height: 100%;
-        width: 100%;
-        border-radius: inherit;
-        background-color: var(--range-color);
-        opacity: var(--range-rail-opacity);
-      }
+      background-color: var(--range-rail-color);
     }
     &_dragging &__track {
       transition: none;
@@ -480,15 +475,16 @@
     &__thumb-inner {
       width: var(--range-thumb-size);
       height: var(--range-thumb-size);
-      background-color: var(--range-color);
+      background-color: var(--range-theme-color);
       transition: transform var(--range-transition);
       border-radius: inherit;
     }
     &__thumb_active &__thumb-inner {
-      transform: scale(var(--range-thumb-active-scale));
+      transform: scale(1.25);
     }
     &_disabled &__thumb-inner {
       transform: scale(0.8);
+      background-color: var(--range-disabled-color);
     }
     &__tooltip {
       position: absolute;
@@ -505,7 +501,7 @@
       opacity: 0;
       visibility: hidden;
     }
-    &__thumb_tooltip-open &__tooltip {
+    &__thumb_open &__tooltip {
       transform: translateX(-50%);
       opacity: 1;
       visibility: visible;
@@ -513,8 +509,8 @@
     &__tooltip-value {
       padding: 4px 8px;
       border-radius: 2px;
-      background-color: var(--range-tooltip-bg-color);
-      color: #ffffff;
+      background-color: var(--range-tooltip-color);
+      color: var(--range-tooltip-text-color);
       font-size: 14px;
       white-space: nowrap;
       min-width: 30px;
@@ -525,7 +521,7 @@
     &__tooltip-arrow {
       width: 14px;
       height: 7px;
-      background-color: var(--range-tooltip-bg-color);
+      background-color: var(--range-tooltip-color);
       clip-path: polygon(0 0, 100% 0, 50% 100%);
       margin-top: -1px;
       align-self: center;
@@ -538,13 +534,11 @@
       top: var(--range-mark-offset);
       position: absolute;
       border-radius: 1px;
-      background-color: var(--range-color);
-      opacity: 0.8;
+      background-color: hsl(214 32% 74%);
       margin: 0 calc(var(--range-mark-thickness) / -2);
 
       &_active {
-        opacity: 0.6;
-        background-color: #ffffff;
+        background-color: hsl(0 0% 100% / 64%);
       }
     }
     &_vertical &__mark {
@@ -558,14 +552,14 @@
     }
     &__mark-label {
       top: var(--range-mark-label-offset);
-      color: #757575;
       position: absolute;
       font-size: 14px;
       transform: translateX(-50%);
       white-space: nowrap;
+      opacity: 0.8;
 
       &_active {
-        color: #212121;
+        opacity: 1;
       }
     }
     &_reversed &__mark-label {

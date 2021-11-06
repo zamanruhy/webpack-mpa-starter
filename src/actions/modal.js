@@ -14,7 +14,7 @@ export default function modalAction(node, id) {
       (e.type === 'keydown' && ['Enter', ' '].includes(e.key))
     ) {
       e.preventDefault()
-      window.dispatchEvent(new CustomEvent('open-modal', { detail: { id } }))
+      window.dispatchEvent(new CustomEvent('toggle-modal', { detail: { id } }))
     }
   }
 

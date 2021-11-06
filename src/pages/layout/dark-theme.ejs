@@ -1,0 +1,15 @@
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="hsl(174 57% 52%)" />
+<script>
+  (() => {
+    const themeColorEl = document.querySelector('meta[name="theme-color"]')
+    const colorSchemeEl = document.querySelector('meta[name="color-scheme"]')
+    const forcedTheme = window.localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const theme = forcedTheme || (prefersDark ? 'dark' : 'light')
+    document.documentElement.setAttribute('data-theme', theme)
+    themeColorEl.content =
+      theme === 'dark' ? 'hsl(174 57% 52%)' : 'hsl(179 51% 39%)'
+    colorSchemeEl.content = theme
+  })()
+</script>

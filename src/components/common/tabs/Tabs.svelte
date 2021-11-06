@@ -184,7 +184,7 @@
       }
     }
     &__tab {
-      color: var(--color-primary);
+      color: var(--theme-color);
       cursor: pointer;
       flex: 0 0 auto;
       display: flex;

@@ -16,7 +16,7 @@
 </script>
 
 <div class="spinner {className}" {style} role="progressbar">
-  <svg xmlns="http://www.w3.org/2000/svg" {viewBox} class="spinner__svg">
+  <svg class="spinner__svg" {viewBox}>
     <circle
       fill="transparent"
       cx={viewBoxSize}
@@ -32,9 +32,8 @@
 
 <style lang="postcss" global>
   .spinner {
+    display: block;
     position: relative;
-    display: inline-block;
-    vertical-align: middle;
 
     &__svg {
       width: 100%;

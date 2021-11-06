@@ -1,49 +1,49 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte'
   import { slide } from 'svelte/transition'
-  import { fastOutSlowIn } from '@/utils'
+  import { easeInOut } from '@/utils'
 
   export let id = ''
   export let accordion = ''
-  export let visible = false
+  export let open = false
+  export let transitionOptions = { duration: 300, easing: easeInOut }
 
   let mounted = false
   const dispatch = createEventDispatcher()
-  const slideOptions = { duration: 300, easing: fastOutSlowIn }
 
-  $: dispatch('update', visible)
+  $: dispatch('update', open)
   $: if (id && mounted) {
     window.dispatchEvent(
-      new CustomEvent('collapse-update', { detail: { id, visible } })
+      new CustomEvent('collapse-update', { detail: { id, open } })
     )
-    if (accordion && visible) {
+    if (accordion && open) {
       window.dispatchEvent(
         new CustomEvent('collapse-accordion', { detail: { id, accordion } })
       )
     }
   }
 
-  function toggleHandler({ detail }) {
-    if (id === detail.id) {
-      visible = !visible
-    }
-  }
-  function accordionHandler({ detail }) {
-    if (accordion === detail.accordion && id !== detail.id) {
-      visible = false
-    }
-  }
-  function onOpen() {
+  function onIntrostart() {
     dispatch('open')
   }
-  function onOpened() {
+  function onIntroend() {
     dispatch('opened')
   }
-  function onClose() {
+  function onOutrostart() {
     dispatch('close')
   }
-  function onClosed() {
+  function onOutroend() {
     dispatch('closed')
+  }
+  function onToggleCollapse({ detail }) {
+    if (id === detail.id) {
+      open = !open
+    }
+  }
+  function onCollapseAccordion({ detail }) {
+    if (accordion === detail.accordion && id !== detail.id) {
+      open = false
+    }
   }
 
   onMount(() => {
@@ -52,18 +52,18 @@
 </script>
 
 <svelte:window
-  on:toggle-collapse={id && toggleHandler}
-  on:collapse-accordion={id && accordion && accordionHandler}
+  on:toggle-collapse={id && onToggleCollapse}
+  on:collapse-accordion={id && accordion && onCollapseAccordion}
 />
 
-{#if visible}
+{#if open}
   <div
     {id}
-    transition:slide|local={slideOptions}
-    on:introstart={onOpen}
-    on:introend={onOpened}
-    on:outrostart={onClose}
-    on:outroend={onClosed}
+    transition:slide|local={transitionOptions}
+    on:introstart={onIntrostart}
+    on:introend={onIntroend}
+    on:outrostart={onOutrostart}
+    on:outroend={onOutroend}
   >
     <slot />
   </div>

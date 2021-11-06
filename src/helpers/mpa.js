@@ -1,6 +1,6 @@
 import { customElement } from '@/utils'
 
-import Test from '@/components/common/Test.svelte'
+import App from '@/components/common/App/App.svelte'
 import Spinner from '@/components/common/Spinner.svelte'
 import Hamburger from '@/components/common/Hamburger.svelte'
 import ToTop from '@/components/common/ToTop.svelte'
@@ -19,7 +19,7 @@ import Switch from '@/components/common/Switch.svelte'
 
 export function customElements() {
   document.addEventListener('DOMContentLoaded', () => {
-    customElement('app-test', Test)
+    customElement('app-app', App)
     customElement('app-hamburger', Hamburger)
     customElement('app-drawer', Drawer)
     customElement('app-modal', Modal)

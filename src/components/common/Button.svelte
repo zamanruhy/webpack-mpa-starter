@@ -38,7 +38,9 @@
       <slot />
     </span>
     {#if loading}
-      <Spinner size={23} width={2} class="button__spinner" />
+      <slot name="loading">
+        <Spinner size={23} width={2} class="button__spinner" />
+      </slot>
     {/if}
   </a>
 {:else}
@@ -55,73 +57,43 @@
       <slot />
     </span>
     {#if loading}
-      <Spinner size={23} width={2} class="button__spinner" />
+      <slot name="loading">
+        <Spinner size={23} width={2} class="button__spinner" />
+      </slot>
     {/if}
   </button>
 {/if}
 
 <style lang="postcss" global>
   .button {
+    font: inherit;
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     vertical-align: middle;
     text-align: center;
-    color: var(--body-color);
+    color: #ffffff;
     user-select: none;
-    background-color: transparent;
+    background-color: var(--theme-color, darkcyan);
     border: 1px solid transparent;
-    line-height: var(--line-height);
     font-size: 16px;
     padding: 6px 12px;
     border-radius: 4px;
-    transition: 0.25s var(--fast-out-slow-in);
+    transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     transition-property: color, background-color, border-color, box-shadow;
     max-width: 100%;
-    min-width: 48px;
     flex: 0 0 auto;
     position: relative;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       text-decoration: none;
     }
 
-    &:focus-visible {
-      z-index: 1;
-    }
-
     &_disabled {
       pointer-events: none;
       opacity: 0.65;
-    }
-
-    &_primary {
-      color: #ffffff;
-      background-color: $color-primary;
-      border-color: $color-primary;
-
-      &:hover {
-        background-color: lighten($color-primary, 0.05);
-        border-color: lighten($color-primary, 0.05);
-      }
-
-      &:active {
-        background-color: darken($color-primary, 0.05);
-        border-color: darken($color-primary, 0.05);
-      }
-    }
-
-    &_small {
-      padding: 4px 8px;
-      font-size: 14px;
-      border-radius: 3px;
-    }
-
-    &_large {
-      padding: 8px 16px;
-      font-size: 20px;
-      border-radius: 5px;
     }
 
     &_loading {
@@ -130,10 +102,9 @@
     }
 
     &__content {
-      align-items: center;
       display: flex;
-      flex: 1 0 auto;
-      justify-content: inherit;
+      align-items: center;
+      justify-content: center;
     }
 
     &_loading &__content {
@@ -141,7 +112,6 @@
     }
 
     &__spinner.spinner {
-      display: flex;
       position: absolute;
       top: 50%;
       left: 50%;

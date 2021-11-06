@@ -1,15 +1,17 @@
 <script>
   import { fade } from 'svelte/transition'
-  import { fastOutSlowIn } from '@/utils'
+  import { easeInOut } from '@/utils'
 
-  export let visible = false
-
-  const fadeOptions = { duration: 300, easing: fastOutSlowIn }
+  export let inTransition = fade
+  export let outTransition = fade
 </script>
 
-{#if visible}
-  <div class="backdrop" transition:fade={fadeOptions} on:click />
-{/if}
+<div
+  class="backdrop"
+  in:inTransition|local={{ duration: 200, easing: easeInOut }}
+  out:outTransition|local={{ duration: 150, easing: easeInOut }}
+  on:click
+/>
 
 <style lang="postcss" global>
   .backdrop {
@@ -19,8 +21,7 @@
     bottom: 0;
     left: 0;
     z-index: var(--z-index-backdrop);
-    background-color: #212121;
-    opacity: 0.46;
+    background-color: rgba(0, 0, 0, 0.48);
     will-change: opacity;
   }
 </style>

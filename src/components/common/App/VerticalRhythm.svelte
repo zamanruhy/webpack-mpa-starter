@@ -1,7 +1,9 @@
 <script>
   let showGrid = true
+  // export let someEl
 
   $: document.body.classList.toggle('show-grid', showGrid)
+  // $: console.log('someEl:', someEl)
 </script>
 
 <svelte:head>

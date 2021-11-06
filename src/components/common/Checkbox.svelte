@@ -5,8 +5,10 @@
 
   let className = ''
   export { className as class }
-  export let style = ''
-  export let value = ''
+  export let size = ''
+  export let variant = ''
+  export let style = undefined
+  export let value = undefined
   export let checked = false
   export let disabled = false
   export let indeterminate = false
@@ -24,6 +26,8 @@
 
   $: classes = [
     'checkbox',
+    variant && `checkbox_${variant}`,
+    size && `checkbox_${size}`,
     checked && !indeterminate && 'checkbox_checked',
     disabled && 'checkbox_disabled',
     indeterminate && 'checkbox_indeterminate',
@@ -65,25 +69,23 @@
     on:change
   />
   <span class="checkbox__base">
-    <slot name="base" {checked} {disabled}>
+    <slot name="base" {checked} {indeterminate} {disabled}>
       <span class="checkbox__box">
         {#if checked || indeterminate}
-          <span class="checkbox__icon" aria-hidden="true">
-            {#if checked && !indeterminate}
-              <slot name="checked-icon">
-                <svg viewBox="0 0 14 10.59">
-                  <path d="m5 10.42-5-5L1.41 4 5 7.59 12.59 0 14 1.42Z" />
-                </svg>
-              </slot>
-            {/if}
-            {#if indeterminate}
-              <slot name="indeterminate-icon">
-                <svg viewBox="0 0 10 2">
-                  <path d="M0 0h10v2H0z" />
-                </svg>
-              </slot>
-            {/if}
-          </span>
+          {#if checked && !indeterminate}
+            <slot name="checked-icon">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M6 13 1 8l1.41-1.41L6 10.17l7.59-7.59L15 4Z" />
+              </svg>
+            </slot>
+          {/if}
+          {#if indeterminate}
+            <slot name="indeterminate-icon">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3 7h10v2H3z" />
+              </svg>
+            </slot>
+          {/if}
         {/if}
       </span>
     </slot>
@@ -96,22 +98,25 @@
 </label>
 
 <style lang="postcss" global>
-  .checkbox {
-    --checkbox-size: 18px;
-    --checkbox-unchecked-color: #666666;
-    --checkbox-checked-color: var(--color-primary, darkcyan);
-    --checkbox-disabled-color: #bdbdbd;
-    --checkbox-label-line-height: var(--line-height, 1.5);
-    --checkbox-label-offset: calc(
-      (var(--checkbox-label-line-height) * 1em - var(--checkbox-size)) / -2
-    );
+  $checkbox-size: 18px;
+  $checkbox-color: hsl(214 17% 61%);
+  $checkbox-active-color: var(--accent-color, var(--theme-color, darkcyan));
+  $checkbox-disabled-color: hsl(218 10% 74%);
+  $checkbox-icon-color: #ffffff;
+  $checkbox-icon-disabled-color: var(
+    --checkbox-icon-color,
+    $checkbox-icon-color
+  );
+  $checkbox-label-line-height: 1.5;
 
+  .checkbox {
     display: flex;
     align-items: flex-start;
     width: fit-content;
     user-select: none;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    isolation: isolate;
 
     &_disabled {
       pointer-events: none;
@@ -122,75 +127,88 @@
       @mixin visually-hidden;
     }
     &__base {
-      flex: 0 0 auto;
-      font-size: var(--checkbox-size);
-      color: var(--checkbox-unchecked-color);
+      flex-shrink: 0;
       border-radius: 2px;
       position: relative;
+      font-size: var(--checkbox-size, $checkbox-size);
+      color: var(--checkbox-color, $checkbox-color);
+      outline-color: transparent;
 
       &::before {
         content: '';
         position: absolute;
-        width: 30px;
-        height: 30px;
-        min-width: 100%;
-        min-height: 100%;
+        width: max(30px, 100%);
+        height: max(30px, 100%);
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         border-radius: inherit;
+        z-index: -1;
       }
-    }
-    &_checked &__base,
-    &_indeterminate &__base {
-      color: var(--checkbox-checked-color);
-    }
-    &_disabled &__base {
-      color: var(--checkbox-disabled-color);
-    }
-    &_focus-visible &__base {
-      @mixin focus-ring;
-    }
-    &__box {
-      display: block;
-      width: var(--checkbox-size);
-      height: var(--checkbox-size);
-      border: 1px solid currentColor;
-      border-radius: inherit;
-      position: relative;
-    }
-    &_checked &__box,
-    &_indeterminate &__box {
-      background-color: currentColor;
-    }
-    &__icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #ffffff;
 
       svg {
         display: block;
         height: 1em;
         fill: currentColor;
+        flex-shrink: 0;
       }
     }
-    &_checked &__icon {
-      font-size: 10px;
+    &_checked &__base,
+    &_indeterminate &__base {
+      color: var(--checkbox-active-color, $checkbox-active-color);
     }
-    &_indeterminate &__icon {
-      font-size: 2px;
+    &_disabled &__base {
+      color: var(--checkbox-disabled-color, $checkbox-disabled-color);
+    }
+    &_focus-visible &__base {
+      @mixin focus-ring;
+    }
+    &__box {
+      width: var(--checkbox-size, $checkbox-size);
+      height: var(--checkbox-size, $checkbox-size);
+      border: 1px solid var(--checkbox-color, $checkbox-color);
+      border-radius: inherit;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--checkbox-icon-color, $checkbox-icon-color);
+      font-size: 16px;
+    }
+    &_checked &__box,
+    &_indeterminate &__box {
+      background-color: var(--checkbox-active-color, $checkbox-active-color);
+      border-color: var(--checkbox-active-color, $checkbox-active-color);
+      border-width: 0;
+    }
+    &_disabled &__box {
+      border-color: var(--checkbox-disabled-color, $checkbox-disabled-color);
+      color: var(--checkbox-icon-disabled-color, $checkbox-icon-disabled-color);
+    }
+    &_disabled&_checked &__box,
+    &_disabled&_indeterminate &__box {
+      background-color: var(
+        --checkbox-disabled-color,
+        $checkbox-disabled-color
+      );
     }
     &__label {
       display: inline-block;
       flex: 0 1 auto;
       margin-inline-start: 8px;
-      line-height: var(--checkbox-label-line-height);
-      margin-block-start: var(--checkbox-label-offset);
+      line-height: var(
+        --checkbox-label-line-height,
+        $checkbox-label-line-height
+      );
+      margin-top: calc(
+        (
+            var(--checkbox-label-line-height, $checkbox-label-line-height) * 1em -
+              var(--checkbox-size, $checkbox-size)
+          ) / -2
+      );
     }
     &_disabled &__label {
-      opacity: 0.5;
+      opacity: 0.6;
     }
   }
 </style>

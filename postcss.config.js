@@ -8,7 +8,7 @@ module.exports = {
     require('postcss-simple-vars')({ variables }),
     require('postcss-functions')({ functions }),
     require('postcss-nested'),
-    require('postcss-calc'),
+    // require('postcss-calc'),
     require('postcss-extend'),
     false &&
       require('postcss-pxtorem')({
