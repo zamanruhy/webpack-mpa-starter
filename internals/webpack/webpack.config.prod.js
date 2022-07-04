@@ -5,6 +5,7 @@ const { merge } = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const BundleAnalyzerPlugin =
   require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -34,6 +35,32 @@ module.exports = merge(baseConfig, {
       new CssMinimizerPlugin({
         minify: CssMinimizerPlugin.cssoMinify,
         minimizerOptions: {}
+      }),
+      new ImageMinimizerPlugin({
+        minimizer: {
+          implementation: ImageMinimizerPlugin.imageminMinify,
+          options: {
+            plugins: [
+              ['gifsicle', { interlaced: false }],
+              ['mozjpeg', { progressive: true }],
+              ['pngquant', { quality: [0.65, 0.9], speed: 4 }],
+              [
+                'svgo',
+                {
+                  multipass: true,
+                  plugins: [
+                    {
+                      name: 'preset-default',
+                      params: {
+                        overrides: { convertPathData: { floatPrecision: 2 } }
+                      }
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        }
       })
     ]
   },

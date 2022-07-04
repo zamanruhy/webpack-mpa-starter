@@ -9,7 +9,8 @@ module.exports = {
         corejs: 3,
         debug: false
       }
-    ]
+    ],
+    'solid'
   ],
   plugins: [
     '@babel/plugin-transform-runtime',

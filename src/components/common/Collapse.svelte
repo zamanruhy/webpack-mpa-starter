@@ -3,7 +3,7 @@
   import { slide } from 'svelte/transition'
   import { easeInOut } from '@/utils'
 
-  export let id = ''
+  export let id = undefined
   export let accordion = ''
   export let open = false
   export let transitionOptions = { duration: 300, easing: easeInOut }

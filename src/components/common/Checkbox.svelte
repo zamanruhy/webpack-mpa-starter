@@ -1,7 +1,8 @@
 <svelte:options immutable />
 
 <script>
-  import { focusVisibleAction } from '@/actions'
+  import { get_current_component } from 'svelte/internal'
+  import { eventsAction, focusVisibleAction } from '@/actions'
 
   let className = ''
   export { className as class }
@@ -19,6 +20,7 @@
   export let inputEl = undefined
 
   let focusVisible = false
+  const component = get_current_component()
 
   $: if (Array.isArray(group)) {
     checked = group.includes(value)
@@ -64,28 +66,25 @@
     bind:indeterminate
     {...$$restProps}
     bind:this={inputEl}
+    use:eventsAction={component}
     use:focusVisibleAction={(v) => (focusVisible = v)}
     on:change={handleChange}
-    on:change
   />
   <span class="checkbox__base">
     <slot name="base" {checked} {indeterminate} {disabled}>
-      <span class="checkbox__box">
-        {#if checked || indeterminate}
-          {#if checked && !indeterminate}
-            <slot name="checked-icon">
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M6 13 1 8l1.41-1.41L6 10.17l7.59-7.59L15 4Z" />
-              </svg>
-            </slot>
-          {/if}
-          {#if indeterminate}
-            <slot name="indeterminate-icon">
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M3 7h10v2H3z" />
-              </svg>
-            </slot>
-          {/if}
+      <span class="checkbox__box" aria-hidden="true">
+        {#if indeterminate}
+          <slot name="indeterminate-icon">
+            <svg viewBox="0 0 16 16">
+              <path d="M3 7h10v2H3z" />
+            </svg>
+          </slot>
+        {:else if checked}
+          <slot name="checked-icon">
+            <svg viewBox="0 0 16 16">
+              <path d="M6 13 1 8l1.41-1.41L6 10.17l7.59-7.59L15 4Z" />
+            </svg>
+          </slot>
         {/if}
       </span>
     </slot>
@@ -99,24 +98,27 @@
 
 <style lang="postcss" global>
   $checkbox-size: 18px;
-  $checkbox-color: hsl(214 17% 61%);
-  $checkbox-active-color: var(--accent-color, var(--theme-color, darkcyan));
+  /* $checkbox-color: hsl(214 17% 61%);
+  $checkbox-active-color: var(--accent-color, var(--color-theme, darkcyan));
   $checkbox-disabled-color: hsl(218 10% 74%);
   $checkbox-icon-color: #ffffff;
   $checkbox-icon-disabled-color: var(
     --checkbox-icon-color,
     $checkbox-icon-color
-  );
-  $checkbox-label-line-height: 1.5;
+  ); */
+  /* $checkbox-label-line-height: 1.5; */
+  $checkbox-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 
   .checkbox {
     display: flex;
-    align-items: flex-start;
+    /* align-items: flex-start; */
+    align-items: center;
     width: fit-content;
     user-select: none;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     isolation: isolate;
+    position: relative;
 
     &_disabled {
       pointer-events: none;
@@ -131,14 +133,17 @@
       border-radius: 2px;
       position: relative;
       font-size: var(--checkbox-size, $checkbox-size);
-      color: var(--checkbox-color, $checkbox-color);
+      /* color: var(--checkbox-color, $checkbox-color); */
+      color: hsl(214 17% 61%);
       outline-color: transparent;
+      transition: var(--checkbox-transition, $checkbox-transition);
+      transition-property: outline-color, box-shadow;
 
       &::before {
         content: '';
         position: absolute;
-        width: max(30px, 100%);
-        height: max(30px, 100%);
+        width: max(40px, 100%);
+        height: max(40px, 100%);
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -149,54 +154,64 @@
       svg {
         display: block;
         height: 1em;
+        width: auto;
         fill: currentColor;
         flex-shrink: 0;
       }
     }
     &_checked &__base,
     &_indeterminate &__base {
-      color: var(--checkbox-active-color, $checkbox-active-color);
+      /* color: var(--checkbox-active-color, $checkbox-active-color); */
+      color: var(--accent-color, var(--color-theme, darkcyan));
     }
     &_disabled &__base {
-      color: var(--checkbox-disabled-color, $checkbox-disabled-color);
+      /* color: var(--checkbox-disabled-color, $checkbox-disabled-color); */
+      color: hsl(218 10% 74%);
     }
     &_focus-visible &__base {
-      @mixin focus-ring;
+      /* @mixin focus-ring; */
+      box-shadow: 0 0 0 3px hsl(207 73% 57% / 60%);
     }
     &__box {
       width: var(--checkbox-size, $checkbox-size);
       height: var(--checkbox-size, $checkbox-size);
-      border: 1px solid var(--checkbox-color, $checkbox-color);
+      /* border: 1px solid var(--checkbox-color, $checkbox-color); */
+      border: 1px solid currentColor;
       border-radius: inherit;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--checkbox-icon-color, $checkbox-icon-color);
+      /* color: var(--checkbox-icon-color, $checkbox-icon-color); */
       font-size: 16px;
+
+      svg {
+        color: #ffffff;
+      }
     }
     &_checked &__box,
     &_indeterminate &__box {
-      background-color: var(--checkbox-active-color, $checkbox-active-color);
-      border-color: var(--checkbox-active-color, $checkbox-active-color);
+      /* background-color: var(--checkbox-active-color, $checkbox-active-color);
+      border-color: var(--checkbox-active-color, $checkbox-active-color); */
       border-width: 0;
+      background-color: currentColor;
     }
     &_disabled &__box {
-      border-color: var(--checkbox-disabled-color, $checkbox-disabled-color);
-      color: var(--checkbox-icon-disabled-color, $checkbox-icon-disabled-color);
+      /* border-color: var(--checkbox-disabled-color, $checkbox-disabled-color);
+      color: var(--checkbox-icon-disabled-color, $checkbox-icon-disabled-color); */
     }
     &_disabled&_checked &__box,
     &_disabled&_indeterminate &__box {
-      background-color: var(
+      /* background-color: var(
         --checkbox-disabled-color,
         $checkbox-disabled-color
-      );
+      ); */
     }
     &__label {
       display: inline-block;
       flex: 0 1 auto;
       margin-inline-start: 8px;
-      line-height: var(
+      /* line-height: var(
         --checkbox-label-line-height,
         $checkbox-label-line-height
       );
@@ -205,7 +220,7 @@
             var(--checkbox-label-line-height, $checkbox-label-line-height) * 1em -
               var(--checkbox-size, $checkbox-size)
           ) / -2
-      );
+      ); */
     }
     &_disabled &__label {
       opacity: 0.6;

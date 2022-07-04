@@ -13,9 +13,7 @@ module.exports = function mpaPreprocess() {
           }
         }`
 
-        return {
-          code: content
-        }
+        return { code: content }
       } else if (/\bgetContext\(/.test(content)) {
         content = content.replace(/\bgetContext\(/g, '_getContext(')
 

@@ -1,5 +1,5 @@
 <script>
-  let showGrid = true
+  let showGrid = false
   // export let someEl
 
   $: document.body.classList.toggle('show-grid', showGrid)
@@ -110,32 +110,33 @@
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     line-height: 1.5; /* 24px */
+  }
 
-    p {
-      margin: 0 0 16px;
+  p {
+    margin: 0 0 16px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 24px 0 16px;
+    line-height: 1.2;
+    font-weight: 500;
+
+    &:first-child {
+      margin-top: 0;
     }
+  }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 24px 0 12px;
-      line-height: 1.2;
-      font-weight: 500;
-
-      &:first-child {
-        margin-top: 0;
-      }
-    }
-
-    h1 {
-      /* font-size: 3.052 * 16px; // 48.832px
+  h1 {
+    /* font-size: 3.052 * 16px; // 48.832px
       line-height: 1.147; // 56px */
 
-      font-size: linear(28.83px, 48.832px, 320px, 630px);
-      /* line-height: linear(36px, 56px, 320px, 630px);
+    font-size: linear(28.83px, 48.832px, 320px, 630px);
+    /* line-height: linear(36px, 56px, 320px, 630px);
       @include steps(
         font-size,
         28.83px,
@@ -144,68 +145,68 @@
         630px,
         $step: 4.0004px
       ); */
-      @mixin steps line-height, 36px, 56px, 320px, 630px, 4px;
+    @mixin steps line-height, 36px, 56px, 320px, 630px, 4px;
 
-      /* @include down(sm) {
+    /* @include down(sm) {
         font-size: 1.802 * 16px; // 28.83px
         line-height: 1.249; // 36px
       } */
-    }
-    h2 {
-      /* font-size: 2.441 * 16px; // 39.056px
+  }
+  h2 {
+    /* font-size: 2.441 * 16px; // 39.056px
       line-height: 1.229; // 48px */
 
-      font-size: linear(25.63px, 39.056px, 320px, 630px);
-      @mixin steps line-height, 32px, 48px, 320px, 630px, 4px;
+    font-size: linear(25.63px, 39.056px, 320px, 630px);
+    @mixin steps line-height, 32px, 48px, 320px, 630px, 4px;
 
-      /* @include down(sm) {
+    /* @include down(sm) {
         font-size: 1.602 * 16px; // 25.63px
         line-height: 1.24843945em; // 32px
       } */
-    }
-    h3 {
-      /* font-size: 1.953 * 16px; // 31.248px
+  }
+  h3 {
+    /* font-size: 1.953 * 16px; // 31.248px
       line-height: 1.28; // 40px */
 
-      font-size: linear(22.78px, 31.248px, 320px, 630px);
-      @mixin steps line-height, 32px, 40px, 320px, 630px, 4px;
+    font-size: linear(22.78px, 31.248px, 320px, 630px);
+    @mixin steps line-height, 32px, 40px, 320px, 630px, 4px;
 
-      /* @include down(sm) {
+    /* @include down(sm) {
         font-size: 1.424 * 16px; // 22.78px
         line-height: 1.4044944em; // 32px
       } */
-    }
-    h4 {
-      /* font-size: 1.563 * 16px; // 25.008px
+  }
+  h4 {
+    /* font-size: 1.563 * 16px; // 25.008px
       line-height: 1.28; // 32px */
 
-      font-size: linear(20.25px, 25.008px, 320px, 630px);
-      @mixin steps line-height, 28px, 32px, 320px, 630px, 4px;
+    font-size: linear(20.25px, 25.008px, 320px, 630px);
+    @mixin steps line-height, 28px, 32px, 320px, 630px, 4px;
 
-      /* @include down(sm) {
+    /* @include down(sm) {
         font-size: 1.266 * 16px; // 20.25px
         line-height: 1.38231em; // 28px
       } */
-    }
-    h5 {
-      /* font-size: 1.25 * 16px; // 20px
+  }
+  h5 {
+    /* font-size: 1.25 * 16px; // 20px
       line-height: 1.4; // 28px */
 
-      font-size: linear(18px, 20px, 320px, 630px);
-      @mixin steps line-height, 24px, 28px, 320px, 630px, 4px;
+    font-size: linear(18px, 20px, 320px, 630px);
+    @mixin steps line-height, 24px, 28px, 320px, 630px, 4px;
 
-      /* @include down(sm) {
+    /* @include down(sm) {
         font-size: 1.125 * 16px; // 18px
         line-height: 1.3333333; // 24px
       } */
-    }
-
-    .footnote {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.7);
-      line-height: 1.67;
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-      padding-top: 15px;
-    }
   }
+
+  .footnote {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.7);
+    line-height: 1.67;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 15px;
+  }
+  /* } */
 </style>

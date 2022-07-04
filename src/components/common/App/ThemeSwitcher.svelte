@@ -34,8 +34,8 @@
   onMount(() => {
     mounted = true
 
-    themeColorEl = document.querySelector('meta[name="theme-color"]')
-    colorSchemeEl = document.querySelector('meta[name="color-scheme"]')
+    themeColorEl = document.head.querySelector('meta[name="theme-color"]')
+    colorSchemeEl = document.head.querySelector('meta[name="color-scheme"]')
     forcedTheme = window.localStorage.getItem('theme')
 
     const mql = window.matchMedia('(prefers-color-scheme: dark)')
@@ -52,8 +52,12 @@
 >
   Enable
   <span class="theme-switcher__word-wrap">
-    <span class="theme-switcher__word">dark</span>
-    <span class="theme-switcher__word">light</span>
+    <span class="theme-switcher__word" aria-hidden={theme === 'dark'}>
+      dark
+    </span>
+    <span class="theme-switcher__word" aria-hidden={theme === 'light'}>
+      light
+    </span>
   </span>
   theme
   <svelte:fragment slot="thumb">
@@ -77,22 +81,24 @@
       --switch-height: 20px;
       --switch-thumb-size: 32px;
       --switch-thumb-left: -1px;
-      --switch-color: hsl(210 13% 71%);
-      --switch-active-color: var(--switch-color);
-      --switch-thumb-color: #001e3c;
+      --theme-switcher-color: hsl(210 13% 71%);
+      --theme-switcher-thumb-color: #001e3c;
       --ripple-opacity: 0.4;
 
       [data-theme='dark'] & {
-        --switch-color: #8796a5;
-        --switch-thumb-color: #003892;
+        --theme-switcher-color: #8796a5;
+        --theme-switcher-thumb-color: #003892;
         --ripple-opacity: 0.3;
       }
 
-      .switch__base {
+      .switch__track {
         outline: 0;
+        box-shadow: none;
+        background-color: var(--theme-switcher-color);
       }
       .switch__thumb {
         color: #ffffff;
+        background-color: var(--theme-switcher-thumb-color);
         font-size: 20px;
         box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
           0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
@@ -107,6 +113,7 @@
           )
         );
         display: grid;
+        place-items: center;
 
         svg {
           grid-area: 1 / -1;

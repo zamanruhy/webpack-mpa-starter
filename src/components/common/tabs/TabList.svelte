@@ -1,3 +1,3 @@
-<div class="tabs__list" role="tablist" tabindex="-1">
+<div class="tabs__list" role="tablist">
   <slot />
 </div>

@@ -1,8 +1,8 @@
 <%
-  const header = require('@/components/header/header.ejs')
-  const footer = require('@/components/footer/footer.ejs')
-  const metaSocial = require('./meta-social.ejs')
-  const darkTheme = require('./dark-theme.ejs')
+  const header = require('@/components/header/header.html')
+  const footer = require('@/components/footer/footer.html')
+  const metaSocial = require('./meta-social.html')
+  const darkTheme = require('./dark-theme.html')
   const title = 'Site title'
   const description = 'Site description'
 %>
@@ -17,9 +17,8 @@
     <link rel="icon" href="favicon.ico">
     <%= darkTheme() %>
     <%= metaSocial({ title, description }) %>
-    <link rel="preload" href="<%= require('@/assets/fonts/OpenSans.woff2') %>" as="font" type="font/woff2" crossorigin>
   </head>
-  <body>
+  <body class="bg-white font-brand text-base text-slate-900">
     <div class="app">
       <%= header() %>
       <main class="main">

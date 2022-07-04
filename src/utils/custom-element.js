@@ -89,7 +89,7 @@ export default function customElement(
         el = el.parentElement
       } while (el !== null)
 
-      return null
+      return []
     }
 
     connectedCallback() {
@@ -107,7 +107,7 @@ export default function customElement(
     }
 
     mount() {
-      this.__context__ = new Map(this.parentContext || [])
+      this.__context__ = new Map(this.parentContext)
 
       this.handleAttributes()
       this.handleChildren()
@@ -163,7 +163,6 @@ export default function customElement(
   }
 }
 
-// eslint-disable-next-line import/first
 import { detach, insert, noop } from 'svelte/internal'
 
 function createSlots(slots) {

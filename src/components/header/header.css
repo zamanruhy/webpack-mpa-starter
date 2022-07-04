@@ -1,0 +1,35 @@
+.header {
+  margin-bottom: 12px;
+
+  /* padding-block: $side-padding;
+  max-width: $max-width; */
+
+  /* @mixin truncate; */
+
+  /* @mixin up md {
+    @mixin <lg {
+      color: blue;
+    }
+  } */
+
+  @mixin md {
+    color: blue;
+  }
+
+  /* @apply truncate; */
+
+  /* min-width: min-content; */
+
+  &__container {
+  }
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+  }
+  &__logo {
+  }
+  &__logo-img {
+  }
+}

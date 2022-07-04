@@ -1,19 +1,20 @@
 <script>
   import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte'
-  import { registerPopup, unregisterPopup, trapFocus } from '@/helpers/modal'
+  import { registerModal, unregisterModal, trapFocus } from '@/helpers/modal'
   import { portalAction } from '@/actions'
-  import { easeOut, easeIn } from '@/utils'
+  import { easeOut } from '@/utils'
   import Backdrop from './Backdrop.svelte'
 
   let className = ''
   export { className as class }
-  export let id = ''
+  export let id = undefined
   export let open = false
-  export let placement = 'end' // 'start' |'end' | 'top' | 'bottom'
+  export let placement = 'right' // 'left' |'right' | 'top' | 'bottom'
   export let variant = ''
-  export let inTransition = slide
-  export let outTransition = slide
-  export let closeAriaLabel = 'Close'
+  export let transition = slide
+  export let inTransition = transition
+  export let outTransition = transition
+  export let closeButton = true // bool | object
   export let getParentEl = () => document.body
 
   let el
@@ -39,7 +40,7 @@
   }
   function beforeOpen() {
     returnFocusEl = returnFocusEl || document.activeElement
-    registerPopup(drawer)
+    registerModal(drawer)
   }
   function onIntrostart() {
     dispatch('open')
@@ -59,16 +60,16 @@
   function afterClose() {
     returnFocusEl.focus?.()
     returnFocusEl = null
-    unregisterPopup(drawer)
+    unregisterModal(drawer)
   }
   function slide(node, { duration, easing }) {
     return {
       duration,
       easing,
       css: (t, n) => {
-        if (placement === 'start') {
+        if (placement === 'left') {
           return `transform: translateX(${n * -100}%);`
-        } else if (placement === 'end') {
+        } else if (placement === 'right') {
           return `transform: translateX(${n * 100}%);`
         } else if (placement === 'top') {
           return `transform: translateY(${n * -100}%);`
@@ -78,7 +79,7 @@
       }
     }
   }
-  function onEsc(e) {
+  function onEscape(e) {
     if (e.key === 'Escape') {
       close()
     }
@@ -88,22 +89,15 @@
       el.focus()
     }
   }
-  function onToggleModal({ detail }) {
-    if (id === detail.id) {
-      open = !open
-    }
-  }
 
   onMount(() => {
     mounted = true
   })
 
   onDestroy(() => {
-    unregisterPopup(drawer)
+    unregisterModal(drawer)
   })
 </script>
-
-<svelte:window on:toggle-modal={id && onToggleModal} />
 
 {#if open && mounted}
   <div class="drawer-container" use:portalAction={getParentEl()}>
@@ -114,10 +108,10 @@
       aria-modal="true"
       {...$$restProps}
       tabindex="-1"
-      in:inTransition|local={{ duration: 200, easing: easeOut }}
-      out:outTransition|local={{ duration: 150, easing: easeIn }}
+      in:inTransition={{ duration: 200, easing: easeOut, placement }}
+      out:outTransition={{ duration: 150, easing: easeOut, placement }}
       bind:this={el}
-      on:keydown={onEsc}
+      on:keydown={onEscape}
       on:keydown={trapFocus}
       on:introstart={onIntrostart}
       on:introend={onIntroend}
@@ -125,67 +119,73 @@
       on:outroend={onOutroend}
     >
       <div class="drawer__content">
-        <button
-          class="drawer__close"
-          type="button"
-          aria-label={closeAriaLabel}
-          on:click={close}
-        >
-          <slot name="close-icon">
-            <svg viewBox="0 0 371.23 371.23">
-              <path
-                d="M371.23 21.213L350.018 0 185.615 164.402 21.213 0 0
-              21.213l164.402 164.402L0 350.018l21.213 21.212
-              164.402-164.402L350.018 371.23l21.212-21.212-164.402-164.403z"
-              />
-            </svg>
-          </slot>
-        </button>
-        <slot {close} />
+        {#if $$slots.header}
+          <div class="drawer__header">
+            <slot name="header" />
+          </div>
+        {/if}
+        {#if closeButton}
+          <button
+            class="drawer__close"
+            type="button"
+            aria-label="Close"
+            {...closeButton}
+            on:click={close}
+          >
+            <slot name="close-icon">
+              <svg viewBox="0 0 371.23 371.23" aria-hidden="true">
+                <path
+                  d="M371.23 21.213L350.018 0 185.615 164.402 21.213 0 0
+                21.213l164.402 164.402L0 350.018l21.213 21.212
+                164.402-164.402L350.018 371.23l21.212-21.212-164.402-164.403z"
+                />
+              </svg>
+            </slot>
+          </button>
+        {/if}
+        <div class="drawer__body">
+          <slot {close} />
+        </div>
+        {#if $$slots.footer}
+          <div class="drawer__footer">
+            <slot name="footer" />
+          </div>
+        {/if}
       </div>
     </div>
     <slot name="backdrop" {open} {close}>
-      <Backdrop on:click={close} />
+      <Backdrop {open} on:click={close} />
     </slot>
   </div>
 {/if}
 
 <style lang="postcss" global>
+  $drawer-z-index: var(--z-index-modal, 1300);
+
   .drawer-container {
     position: relative;
-    z-index: var(--z-index-modal);
+    z-index: var(--drawer-z-index, $drawer-z-index);
   }
 
   .drawer {
     background-color: #ffffff;
     position: fixed;
-    overflow-y: auto;
     width: 340px;
     max-width: 100%;
     max-height: 100%;
     outline: 0;
-    z-index: var(--z-index-modal);
+    z-index: var(--drawer-z-index, $drawer-z-index);
     will-change: transform;
 
-    &_start {
+    &_left {
       top: 0;
       left: 0;
       bottom: 0;
-
-      @supports (inset-inline-start: 0) {
-        left: auto;
-        inset-inline-start: 0;
-      }
     }
-    &_end {
+    &_right {
       top: 0;
       right: 0;
       bottom: 0;
-
-      @supports (inset-inline-end: 0) {
-        right: auto;
-        inset-inline-end: 0;
-      }
     }
     &_top {
       top: 0;
@@ -206,41 +206,62 @@
     }
 
     &__content {
-      min-height: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       position: relative;
-      padding: 24px 28px 28px;
+    }
+    &__header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+    }
+    &__body {
+      flex-grow: 1;
+      padding: 8px 24px;
+
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    &__footer {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 16px 24px;
     }
     &__close {
+      color: inherit;
+      appearance: none;
+      border: 0;
+      padding: 8px;
+      background-color: transparent;
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 16px;
+      right: 16px;
       z-index: 100;
       cursor: pointer;
-      border: none;
-      background-color: transparent;
-      color: #333333;
-      font-size: 20px;
-      padding: 0;
-      border-radius: 1px;
-      align-self: flex-end;
+      font-size: 16px;
+      border-radius: 4px;
+      transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      -webkit-tap-highlight-color: transparent;
 
-      &::before {
-        content: '';
-        width: max(30px, 100%);
-        height: max(30px, 100%);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: inherit;
+      @supports selector(:focus-visible) {
+        outline: 0;
+
+        &:focus-visible {
+          box-shadow: 0 0 0 3px hsl(207 73% 57% / 60%);
+        }
       }
 
       svg {
         display: block;
         height: 1em;
+        width: auto;
         fill: currentColor;
+        flex-shrink: 0;
       }
     }
   }

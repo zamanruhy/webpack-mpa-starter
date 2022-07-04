@@ -6,9 +6,9 @@ import Hamburger from '@/components/common/Hamburger.svelte'
 import ToTop from '@/components/common/ToTop.svelte'
 import Button from '@/components/common/Button.svelte'
 import Collapse from '@/components/common/Collapse.svelte'
-import { Swiper, SwiperSlide } from '@/components/common/swiper'
+// import { Swiper, SwiperSlide } from '@/components/common/swiper'
 import { Tabs, TabList, Tab, TabPanel } from '@/components/common/tabs'
-import Modal from '@/components/common/Modal.svelte'
+import Dialog from '@/components/common/Dialog.svelte'
 import Drawer from '@/components/common/Drawer.svelte'
 import Field from '@/components/common/Field.svelte'
 import Input from '@/components/common/Input.svelte'
@@ -22,11 +22,11 @@ export function customElements() {
     customElement('app-app', App)
     customElement('app-hamburger', Hamburger)
     customElement('app-drawer', Drawer)
-    customElement('app-modal', Modal)
+    customElement('app-dialog', Dialog)
     customElement('app-button', Button)
     customElement('app-collapse', Collapse)
-    customElement('app-swiper', Swiper)
-    customElement('app-swiper-slide', SwiperSlide, { outside: true })
+    // customElement('app-swiper', Swiper)
+    // customElement('app-swiper-slide', SwiperSlide, { outside: true })
     customElement('app-tabs', Tabs)
     customElement('app-tab-list', TabList)
     customElement('app-tab', Tab)
@@ -42,21 +42,7 @@ export function customElements() {
   })
 }
 
-// eslint-disable-next-line import/first
-import { collapseAction, modalAction } from '@/actions'
-
-export function dataModal() {
-  Array.from(document.querySelectorAll('[data-modal]')).forEach((el) => {
-    const id = el.dataset.modal
-
-    if (el.tagName.startsWith('APP-')) {
-      el.use = el.use || []
-      el.use.push([modalAction, id])
-    } else {
-      modalAction(el, id)
-    }
-  })
-}
+import { collapseAction } from '@/actions'
 
 export function dataCollapse() {
   Array.from(document.querySelectorAll('[data-collapse]')).forEach((el) => {
@@ -65,8 +51,7 @@ export function dataCollapse() {
       class: el.dataset.class
     }
     if (el.tagName.startsWith('APP-')) {
-      el.use = el.use || []
-      el.use.push([collapseAction, options])
+      el.action = (node) => collapseAction(node, options)
     } else {
       collapseAction(el, options)
     }

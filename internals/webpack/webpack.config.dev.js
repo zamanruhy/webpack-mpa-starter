@@ -22,7 +22,7 @@ const devConfig = merge(baseConfig, {
     static: {
       directory: path.join(process.cwd(), 'dist')
     },
-    watchFiles: './src/{pages,components}/**/*.ejs',
+    watchFiles: './src/{pages,components}/**/*.html',
     client: { logging: 'warn' },
     devMiddleware: { stats: 'errors-only' }
   }

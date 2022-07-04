@@ -90,7 +90,7 @@
 <style lang="postcss" global>
   $radio-size: 20px;
   $radio-color: hsl(214 17% 61%);
-  $radio-active-color: var(--accent-color, var(--theme-color, darkcyan));
+  $radio-active-color: var(--accent-color, var(--color-theme, darkcyan));
   $radio-disabled-color: hsl(218 10% 74%);
   $radio-dot-color: #ffffff;
   $radio-dot-disabled-color: var(--radio-dot-color, $radio-dot-color);
@@ -104,6 +104,7 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     isolation: isolate;
+    position: relative;
 
     &_disabled {
       pointer-events: none;

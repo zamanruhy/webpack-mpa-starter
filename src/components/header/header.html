@@ -2,11 +2,11 @@
   console.log('global', global)
 %>
 
-<header class="header">
+<header class="header md:mb-10">
   <div class="container header__container">
     <div class="header__inner">
       <div class="header__logo">
-        <img src="<%= require('@/assets/img/svelte.svg') %>" alt="Logo" width="98.1" height="118" class="header__logo-img">
+        <img class="header__logo-img w-14" src="https://www.solidjs.com/assets/logo.123b04bc.svg" alt="Logo" width="98.1" height="118">
       </div>
       <app-hamburger class="header__toggle" aria-controls="main-drawer"></app-hamburger>
     </div>

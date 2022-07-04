@@ -7,16 +7,19 @@
   import { writable } from 'svelte/store'
   import { uid } from '@/utils'
 
+  let className = ''
+  export { className as class }
+  export let variant = ''
   export let index = 0
+  export let vertical = false
+  export let rtl = false
 
   let tabs = []
   let panels = []
   let activeTab = writable(null)
   let activePanel = writable(null)
   let firstUpdate = true
-  let centerActive = true
   let mounted = false
-  let scrollTimer
   const dispatch = createEventDispatcher()
   const counter = { tab: 1, panel: 1 }
   const cid = uid()
@@ -67,64 +70,41 @@
   $: if (mounted && $activeTab) {
     if (firstUpdate) {
       firstUpdate = false
-      scrollTimer = setTimeout(() => {
-        scrollToActiveTab()
-      }, 100)
     } else {
       focusActiveTab()
-      scrollToActiveTab()
     }
   }
+  $: classes = [
+    'tabs',
+    vertical && 'tabs_vertical',
+    variant && `tabs_${variant}`,
+    className
+  ]
+    .filter(Boolean)
+    .join(' ')
 
-  function scrollToActiveTab() {
-    const activeTabEl = $activeTab.el
-    const listEl = activeTabEl.closest('.tabs__list')
-    const isOverflowing = listEl.scrollWidth > listEl.offsetWidth
-    if (!isOverflowing) {
-      return
-    }
-
-    if (centerActive) {
-      listEl.scrollLeft =
-        activeTabEl.offsetLeft -
-        listEl.offsetWidth / 2 +
-        activeTabEl.offsetWidth / 2
-      return
-    }
-
-    const offset = 10
-    const tabEnd = activeTabEl.offsetLeft + activeTabEl.offsetWidth
-    const listEnd = listEl.scrollLeft + listEl.offsetWidth
-    const offsetEnd = tabEnd - listEnd
-    if (offsetEnd > 0) {
-      listEl.scrollLeft += offsetEnd + offset
-      return
-    }
-
-    const tabStart = activeTabEl.offsetLeft
-    const listStart = listEl.scrollLeft
-    const offsetStart = listStart - tabStart
-    if (offsetStart > 0) {
-      listEl.scrollLeft -= offsetStart + offset
-    }
-  }
   function focusActiveTab() {
     const activeTabEl = $activeTab.el
     const listEl = activeTabEl.closest('.tabs__list')
     const scrollLeft = listEl.scrollLeft
-    activeTabEl.focus()
+    activeTabEl.focus({ preventScroll: true })
     listEl.scrollLeft = scrollLeft
   }
   function onTabKeydown(e, tab) {
     const key = e.key
     const i = tabs.indexOf(tab)
+    const lessArrows = [vertical ? 'ArrowUp' : rtl ? 'ArrowRight' : 'ArrowLeft']
+    const moreArrows = [
+      vertical ? 'ArrowDown' : rtl ? 'ArrowLeft' : 'ArrowRight'
+    ]
+
     if (key === ' ') {
       e.preventDefault()
       index = i
-    } else if (['ArrowDown', 'ArrowLeft'].includes(key)) {
+    } else if (lessArrows.includes(key)) {
       e.preventDefault()
       index = Math.max(index - 1, 0)
-    } else if (['ArrowUp', 'ArrowRight'].includes(key)) {
+    } else if (moreArrows.includes(key)) {
       e.preventDefault()
       index = Math.min(index + 1, tabs.length - 1)
     } else if (key === 'Home') {
@@ -141,50 +121,33 @@
   onMount(() => {
     mounted = true
   })
-
-  onDestroy(() => {
-    clearTimeout(scrollTimer)
-  })
 </script>
 
-<div class="tabs">
+<div class={classes} {...$$restProps}>
   <slot />
 </div>
 
 <style lang="postcss" global>
-  $scrollbar-track-color: #ededee;
-  $scrollbar-color: #ceced1;
-
   .tabs {
+    &_vertical {
+      display: flex;
+    }
     &__list {
       display: flex;
-      overflow: auto;
-      margin-bottom: -1px;
-      position: relative;
-      scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: $scrollbar-color $scrollbar-track-color;
-
-      @media (pointer: fine) {
-        &::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-          background-color: $scrollbar-track-color;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: $scrollbar-color;
-
-          &:hover {
-            background-color: darken($scrollbar-color, 0.1);
-          }
-          &:active {
-            background-color: darken($scrollbar-color, 0.2);
-          }
-        }
-      }
+      flex-wrap: wrap;
+    }
+    &_vertical &__list {
+      flex-direction: column;
+      flex-shrink: 0;
     }
     &__tab {
-      color: var(--theme-color);
+      font: inherit;
+      color: inherit;
+      appearance: none;
+      background-color: transparent;
+      text-transform: none;
+      outline: 0;
+      box-sizing: border-box;
       cursor: pointer;
       flex: 0 0 auto;
       display: flex;
@@ -192,31 +155,39 @@
       justify-content: center;
       text-align: center;
       padding: 8px 16px;
-      border: 1px solid transparent;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
+      border: 0 solid hsl(214 32% 91%);
+      border-bottom-width: 2px;
       white-space: nowrap;
-      outline-offset: -3px !important;
+      transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition-property: transform, opacity, background-color, color,
+        border-color, outline, box-shadow;
 
-      &_active {
-        color: #495057;
-        background-color: #fff;
-        border-color: #dee2e6 #dee2e6 #ffffff;
+      &_focus-visible {
+        box-shadow: 0 0 0 3px hsl(207 73% 57% / 60%);
       }
-
-      &:hover {
-        color: #495057;
+      &_active {
+        color: var(--color-theme, darkcyan);
+        border-color: currentColor;
+        z-index: 1;
       }
     }
+    &_vertical &__tab {
+      border-bottom-width: 0;
+      border-inline-start-width: 2px;
+    }
     &__panel {
+      box-sizing: border-box;
       width: 100%;
       padding: 16px;
       display: none;
-      border-top: 1px solid #dee2e6;
 
       &_active {
         display: block;
       }
+    }
+    &_vertical &__panel {
+      flex-grow: 1;
+      min-width: 0;
     }
   }
 </style>

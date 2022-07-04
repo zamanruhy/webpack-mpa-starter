@@ -1,7 +1,6 @@
-<svelte:options immutable />
-
 <script>
-  import { focusVisibleAction } from '@/actions'
+  import { get_current_component } from 'svelte/internal'
+  import { eventsAction, focusVisibleAction } from '@/actions'
 
   let className = ''
   export { className as class }
@@ -18,6 +17,7 @@
   export let inputEl = undefined
 
   let focusVisible = false
+  const component = get_current_component()
 
   $: if (Array.isArray(group)) {
     checked = group.includes(value)
@@ -62,18 +62,17 @@
     role="switch"
     {...$$restProps}
     bind:this={inputEl}
+    use:eventsAction={component}
     use:focusVisibleAction={(v) => (focusVisible = v)}
     on:change={handleChange}
-    on:change
   />
-  <span class="switch__base">
-    <span class="switch__track">
-      <slot name="track" {checked} {disabled} />
-    </span>
+  <span class="switch__track" aria-hidden="true">
+    <slot name="track" {checked} {disabled} />
     <span class="switch__thumb">
       <slot name="thumb" {checked} {disabled} />
     </span>
   </span>
+
   {#if $$slots.default || label}
     <span class="switch__label">
       <slot {disabled}>{label}</slot>
@@ -84,11 +83,6 @@
 <style lang="postcss" global>
   $switch-width: 40px;
   $switch-height: 20px;
-  $switch-color: hsl(211 25% 84%);
-  $switch-active-color: var(--accent-color, var(--theme-color, darkcyan));
-  $switch-thumb-color: #ffffff;
-  $switch-thumb-active-color: var(--switch-thumb-color, $switch-thumb-color);
-  $switch-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   $switch-thumb-size: 16px;
   $switch-thumb-left: calc(
     (
@@ -105,86 +99,69 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     isolation: isolate;
+    position: relative;
 
     &_disabled {
       pointer-events: none;
       cursor: default;
+      opacity: 0.6;
     }
 
     &__input {
       @mixin visually-hidden;
     }
-    &__base {
+    &__track {
       position: relative;
-      border-radius: calc(var(--switch-height, $switch-height) * 2);
-      height: var(--switch-height, $switch-height);
+      border-radius: 100px;
       width: var(--switch-width, $switch-width);
+      height: var(--switch-height, $switch-height);
       flex-shrink: 0;
-      outline-color: transparent;
-      transition: var(--switch-transition, $switch-transition);
-      transition-property: outline-color, box-shadow;
+      background-color: hsl(211 25% 84%);
+      transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      transition-property: transform, opacity, background-color, color,
+        border-color, outline, box-shadow;
 
       &::before {
         content: '';
         position: absolute;
-        width: max(30px, 100%);
-        height: max(30px, 100%);
+        width: max(40px, var(--switch-width, $switch-width));
+        height: max(40px, var(--switch-height, $switch-height));
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         border-radius: inherit;
         z-index: -1;
       }
-    }
-    &_disabled &__base {
-      opacity: 0.6;
-    }
-    &_focus-visible &__base {
-      @mixin focus-ring;
-    }
-    &__track {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      background-color: var(--switch-color, $switch-color);
-      border: 0 solid var(--switch-color, $switch-color);
-      transition: var(--switch-transition, $switch-transition);
-      transition-property: background-color, color, border-color;
 
       svg {
         display: block;
         height: 1em;
+        width: auto;
         fill: currentColor;
         flex-shrink: 0;
       }
     }
     &_checked &__track {
-      background-color: var(--switch-active-color, $switch-active-color);
-      border-color: var(--switch-active-color, $switch-active-color);
+      background-color: var(--accent-color, var(--color-theme, darkcyan));
+    }
+    &_focus-visible &__track {
+      box-shadow: 0 0 0 3px hsl(207 73% 57% / 60%);
     }
     &__thumb {
       width: var(--switch-thumb-size, $switch-thumb-size);
       height: var(--switch-thumb-size, $switch-thumb-size);
       position: absolute;
-      top: $switch-thumb-left;
-      left: var(--switch-thumb-left, $switch-thumb-left);
+      top: 50%;
+      margin-top: calc(var(--switch-thumb-size, $switch-thumb-size) / -2);
+      left: 50%;
+      margin-left: calc(
+        var(--switch-width, $switch-width) / -2 +
+          var(--switch-thumb-left, $switch-thumb-left)
+      );
       border-radius: inherit;
-      background-color: var(--switch-thumb-color, $switch-thumb-color);
-      outline-color: transparent;
-      transition: var(--switch-transition, $switch-transition);
-      transition-property: transform, background-color, color, border-color,
-        outline-color, box-shadow;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      svg {
-        display: block;
-        height: 1em;
-        fill: currentColor;
-        flex-shrink: 0;
-      }
+      background-color: #ffffff;
+      /* outline-color: transparent; */
+      transition: inherit;
     }
     &_checked &__thumb {
       transform: translateX(
@@ -194,18 +171,11 @@
             var(--switch-thumb-size, $switch-thumb-size)
         )
       );
-      background-color: var(
-        --switch-thumb-active-color,
-        $switch-thumb-active-color
-      );
     }
     &__label {
       display: inline-block;
       flex: 0 1 auto;
       margin-inline-start: 8px;
-    }
-    &_disabled &__label {
-      opacity: 0.6;
     }
   }
 </style>

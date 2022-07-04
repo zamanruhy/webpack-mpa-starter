@@ -5,8 +5,8 @@ const path = require('path')
 const chalk = require('chalk')
 const blocksDir = path.join(process.cwd(), 'src/components')
 const fileSources = {
-  ejs: `<div class="{blockName}"></div>`,
-  pcss: `.{blockName} {}`,
+  html: `<div class="{blockName}"></div>`,
+  css: `.{blockName} {}`,
   js: `export default function {blockNameCamel}() {
   const el = document.querySelector('.{blockName}')
 
@@ -102,7 +102,7 @@ function getFiles(blockPath) {
 }
 
 async function forcePostcssCompile() {
-  const file = path.join(process.cwd(), 'src/assets/styles/main.pcss')
+  const file = path.join(process.cwd(), 'src/assets/styles/main.css')
   const error = 'ERR>>> Failed to force postcss to build'
 
   const content = await new Promise((resolve, reject) => {

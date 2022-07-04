@@ -5,9 +5,10 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const sveltePreprocess = require('svelte-preprocess')
 const mpaPreprocess = require('./mpa-preprocess')
+// const UnoCSS = require('@unocss/webpack').default
+// const presetUno = require('@unocss/preset-mini').default
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -33,7 +34,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|svelte)$/,
+        test: /\.jsx?$/,
         enforce: 'pre',
         exclude: /node_modules/,
         loader: 'eslint-loader',
@@ -45,6 +46,10 @@ module.exports = {
       {
         test: /\.m?js$/,
         exclude: /node_modules[/\\](?!(svelte|swiper|dom7))/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.jsx$/,
         loader: 'babel-loader'
       },
       {
@@ -64,7 +69,16 @@ module.exports = {
                 mpaPreprocess(),
                 sveltePreprocess({
                   sourceMap: isDev,
-                  postcss: true
+                  postcss: {
+                    plugins: [
+                      require('postcss-mixins')({
+                        mixins: require('../../src/assets/styles/globals')
+                          .mixins
+                      }),
+                      require('postcss-simple-vars')({}),
+                      require('postcss-nested')
+                    ]
+                  }
                 })
               ]
             }
@@ -73,48 +87,49 @@ module.exports = {
       },
       {
         test: /\.svg$/,
-        include: resolve('src/assets/svg'),
+        include: resolve('src/assets/icons'),
+        type: 'asset/source',
         use: [
           {
-            loader: 'svg-sprite-loader',
+            loader: 'svgo-loader',
             options: {
-              symbolId: 'icon-[name]',
-              extract: true,
-              spriteFilename: 'static/img/sprite.svg',
-              publicPath: isDev ? '/' : ''
+              multipass: true,
+              plugins: [
+                {
+                  name: 'preset-default',
+                  params: {
+                    overrides: {
+                      // customize options for plugins included in preset
+                      convertPathData: { floatPrecision: 2 },
+                      // or disable plugins
+                      removeViewBox: false
+                    }
+                  }
+                },
+                // enable builtin plugin not included in default preset
+                'removeDimensions',
+                'prefixIds',
+                'removeXMLNS',
+                // enable and configure builtin plugin not included in preset
+                {
+                  name: 'removeAttributesBySelector',
+                  params: {
+                    selector: 'svg',
+                    attributes: ['class', 'style', 'xml:space']
+                  }
+                }
+              ]
             }
-          },
-          'svgo-loader'
+          }
         ]
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp|avif)$/,
-        exclude: resolve('src/assets/svg'),
+        exclude: resolve('src/assets/icons'),
         type: 'asset/resource',
         generator: {
           filename: 'static/img/[name][ext]'
-        },
-        use: [
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              disable: isDev,
-              mozjpeg: {
-                progressive: true
-              },
-              optipng: {
-                optimizationLevel: 7
-              },
-              pngquant: {
-                quality: [0.65, 0.9],
-                speed: 4
-              },
-              gifsicle: {
-                interlaced: false
-              }
-            }
-          }
-        ]
+        }
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/,
@@ -131,7 +146,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(css|pcss)$/,
+        test: /\.css$/,
         use: [
           isDev
             ? 'style-loader'
@@ -150,7 +165,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.ejs$/,
+        test: /\.html$/,
         loader: 'ejs-loader',
         options: {
           variable: 'props',
@@ -168,8 +183,8 @@ module.exports = {
         }
       ]
     }),
-    ...getHtmlWebpackPlugins(),
-    new SpriteLoaderPlugin()
+    ...getHtmlWebpackPlugins()
+    // UnoCSS()
   ]
 }
 
@@ -178,7 +193,7 @@ function getHtmlWebpackPlugins() {
 
   return fs
     .readdirSync(dir)
-    .filter((file) => file.endsWith('.ejs'))
+    .filter((file) => file.endsWith('.html'))
     .map((file) => {
       const { name } = path.parse(file)
       return new HtmlWebpackPlugin({

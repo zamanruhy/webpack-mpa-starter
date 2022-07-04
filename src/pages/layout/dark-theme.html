@@ -1,9 +1,9 @@
 <meta name="color-scheme" content="light dark" />
 <meta name="theme-color" content="hsl(174 57% 52%)" />
 <script>
-  (() => {
-    const themeColorEl = document.querySelector('meta[name="theme-color"]')
-    const colorSchemeEl = document.querySelector('meta[name="color-scheme"]')
+  (function () {
+    const themeColorEl = document.head.querySelector('meta[name="theme-color"]')
+    const colorSchemeEl = document.head.querySelector('meta[name="color-scheme"]')
     const forcedTheme = window.localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const theme = forcedTheme || (prefersDark ? 'dark' : 'light')

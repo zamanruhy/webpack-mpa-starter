@@ -1,36 +1,37 @@
 <%
-  const icon = require('@/components/icon/icon.ejs')
-  const houseIcon = require('@/assets/svg/house.svg').default
-  const logoIcon = require('@/assets/svg/logo.svg').default
-  const closeIcon = require('@/assets/svg/close.svg').default
-  const lockIcon = require('@/assets/svg/lock.svg').default
-  const inIcon = require('@/assets/svg/in.svg').default
+  const icon = require('@/components/icon/icon.html')
 %>
 
 <div class="styleguide">
   <div class="container">
+    <!-- <solid-spinner class="[--spinner-size:40px] [--spinner-thickness:2] md:[--spinner-size:100px] md:[--spinner-thickness:4]"></solid-spinner> -->
+
     <!--    <h1 class="styleguide__title styleguide__title_one">Example title</h1>-->
     <!--    <h1 class="styleguide__title styleguide__title_two">Example title</h1>-->
-    <h1 class="styleguide__title">Styleguide</h1>
+    <h1 class="styleguide__title hover:underline mt-4 text-cool fw-900 text-4xl">Styleguide</h1>
     <div class="styleguide__cols">
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Hamburger</h2>
         <app-hamburger></app-hamburger>
       </div>
       <div class="styleguide__col">
-        <h2 class="styleguide__subtitle" data-modal="main-modal" role="button" tabindex="0">Modal</h2>
-        <app-button variant="primary" data-modal="main-modal">Open Modal</app-button>
-        <app-modal .id="other-modal">
+        <h2 class="styleguide__subtitle" data-dialog="main-dialog" role="button" tabindex="0">Dialog</h2>
+        <app-button
+          variant="primary"
+          onclick="document.querySelector('app-dialog.main-dialog').open = true"
+        >Open Dialog</app-button>
+        <app-dialog data-other-dialog>
           <p>
             <app-button variant="primary" data-collapse="other-collapse">Toggle</app-button>
           </p>
           <app-collapse .id="other-collapse" open>
             <div class="styleguide__slide"></div>
           </app-collapse>
-        </app-modal>
-        <app-modal .id="main-modal" class="main-modal">
+        </app-dialog>
+        <app-dialog class="main-dialog">
+          <h2 style="margin-bottom: 0" slot="header">Dialog title</h2>
           <app-swiper class="styleguide__modal-swiper">
-            <% for (let i=0; i < 10; i++) { %>
+            <% for (let i=0; i < 1; i++) { %>
               <app-swiper-slide>
                 <div class="styleguide__slide">
                   <%= i + 1 %>
@@ -40,13 +41,16 @@
           </app-swiper>
           <br>
           <p>
-            <app-button variant="primary" data-modal="other-modal">Open Other</app-button>
+            <app-button
+              variant="primary"
+              onclick="document.querySelector('app-dialog[data-other-dialog]').open = true"
+            >Open Other</app-button>
           </p>
-        </app-modal>
+        </app-dialog>
       </div>
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Swiper</h2>
-        <app-swiper class="styleguide__main-swiper">
+        <app-swiper class="styleguide__main-swiper" hidden>
           <% for (let i=0; i < 10; i++) { %>
             <app-swiper-slide>
               <div class="styleguide__slide">
@@ -57,10 +61,10 @@
         </app-swiper>
         <p style="margin-top: 5px;">
           <app-button variant="primary" class="styleguide__prev">
-            <%= icon({ data: closeIcon }) %>
+            <%= icon({ name: 'close' }) %>
           </app-button>
           <app-button variant="primary" class="styleguide__next">
-            <%= icon({ data: houseIcon }) %>
+            <%= icon({ name: 'house' }) %>
           </app-button>
         </p>
       </div>
@@ -89,7 +93,7 @@
           <div class="styleguide__button">
             <app-button variant="primary" size="large" disabled>
               Large disabled
-              <%= icon({ data: houseIcon }) %>
+              <%= icon({ name: 'house' }) %>
             </app-button>
           </div>
         </div>
@@ -169,19 +173,10 @@
       <div class="styleguide__col">
         <h2 class="styleguide__subtitle">Icon</h2>
         <p style="font-size: 30px">
-          <%= icon({
-              data: logoIcon,
-              img: true,
-              attrs: {
-                style: 'margin: 0',
-                'data-modal': 'main-modal',
-                'aria-label': 'Open main modal'
-              }
-            })
-          %>
-          <%= icon({ data: houseIcon , className: 'block__element' }) %>
-          <%= icon({ data: lockIcon , img: true, attrs: { 'aria-hidden': 'true' } }) %>
-          <%= icon({ data: closeIcon }) %>
+          <%= icon({ name: 'house', class: 'block__element', 'data-example': 'some' }) %>
+          <%= icon({ name: 'lock' }) %>
+          <%= icon({ name: 'close' }) %>
+          <img src="<%= require('../../assets/img/in.svg') %>" alt="#">
         </p>
       </div>
       <div class="styleguide__col">

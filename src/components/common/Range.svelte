@@ -171,18 +171,18 @@
 
   function onThumbKeydown(e, i) {
     const key = e.key
-    const less = [
+    const lessArrows = [
       reversed && vertical ? 'ArrowUp' : 'ArrowDown',
       reversed && !vertical ? 'ArrowRight' : 'ArrowLeft'
     ]
-    const more = [
-      less[0] === 'ArrowUp' ? 'ArrowDown' : 'ArrowUp',
-      less[1] === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight'
+    const moreArrows = [
+      lessArrows[0] === 'ArrowUp' ? 'ArrowDown' : 'ArrowUp',
+      lessArrows[1] === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight'
     ]
-    if (less.includes(key)) {
+    if (lessArrows.includes(key)) {
       toSiblingStep(i, -1)
       e.preventDefault()
-    } else if (more.includes(key)) {
+    } else if (moreArrows.includes(key)) {
       toSiblingStep(i, 1)
       e.preventDefault()
     } else if (key === 'Home') {
@@ -296,10 +296,11 @@
     {/if}
     {#each values as value, i (i)}
       <div
-        class="range__thumb"
-        class:range__thumb_focus-visible={focusVisibleIndex === i}
-        class:range__thumb_active={activeIndex === i}
-        class:range__thumb_open={tooltipDisplay !== 'never' &&
+        class="range__handle"
+        class:range__handle_focus-visible={focusVisibleIndex === i}
+        class:range__handle_pressed={activeIndex === i && pressed}
+        class:range__handle_active={activeIndex === i}
+        class:range__handle_open={tooltipDisplay !== 'never' &&
           (tooltipDisplay === 'always' ||
             activeIndex === i ||
             hoveredIndex === i)}
@@ -319,9 +320,9 @@
         on:pointerenter={() => (hoveredIndex = i)}
         on:pointerleave={() => (hoveredIndex = -1)}
       >
-        <slot name="thumb" index={i}>
-          <div class="range__thumb-inner" />
-        </slot>
+        <div class="range__thumb">
+          <slot name="thumb" index={i} />
+        </div>
         {#if tooltipDisplay !== 'never'}
           <div class="range__tooltip" aria-hidden="true">
             <slot name="tooltip" value={scale(value)} index={i}>
@@ -338,24 +339,34 @@
 </div>
 
 <style lang="postcss" global>
-  .range {
-    --range-size: 32px;
-    --range-margin: 24px;
-    --range-theme-color: var(--accent-color, var(--theme-color, darkcyan));
-    --range-disabled-color: hsl(214 20% 74%);
-    --range-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --range-base-size: 4px;
-    --range-rail-color: hsl(214 32% 87%);
-    --range-track-size: 100%;
-    --range-thumb-size: 18px;
-    --range-tooltip-color: hsl(218 23% 23%);
-    --range-tooltip-text-color: hsl(0 0% 100% / 92%);
-    --range-mark-size: 100%;
-    --range-mark-thickness: 2px;
-    --range-mark-offset: 0px;
-    --range-mark-label-offset: 20px;
+  $range-outer-size: 32px;
+  $range-margin: 24px;
+  $range-size: 4px;
+  $range-color: var(--accent-color, var(--color-theme, darkcyan));
+  $range-disabled-color: hsl(214 20% 74%);
+  $range-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  $range-rail-color: hsl(214 32% 87%);
+  $range-rail-disabled-color: hsl(214 29% 89%);
+  $range-track-size: 100%;
+  $range-thumb-size: 18px;
+  $range-thumb-color: var(--range-color, $range-color);
+  $range-thumb-disabled-color: var(
+    --range-disabled-color,
+    $range-disabled-color
+  );
+  $range-tooltip-color: hsl(218 23% 23%);
+  $range-tooltip-text-color: hsl(0 0% 100%);
+  $range-mark-size: 100%;
+  $range-mark-thickness: 2px;
+  $range-mark-offset: 0px;
+  $range-mark-label-offset: 20px;
+  $range-mark-color: hsl(214 32% 74%);
+  $range-mark-active-color: hsl(0 0% 100% / 64%);
+  $range-mark-label-color: hsl(218 23% 23% / 70%);
+  $range-mark-label-active-color: hsl(218 23% 23%);
 
-    height: var(--range-size);
+  .range {
+    height: var(--range-outer-size, $range-outer-size);
     width: 100%;
     display: flex;
     align-items: center;
@@ -364,17 +375,22 @@
     touch-action: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    color: var(--range-color, $range-color);
+
+    &_disabled {
+      color: var(--range-disabled-color, $range-disabled-color);
+    }
 
     &_vertical {
-      width: var(--range-size);
+      width: var(--range-outer-size, $range-outer-size);
       height: 100%;
     }
 
     &_marked {
-      margin-bottom: var(--range-margin);
+      margin-bottom: var(--range-margin, $range-margin);
     }
     &_vertical&_marked {
-      margin-right: var(--range-margin);
+      margin-right: var(--range-margin, $range-margin);
       margin-bottom: auto;
     }
 
@@ -384,13 +400,13 @@
     }
 
     &__base {
-      height: var(--range-base-size);
+      height: var(--range-size, $range-size);
       position: relative;
       border-radius: 1px;
       width: 100%;
     }
     &_vertical &__base {
-      width: var(--range-base-size);
+      width: var(--range-size, $range-size);
       height: 100%;
     }
     &__rail {
@@ -398,41 +414,53 @@
       width: 100%;
       height: 100%;
       border-radius: inherit;
-      background-color: var(--range-rail-color);
+      background-color: var(--range-rail-color, $range-rail-color);
+    }
+    &_disabled &__rail {
+      background-color: var(
+        --range-rail-disabled-color,
+        $range-rail-disabled-color
+      );
     }
     &_track-inverted &__rail {
-      background-color: var(--range-theme-color);
+      background-color: var(--range-color, $range-color);
     }
     &_disabled&_track-inverted &__rail {
-      background-color: var(--range-disabled-color);
+      background-color: var(--range-disabled-color, $range-disabled-color);
     }
     &__track {
       position: absolute;
-      height: var(--range-track-size);
+      height: var(--range-track-size, $range-track-size);
       border-radius: inherit;
-      background-color: var(--range-theme-color);
+      background-color: var(--range-color, $range-color);
       top: 50%;
       transform: translateY(-50%);
-      transition: var(--range-transition);
+      transition: var(--range-transition, $range-transition);
       transition-property: left, right, top, bottom, width, height;
     }
     &_vertical &__track {
-      width: var(--range-track-size);
+      width: var(--range-track-size, $range-track-size);
       height: auto;
       top: auto;
       left: 50%;
       transform: translateX(-50%);
     }
     &_disabled &__track {
-      background-color: var(--range-disabled-color);
+      background-color: var(--range-disabled-color, $range-disabled-color);
     }
     &_track-inverted &__track {
-      background-color: var(--range-rail-color);
+      background-color: var(--range-rail-color, $range-rail-color);
+    }
+    &_disabled&_track-inverted &__rail {
+      background-color: var(
+        --range-rail-disabled-color,
+        $range-rail-disabled-color
+      );
     }
     &_dragging &__track {
       transition: none;
     }
-    &__thumb {
+    &__handle {
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
@@ -440,8 +468,9 @@
       outline: 0;
       display: flex;
       z-index: 1;
-      transition: var(--range-transition);
+      transition: var(--range-transition, $range-transition);
       transition-property: left, right, top, bottom;
+      isolation: isolate;
 
       &_active {
         z-index: 2;
@@ -458,33 +487,35 @@
         border-radius: inherit;
       }
     }
-    &_reversed &__thumb {
+    &_reversed &__handle {
       transform: translate(50%, -50%);
     }
-    &_vertical &__thumb {
+    &_vertical &__handle {
       transform: translate(-50%, 50%);
       left: 50%;
       top: auto;
     }
-    &_reversed&_vertical &__thumb {
+    &_reversed&_vertical &__handle {
       transform: translate(-50%, -50%);
     }
-    &_dragging &__thumb {
+    &_dragging &__handle {
       transition: none;
     }
-    &__thumb-inner {
-      width: var(--range-thumb-size);
-      height: var(--range-thumb-size);
-      background-color: var(--range-theme-color);
-      transition: transform var(--range-transition);
+    &__thumb {
+      width: var(--range-thumb-size, $range-thumb-size);
+      height: var(--range-thumb-size, $range-thumb-size);
+      background-color: var(--range-thumb-color, $range-thumb-color);
+      transition: transform var(--range-transition, $range-transition);
       border-radius: inherit;
     }
-    &__thumb_active &__thumb-inner {
-      transform: scale(1.25);
+    &__handle_active &__thumb {
+      transform: scale(1.15);
     }
-    &_disabled &__thumb-inner {
-      transform: scale(0.8);
-      background-color: var(--range-disabled-color);
+    &_disabled &__thumb {
+      background-color: var(
+        --range-thumb-disabled-color,
+        $range-thumb-disabled-color
+      );
     }
     &__tooltip {
       position: absolute;
@@ -493,24 +524,24 @@
       flex-direction: column;
       left: 50%;
       padding-bottom: 6px;
-      min-width: 40px;
-      transition: var(--range-transition);
+      transition: var(--range-transition, $range-transition);
       transition-property: transform, opacity, visibility;
       transform-origin: center bottom;
       transform: translateX(-50%) translateY(5px);
       opacity: 0;
       visibility: hidden;
     }
-    &__thumb_open &__tooltip {
+    &__handle_open &__tooltip {
       transform: translateX(-50%);
       opacity: 1;
       visibility: visible;
     }
     &__tooltip-value {
-      padding: 4px 8px;
+      align-self: center;
+      padding: 4px 12px;
       border-radius: 2px;
-      background-color: var(--range-tooltip-color);
-      color: var(--range-tooltip-text-color);
+      background-color: var(--range-tooltip-color, $range-tooltip-color);
+      color: var(--range-tooltip-text-color, $range-tooltip-text-color);
       font-size: 14px;
       white-space: nowrap;
       min-width: 30px;
@@ -521,7 +552,7 @@
     &__tooltip-arrow {
       width: 14px;
       height: 7px;
-      background-color: var(--range-tooltip-color);
+      background-color: var(--range-tooltip-color, $range-tooltip-color);
       clip-path: polygon(0 0, 100% 0, 50% 100%);
       margin-top: -1px;
       align-self: center;
@@ -529,37 +560,43 @@
     &__marks {
     }
     &__mark {
-      width: var(--range-mark-thickness);
-      height: var(--range-mark-size);
-      top: var(--range-mark-offset);
+      width: var(--range-mark-thickness, $range-mark-thickness);
+      height: var(--range-mark-size, $range-mark-size);
+      top: var(--range-mark-offset, $range-mark-offset);
       position: absolute;
       border-radius: 1px;
-      background-color: hsl(214 32% 74%);
-      margin: 0 calc(var(--range-mark-thickness) / -2);
+      background-color: var(--range-mark-color, $range-mark-color);
+      margin: 0 calc(var(--range-mark-thickness, $range-mark-thickness) / -2);
 
       &_active {
-        background-color: hsl(0 0% 100% / 64%);
+        background-color: var(
+          --range-mark-active-color,
+          $range-mark-active-color
+        );
       }
     }
     &_vertical &__mark {
-      height: var(--range-mark-thickness);
-      width: var(--range-mark-size);
-      left: var(--range-mark-offset);
+      height: var(--range-mark-thickness, $range-mark-thickness);
+      width: var(--range-mark-size, $range-mark-size);
+      left: var(--range-mark-offset, $range-mark-offset);
       top: auto;
-      margin: calc(var(--range-mark-thickness) / -2) 0;
+      margin: calc(var(--range-mark-thickness, $range-mark-thickness) / -2) 0;
     }
     &__mark-labels {
     }
     &__mark-label {
-      top: var(--range-mark-label-offset);
+      top: var(--range-mark-label-offset, $range-mark-label-offset);
       position: absolute;
       font-size: 14px;
       transform: translateX(-50%);
       white-space: nowrap;
-      opacity: 0.8;
+      color: var(--range-mark-label-color, $range-mark-label-color);
 
       &_active {
-        opacity: 1;
+        color: var(
+          --range-mark-label-active-color,
+          $range-mark-label-active-color
+        );
       }
     }
     &_reversed &__mark-label {
@@ -567,7 +604,7 @@
     }
     &_vertical &__mark-label {
       top: auto;
-      left: var(--range-mark-label-offset);
+      left: var(--range-mark-label-offset, $range-mark-label-offset);
       transform: translateY(50%);
     }
     &_vertical&_reversed &__mark-label {

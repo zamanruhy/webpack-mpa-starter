@@ -4,30 +4,25 @@
   import Switch from '@/components/common/Switch.svelte'
   import Radio from '@/components/common/Radio.svelte'
   import FileInput from '@/components/common/FileInput.svelte'
-  import { Swiper, SwiperSlide } from '@/components/common/swiper'
+  // import { Swiper, SwiperSlide } from '@/components/common/swiper'
   import Collapse from '@/components/common/Collapse.svelte'
   import Button from '@/components/common/Button.svelte'
   import { Tabs, TabList, Tab, TabPanel } from '@/components/common/tabs'
-  import Icon from '@/components/common/Icon.svelte'
-  import Modal from '@/components/common/Modal.svelte'
+  // import Icon from '@/components/common/Icon.svelte'
+  import Dialog from '@/components/common/Dialog.svelte'
   import Drawer from '@/components/common/Drawer.svelte'
   import Range from '@/components/common/Range.svelte'
   import Field from '@/components/common/Field.svelte'
   import Spinner from '@/components/common/Spinner.svelte'
   import Vertical from '@/components/common/App/VerticalRhythm.svelte'
   import { bp } from '@/helpers/bp'
-  import {
-    collapseAction,
-    modalAction,
-    portalAction,
-    intersectAction
-  } from '@/actions'
+  import { collapseAction, portalAction, intersectAction } from '@/actions'
   // import '@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg'
-  import houseIcon from '@/assets/svg/house.svg'
-  import logoIcon from '@/assets/svg/logo.svg'
-  import closeIcon from '@/assets/svg/close.svg'
-  import lockIcon from '@/assets/svg/lock.svg'
-  import inIcon from '@/assets/svg/in.svg'
+  // import houseIcon from '@/assets/svg/house.svg'
+  // import logoIcon from '@/assets/svg/logo.svg'
+  // import closeIcon from '@/assets/svg/close.svg'
+  // import lockIcon from '@/assets/svg/lock.svg'
+  // import inIcon from '@/assets/svg/in.svg'
 
   let range = 5
   let inputValue = ''
@@ -64,14 +59,14 @@
   let modalInputValue = ''
   let prev
   let next
-  const icons = [
-    { data: houseIcon, img: false },
-    { data: logoIcon, img: true },
-    { data: closeIcon, img: false },
-    { data: lockIcon, img: true },
-    { data: inIcon, img: false }
-  ]
-  let buttonIcon = icons[0]
+  // const icons = [
+  //   { data: houseIcon, img: false },
+  //   { data: logoIcon, img: true },
+  //   { data: closeIcon, img: false },
+  //   { data: lockIcon, img: true },
+  //   { data: inIcon, img: false }
+  // ]
+  // let buttonIcon = icons[0]
   let buttonSize = ''
   let buttonHasIcon = true
   let buttonIconLeft = true
@@ -86,16 +81,16 @@
   let collapsedClass = 'collapsed'
 
   $: step = switched ? 2 : 7
-  $: swiperOptions = {
-    navigation: {
-      prevEl: prev?.el,
-      nextEl: next?.el
-    },
-    pagination: true,
-    slidesPerView: 2,
-    spaceBetween: 20,
-    keyboard: true
-  }
+  // $: swiperOptions = {
+  //   navigation: {
+  //     prevEl: prev?.el,
+  //     nextEl: next?.el
+  //   },
+  //   pagination: true,
+  //   slidesPerView: 2,
+  //   spaceBetween: 20,
+  //   keyboard: true
+  // }
 
   function onEvent(e) {
     console.log(e)
@@ -215,6 +210,7 @@
   //   // await Promise.resolve()
   //   console.log('paramEl:', param())
   // }
+  loadComp()
 </script>
 
 <!-- <p bind:this={someEl} />
@@ -403,9 +399,7 @@
 </Field>
 <hr />
 <h6>Drawer</h6>
-<Button variant="primary" use={[[modalAction, 'content-drawer']]}>
-  Open Drawer
-</Button>
+<Button variant="primary">Open Drawer</Button>
 <Drawer id="content-drawer" {placement} let:close getParentEl={() => false}>
   <div>
     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero, laboriosam
@@ -418,7 +412,7 @@
     odio non quam sapiente obcaecati eaque aliquid necessitatibus facere, ab,
     ratione magnam animi modi?
   </div>
-  <div class="flex gap-4 mt-4 mb-4">
+  <div class="mt-4 mb-4 flex gap-4">
     <Radio bind:group={placement} name="placement" value="start">Start</Radio>
     <Radio bind:group={placement} name="placement" value="end">End</Radio>
     <Radio bind:group={placement} name="placement" value="top">Top</Radio>
@@ -431,7 +425,7 @@
 
 <hr />
 
-<Button
+<!-- <Button
   class="mb-4"
   variant="primary"
   size={buttonSize}
@@ -446,9 +440,9 @@
   {#if buttonHasIcon && !buttonIconLeft}
     <Icon {...buttonIcon} style="margin-left: 4px;" />
   {/if}
-</Button>
+</Button> -->
 
-{#each [...Array(iconsCount).keys()] as num (num)}
+<!-- {#each [...Array(iconsCount).keys()] as num (num)}
   <p
     class="flex gap-4"
     style="font-size: 30px; color: rebeccapurple; --in-outer-color: red; --in-inner-color: blue; --in-dot-color: green;"
@@ -457,7 +451,7 @@
       <Icon {...icon} style="margin: 0" on:click={() => (buttonIcon = icon)} />
     {/each}
   </p>
-{/each}
+{/each} -->
 
 <Tabs bind:index={tabIndex}>
   <TabList>
@@ -502,24 +496,26 @@
 
 <br />
 
-<p>
+<!-- <p>
   <Button
     variant="primary"
-    use={[[collapseAction, { id: 'test-collapse', class: 'collapsed-class' }]]}
+    actions={[
+      [collapseAction, { id: 'test-collapse', class: 'collapsed-class' }]
+    ]}
   >
     <Icon data={houseIcon} style="margin-right: 4px;" />
     Toogle
   </Button>
   {slideIndex}
-</p>
+</p> -->
 <Collapse id="test-collapse" open>
-  <Swiper bind:index={slideIndex} options={swiperOptions}>
+  <!-- <Swiper bind:index={slideIndex} options={swiperOptions}>
     {#each [...Array(range).keys()] as num}
       <SwiperSlide>
         <div class="styleguide__slide">{num + 1}</div>
       </SwiperSlide>
     {/each}
-  </Swiper>
+  </Swiper> -->
   <p style="margin-top: 5px;">
     <Button variant="primary" bind:this={prev}>Prev</Button>
     <Button variant="primary" bind:this={next}>Next</Button>
@@ -545,17 +541,12 @@
     variant="primary"
     class="first second"
     onclick={() => (modalOpen = !modalOpen)}
-    use={[[modalAction, 'modal-test']]}
   >
     Modal
   </Button>
-  <a href="#button" use:modalAction={'modal-test'}>Modal by action</a>
-  <svg use:modalAction={'modal-test'}>
-    <text x="50" y="50">Modal by action on SVG</text>
-  </svg>
 </p>
 <p>
-  <Modal
+  <Dialog
     id="modal-test"
     class="some__modal"
     aria-labelledby="modal-title"
@@ -588,7 +579,7 @@
       </p>
     </div>
     <!-- </Collapse> -->
-    <div class="flex justify-end mt-4">
+    <div class="mt-4 flex justify-end">
       <Button variant="primary" on:click={close}>Close modal</Button>
       <!-- <div>
         <label>
@@ -605,7 +596,7 @@
         </label>
       </div> -->
     </div>
-  </Modal>
+  </Dialog>
 </p>
 
 <!-- <Swiper
@@ -816,7 +807,7 @@
 </div>
 
 <hr />
-<div class="flex items-center gap-4 mb-4">
+<div class="mb-4 flex items-center gap-4">
   <Checkbox
     aria-label="Favourite"
     checked
@@ -902,7 +893,7 @@
     </svg>
   </Checkbox>
 </div>
-<div class="flex gap-4 mb-4">
+<div class="mb-4 flex gap-4">
   <Checkbox
     label="Lorem ipsum, dolor sit amet consectetur adipisicing elit."
     checked
@@ -928,7 +919,7 @@
     }}
   />
 </div>
-<ul class="grid gap-2 mb-2" style="padding-left: 25px;">
+<ul class="mb-2 grid gap-2" style="padding-left: 25px;">
   {#each flavours as flavour (flavour)}
     <li>
       <Checkbox
@@ -968,10 +959,11 @@
   /* :root {
     --spacer: 16px;
   } */
-  .grid {
+
+  /* .grid {
     display: grid;
-  }
-  .flex {
+  } */
+  /* .flex {
     display: flex;
     flex-wrap: wrap;
   }
@@ -1019,7 +1011,7 @@
   }
   .mt-4 {
     margin-top: 16px;
-  }
+  } */
   body {
     /* background: url(@/assets/img/34A3721C-53F0-4371-ABB9-F7CB9C94F053_w1200_r1.jpg); */
   }
@@ -1058,8 +1050,8 @@
       font-size: 16px;
     }
     &_checked .radio__base {
-      background-color: var(--theme-color);
-      border-color: var(--theme-color);
+      background-color: var(--color-theme);
+      border-color: var(--color-theme);
       color: #ffffff;
     }
   }

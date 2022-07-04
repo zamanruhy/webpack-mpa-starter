@@ -1,0 +1,74 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:focus:not(:focus-visible) {
+  outline: 0;
+}
+
+/* :focus {
+  outline: 0;
+}
+
+:focus-visible {
+  @mixin focus-ring;
+} */
+
+html {
+  font-size: 16px;
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  line-height: var(--line-height);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  height: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-theme);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  margin: 24px 0;
+  background-color: hsl(214 32% 91%);
+}
+
+p {
+  margin: 0 0 16px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 16px;
+  line-height: 1.2;
+  font-weight: 500;
+}

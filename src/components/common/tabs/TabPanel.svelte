@@ -11,7 +11,7 @@
   class="tabs__panel"
   class:tabs__panel_active={$activePanel === panel}
   role="tabpanel"
-  aria-hidden={$activePanel === panel ? 'false' : 'true'}
+  aria-hidden={$activePanel !== panel}
   aria-labelledby={id}
 >
   {#if $activePanel === panel}

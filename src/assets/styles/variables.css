@@ -1,0 +1,27 @@
+:root {
+  /* Colors */
+  --color-theme: hsl(179 51% 39%);
+  --color-text: hsl(218 23% 23%);
+  --color-bg: #ffffff;
+
+  /* Font */
+  --font-family: OpenSans, system-ui, -apple-system, Arial, sans-serif;
+  --font-size: 16px;
+  --line-height: 1.5;
+
+  /* Layout */
+  --layout-padding: 15px;
+  --layout-max-width: calc(1200px + var(--layout-padding) * 2);
+
+  /* Z-indexes */
+  --z-index-fixed: 1100;
+  --z-index-backdrop: 1200;
+  --z-index-modal: 1300;
+  --z-index-popup: 1400;
+
+  /* Transition */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 200ms var(--ease-in-out);
+}

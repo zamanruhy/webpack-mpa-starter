@@ -1,0 +1,10 @@
+<%
+  const { name, class: className = '', ...rest } = props
+  const data = require(`@/assets/icons/${name}.svg`)
+  const attrs = Object.entries({ 'aria-hidden': true, ...rest })
+    .map((p) => `${p[0]}="${p[1]}"`).join(' ')
+  const classes = ['icon', className].filter(Boolean).join(' ')
+  const svg = data.replace('<svg', `<svg class="${classes}" ${attrs}`)
+%>
+
+<%= svg %>

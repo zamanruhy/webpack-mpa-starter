@@ -1,0 +1,28 @@
+/* @import "./fonts.css"; */
+/* @import "./variables.css"; */
+/* @import "./base.css"; */
+/* @import "./common.css"; */
+
+/* @import "../../components/header/header.css"; */
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import-glob "../../components/**/*.css";
+@import "tailwindcss/utilities";
+
+@layer base {
+  @font-face {
+    font-family: "OpenSans";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url(../fonts/OpenSans.woff2) format("woff2"),
+      url(../fonts/OpenSans.woff) format("woff");
+  }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto box-content max-w-[1200px] px-4;
+  }
+}

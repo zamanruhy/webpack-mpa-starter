@@ -3,19 +3,306 @@
   import Switch from '@/components/common/Switch.svelte'
   import Checkbox from '@/components/common/Checkbox.svelte'
   import Radio from '@/components/common/Radio.svelte'
+  import Button from '@/components/common/Button.svelte'
+  import Range from '@/components/common/Range.svelte'
+  import { Tabs, TabList, Tab, TabPanel } from '@/components/common/tabs'
+  import Spinner from '@/components/common/Spinner.svelte'
+  import Dialog from '@/components/common/Dialog.svelte'
+  import Drawer from '@/components/common/Drawer.svelte'
+  import Collapse from '@/components/common/Collapse.svelte'
+  import { collapseAction } from '@/actions'
+  import Hamburger from '@/components/common/Hamburger.svelte'
+  import Input from '@/components/common/Input.svelte'
+  // import Field from '@/components/common/Field.svelte'
+
   import ThemeSwitcher from './ThemeSwitcher.svelte'
 
   let switchGroup = [2]
   let checkboxGroup = [2]
   let radioGroup = 2
+  let rangeValue = [20, 62]
+  let tabIndex = 0
+  let drawerPlacement = 'left'
+  let dialogOpen = false
+  let drawerOpen = false
+  const marks = [
+    {
+      value: 0,
+      label: '0°C'
+    },
+    {
+      value: 13,
+      label: '13°C'
+    },
+    {
+      value: 20
+    },
+    {
+      value: 33,
+      label: '33°C'
+    },
+    {
+      value: 47
+    },
+    {
+      value: 62,
+      label: '62°C'
+    },
+    {
+      value: 86,
+      label: '86°C'
+    },
+    {
+      value: 100,
+      label: '100°C'
+    }
+  ]
+
+  $: console.log(rangeValue)
 </script>
+
+<svelte:head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+</svelte:head>
 
 <ThemeSwitcher />
 
 <hr />
 
-<h4>Radio</h4>
-<div class="flex gap-4 items-center">
+<h5 class="-mt-px mb-4 text-indigo-500 dark:text-green-400">Input m-6</h5>
+<Input
+  type="search"
+  placeholder="Typing..."
+  on:input={(e) => console.log(e.target.value)}
+  on:click={(e) => console.log(e.target)}
+/>
+<hr />
+
+<h5
+  class="text-30px z-modal z-fixed mt-10 min-w-min text-red-600 ease-in dark:text-red-400"
+>
+  Hamburger
+</h5>
+<Hamburger />
+
+<hr />
+
+<h5>Collapse</h5>
+<Button
+  action={(node) =>
+    collapseAction(node, { id: 'collapse', class: 'collapsed-class' })}
+>
+  Toogle Collapse
+</Button>
+<Collapse id="collapse">
+  <div style="padding-top: 16px">
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet ab quos
+    recusandae distinctio, quae esse ea minima sunt eligendi nam expedita!
+    Debitis optio, explicabo aspernatur doloribus libero adipisci ducimus! Quo
+    nostrum totam similique vero saepe, illo accusantium eos aspernatur
+    voluptatem sapiente possimus repellendus ducimus suscipit ullam atque
+    perferendis praesentium nemo a tempora nulla corrupti, quisquam alias?
+    Architecto maxime ipsam nesciunt repudiandae vero, voluptate eum molestias
+    quidem.
+  </div>
+</Collapse>
+
+<hr />
+
+<h5>Drawer</h5>
+<Button variant="primary" on:click={() => (drawerOpen = !drawerOpen)}>
+  Open Drawer
+</Button>
+<Drawer bind:open={drawerOpen} placement={drawerPlacement} let:close>
+  <h5 class="mb-0" slot="header">Drawer title</h5>
+  <div>
+    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero, laboriosam
+    deleniti? Ipsum aliquid maiores placeat iure obcaecati, accusamus cum,
+    dolores sunt optio, quis voluptate similique perspiciatis! Laudantium
+    aspernatur asperiores impedit necessitatibus, ex nulla tenetur. Qui ea
+    repellendus sint ex illo recusandae dolorem laboriosam, ipsa deleniti!
+    Incidunt doloribus distinctio ullam error dignissimos ad magnam ipsam sed?
+    Dolorum temporibus dicta consequatur commodi est, reiciendis sunt deserunt
+    odio non quam sapiente obcaecati eaque aliquid necessitatibus facere, ab,
+    ratione magnam animi modi?
+  </div>
+  <div class="mt-4 flex gap-4">
+    <Radio bind:group={drawerPlacement} name="placement" value="left">
+      Left
+    </Radio>
+    <Radio bind:group={drawerPlacement} name="placement" value="right">
+      Right
+    </Radio>
+    <Radio bind:group={drawerPlacement} name="placement" value="top">Top</Radio>
+    <Radio bind:group={drawerPlacement} name="placement" value="bottom">
+      Bottom
+    </Radio>
+  </div>
+  <Button variant="primary" slot="footer" on:click={close}>Close</Button>
+</Drawer>
+
+<hr />
+
+<h5>Dialog</h5>
+<Button on:click={() => (dialogOpen = !dialogOpen)}>Open Dialog</Button>
+<Dialog
+  bind:open={dialogOpen}
+  aria-labelledby="dialog-title"
+  aria-describedby="dialog-description"
+  let:close
+  scrollable
+>
+  <h5 id="dialog-title" class="mb-0" slot="header">Dialog title</h5>
+  <div id="dialog-description">
+    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam nemo
+    possimus dolorum ducimus rerum tempora aut repudiandae necessitatibus
+    adipisci, voluptatem, esse est? Alias ad error magni culpa at consectetur
+    architecto magnam, deserunt dolorem doloribus sequi reiciendis laudantium
+    sint laboriosam, delectus cum rerum quam totam sit. Sint culpa facilis
+    doloribus accusamus voluptate omnis unde iste corrupti, harum architecto
+    soluta enim velit aut minus sequi magni laborum quisquam esse cumque
+    sapiente laboriosam nisi et quasi saepe! Quibusdam perferendis quo illum
+    architecto fuga. Eius provident architecto nostrum, incidunt alias quis
+    totam saepe deleniti nam tempore quidem natus quibusdam accusamus velit
+    maiores fugiat! Pariatur?
+  </div>
+  <svelte:fragment slot="footer">
+    <Button variant="primary" on:click={close}>Close dialog</Button>
+  </svelte:fragment>
+</Dialog>
+
+<!-- <Dialog bind:open={dialogOpen}>
+  <div>
+    <p class="mb-0">
+      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam nemo
+      possimus dolorum ducimus rerum tempora aut repudiandae necessitatibus
+      adipisci, voluptatem, esse est? Alias ad error magni culpa at consectetur
+      architecto magnam, deserunt dolorem doloribus sequi reiciendis laudantium
+      sint laboriosam, delectus cum rerum quam totam sit.
+    </p>
+  </div>
+</Dialog> -->
+
+<hr />
+
+<h5>Spinner</h5>
+<Spinner size={32} width={2} />
+
+<hr />
+
+<h5>Tabs</h5>
+<Tabs bind:index={tabIndex}>
+  <TabList>
+    {#each [...Array(7).keys()] as num (num)}
+      <Tab>Tab {num + 1}</Tab>
+    {/each}
+  </TabList>
+  {#each [...Array(7).keys()] as num (num)}
+    <TabPanel>
+      Content of Tab {num + 1}
+    </TabPanel>
+  {/each}
+</Tabs>
+<!-- <Tabs vertical>
+  <TabList>
+    {#each [...Array(4).keys()] as num (num)}
+      <Tab>Tab {num + 1}</Tab>
+    {/each}
+  </TabList>
+  {#each [...Array(4).keys()] as num (num)}
+    <TabPanel>
+      Content of Tab {num + 1}
+    </TabPanel>
+  {/each}
+</Tabs> -->
+
+<hr />
+
+<h5>Range</h5>
+<div class="grid gap-4">
+  <Range
+    bind:value={rangeValue}
+    min={0}
+    max={100}
+    step={null}
+    {marks}
+    tooltipDisplay="auto"
+  />
+  <!-- {JSON.stringify(rangeValue)} -->
+  <h5 class="mb-0">Chakra</h5>
+  <Range
+    class="chakra-range"
+    value={[30, 60]}
+    min={0}
+    max={100}
+    step={1}
+    tooltipDisplay="never"
+  />
+  <h5 class="mb-0">Mui</h5>
+  <Range class="mui-range" value={[30, 60]} {marks} tooltipDisplay="auto" />
+  <h5 class="mb-0">iOS</h5>
+  <Range
+    class="ios-range"
+    value={60}
+    step={10}
+    marks={true}
+    aria-label="ios slider"
+    tooltipDisplay="always"
+  />
+  <h5 class="mb-0">pretto.fr</h5>
+  <Range class="pretto-range" value={20} aria-label="pretto slider" />
+  <h5 class="mb-0">Airbnb</h5>
+  <Range
+    class="airbnb-range"
+    value={[20, 40]}
+    getAriaLabel={(i) => (i === 0 ? 'Minimum price' : 'Maximum price')}
+    tooltipDisplay="never"
+  >
+    <div class="airbnb-range__thumb-bars" slot="thumb">
+      <div class="airbnb-range__thumb-bar" />
+      <div class="airbnb-range__thumb-bar" />
+      <div class="airbnb-range__thumb-bar" />
+    </div>
+  </Range>
+</div>
+
+<hr />
+
+<h5>Button</h5>
+<div class="flex flex-wrap items-center gap-4">
+  <Button>Default</Button>
+  <Button loading>Loading</Button>
+  <Button disabled>Disabled</Button>
+  <Button class="mui-button" variant="contained">Mui Contained</Button>
+  <Button class="mui-button" variant="outlined">
+    <svg viewBox="0 0 24 24" style="font-size: 20px" aria-hidden="true">
+      <path
+        d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+      />
+    </svg>
+    Mui Outlined
+  </Button>
+  <Button class="chakra-button" variant="solid">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" d="M0 0h24v24H0z" clip-rule="evenodd" />
+      <path
+        d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"
+      />
+    </svg>
+    Chakra Solid
+  </Button>
+  <Button class="chakra-button" variant="outline">Chakra Outline</Button>
+</div>
+
+<hr />
+
+<h5>Radio</h5>
+<div class="flex flex-wrap items-center gap-4">
   <Radio label="Disable" name="radio-name" bind:group={radioGroup} value={1} />
   <Radio label="Default" name="radio-name" bind:group={radioGroup} value={2} />
   <Radio
@@ -56,8 +343,8 @@
 
 <hr />
 
-<h4>Checkbox</h4>
-<div class="flex gap-4 items-center">
+<h5>Checkbox</h5>
+<div class="flex flex-wrap items-center gap-4">
   <Checkbox label="Disable" bind:group={checkboxGroup} value={1} />
   <Checkbox
     label="Default"
@@ -133,7 +420,7 @@
   </Checkbox>
   <Checkbox
     class="chakra-checkbox"
-    label="Chakra UI"
+    label="Chakra"
     disabled={checkboxGroup.includes(1)}
     bind:group={checkboxGroup}
     value={2}
@@ -165,8 +452,8 @@
 
 <hr />
 
-<h4>Switch</h4>
-<div class="flex gap-4 items-center">
+<h5>Switch</h5>
+<div class="flex flex-wrap items-center gap-4">
   <Switch label="Disable" bind:group={switchGroup} value={1} />
   <Switch
     disabled={switchGroup.includes(1)}
@@ -190,14 +477,14 @@
     bind:group={switchGroup}
     value={2}
   >
-    <svelte:fragment slot="track">
+    <span slot="track">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
       </svg>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M19,13H5V11H19V13Z" />
       </svg>
-    </svelte:fragment>
+    </span>
   </Switch>
   <Switch
     class="ant-switch"
@@ -243,46 +530,505 @@
 
 <hr />
 
-<Test />
+<div hidden1>
+  <Test />
+</div>
 
 <style lang="postcss" global>
   :root {
     color-scheme: light;
     --dark-theme: 0;
-    --theme-color: hsl(179 51% 39%);
-    --text-color: hsl(218 23% 23%);
-    --bg-color: #ffffff;
-    --divider-color: hsl(214 32% 91%);
-    --button-text-color: #ffffff;
+    --color-theme: hsl(179 51% 39%);
+    --color-text: hsl(218 23% 23%);
+    --color-bg: #ffffff;
   }
 
   [data-theme='dark'] {
     color-scheme: dark;
     --dark-theme: 1;
-    --theme-color: hsl(174 59% 56%);
-    --text-color: hsl(0 0% 100% / 92%);
-    --bg-color: hsl(220 26% 14%);
-    --divider-color: rgb(255 255 255 / 16%);
-    --button-text-color: #1a202c;
-    --focus-ring-color: var(--text-color);
+    --color-theme: hsl(174 59% 56%);
+    --color-text: hsl(0 0% 100% / 92%);
+    --color-bg: hsl(220 26% 14%);
+    --focus-ring-color: var(--color-text);
     --focus-ring-width: 2px;
     --focus-ring-offset: 3px;
 
-    --switch-color: hsl(0 0% 100% / 24%);
+    hr {
+      background-color: rgb(255 255 255 / 16%);
+    }
+
     --checkbox-color: hsl(0 0% 100% / 50%);
     --checkbox-disabled-color: hsl(0 0% 100% / 30%);
     --checkbox-icon-color: hsl(230 21% 11%);
     --radio-color: hsl(0 0% 100% / 50%);
     --radio-disabled-color: hsl(0 0% 100% / 30%);
     --radio-dot-color: hsl(230 21% 11%);
+    --range-disabled-color: hsl(214 14% 60%);
+    --range-rail-color: hsl(214 10% 50%);
+    --range-rail-disabled-color: hsl(214 10% 42%);
+    --range-mark-color: hsl(214 25% 70%);
+    --range-mark-active-color: hsl(220 26% 14% / 60%);
+    --range-tooltip-color: hsl(211 25% 84%);
+    --range-tooltip-text-color: hsl(230 21% 11%);
+    --range-mark-label-color: hsl(0 0% 100% / 70%);
+    --range-mark-label-active-color: hsl(0 0% 100% / 92%);
+
+    /* Checkbox dark */
+    .checkbox {
+      &__base {
+        color: hsl(0 0% 100% / 50%);
+      }
+      &_disabled .checkbox__base {
+        color: hsl(0 0% 100% / 30%);
+      }
+      &__box svg {
+        color: hsl(230 21% 11%);
+      }
+    }
+
+    /* Switch dark */
+    .switch {
+      &__track {
+        background-color: hsl(0 0% 100% / 24%);
+      }
+    }
+
+    /* Tabs dark */
+    .tabs {
+      &__tab:not(.tabs__tab_active) {
+        border-color: hsl(0 0% 100% / 16%);
+      }
+    }
+
+    /* Dialog dark */
+    .dialog {
+      &__content {
+        background-color: hsl(218 23% 23%);
+      }
+    }
+
+    /* Drawer dark */
+    .drawer {
+      background-color: hsl(218 23% 23%);
+    }
+
+    /* Button dark */
+    .button {
+      color: #1a202c;
+
+      &_disabled {
+        background-color: hsl(0 0% 100% / 0.15);
+        color: hsl(0 0% 100% / 0.4);
+      }
+    }
+
+    /* Input dark */
+    .input {
+      &__input {
+        &:not(:focus) {
+          border-color: hsl(0 0% 100% / 24%);
+        }
+
+        &::placeholder {
+          color: hsl(0 0% 100% / 24%);
+        }
+      }
+    }
   }
 
-  .button.button {
-    color: var(--button-text-color);
+  body {
+    font-family: 'Open Sans', sans-serif;
   }
 
-  hr {
-    background-color: var(--divider-color);
+  /* Range */
+  .chakra-range.range {
+    --range-outer-size: 24px;
+    --range-color: hsl(209 62% 50%);
+    --range-rail-color: hsl(214 32% 91%);
+    --range-size: 4px;
+    --range-thumb-size: 14px;
+    --range-thumb-color: #ffffff;
+    --range-transition: none;
+
+    [data-theme='dark'] & {
+      --range-color: hsl(203 82% 76%);
+      --range-rail-color: #2c313d;
+    }
+
+    .range__base {
+      border-radius: 2px;
+    }
+    .range__thumb {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+    .range__handle_focus-visible .range__thumb {
+      box-shadow: rgba(66, 153, 225, 0.6) 0px 0px 0px 3px;
+    }
+    .range__handle_active .range__thumb {
+      transform: scale(1.15);
+    }
+  }
+
+  .mui-range.range {
+    --range-size: 4px;
+    --range-track-size: 6px;
+    --range-color: rgb(25, 118, 210);
+    --range-disabled-color: #bdbdbd;
+    --range-rail-color: #a8cbee;
+    --range-rail-disabled-color: rgb(189 189 189 / 0.38);
+    --range-thumb-size: 20px;
+    --range-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --range-mark-size: 2px;
+    --range-mark-thickness: 2px;
+    --range-mark-offset: 1px;
+    --range-mark-color: currentColor;
+    --range-mark-active-color: rgb(255 255 255 / 0.8);
+    --range-mark-label-color: rgba(0, 0, 0, 0.6);
+    --range-mark-label-active-color: rgba(0, 0, 0, 0.87);
+    --range-tooltip-color: #757575;
+    --range-tooltip-text-color: hsl(0 0% 100%);
+
+    .range__base {
+      border-radius: 12px;
+    }
+    .range__handle {
+      &::after {
+        content: '';
+        position: absolute;
+        transition: inherit;
+        transition-property: transform;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: currentColor;
+        border-radius: inherit;
+        opacity: 0.16;
+        transform: scale(0.95);
+        z-index: -1;
+      }
+      &:where(:hover)::after,
+      &_focus-visible::after {
+        transform: scale(1.8);
+      }
+      &_pressed::after {
+        transform: scale(2.4);
+      }
+    }
+    .range__thumb {
+      transform: none;
+      box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px,
+        rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
+    }
+    .range__tooltip {
+      padding-bottom: 5px;
+      opacity: 1;
+      visibility: visible;
+      transform-origin: bottom center;
+      transform: translateX(-50%) scale(0);
+    }
+    .range__handle_open .range__tooltip {
+      transform: translateX(-50%) scale(1);
+    }
+    .range__tooltip-value {
+      font-weight: 500;
+      font-size: 14px;
+      border-radius: 2px;
+      line-height: 1.43;
+      padding: 4px 12px;
+    }
+    .range__tooltip-arrow {
+      width: 11.3px;
+      height: 5.7px;
+    }
+  }
+
+  .ios-range.range {
+    --range-size: 2px;
+    --range-color: #3880ff;
+    --range-disabled-color: #bdbdbd;
+    --range-rail-color: #bfbfbf;
+    --range-rail-disabled-color: var(--range-rail-color);
+    --range-mark-size: 8px;
+    --range-mark-thickness: 1px;
+    --range-mark-offset: -3px;
+    --range-mark-color: var(--range-rail-color);
+    --range-mark-active-color: currentColor;
+    --range-thumb-size: 28px;
+    --range-thumb-color: #ffffff;
+    --range-tooltip-text-color: rgba(0, 0, 0, 0.87);
+
+    [data-theme='dark'] & {
+      --range-color: rgb(56, 128, 255);
+      --range-rail-color: rgb(191, 191, 191);
+      --range-tooltip-text-color: rgb(255, 255, 255);
+    }
+
+    .range__rail {
+      opacity: 0.5;
+    }
+    .range__thumb {
+      box-shadow: 0 3px 1px rgb(0 0 0 / 10%), 0 4px 8px rgb(0 0 0 / 13%),
+        0 0 0 1px rgb(0 0 0 / 2%);
+      transform: none;
+      transition: inherit;
+      transition-property: box-shadow;
+    }
+    .range__handle_active .range__thumb,
+    .range__handle:hover .range__thumb {
+      box-shadow: 0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+
+      @media (hover: none) {
+        box-shadow: 0 3px 1px rgb(0 0 0 / 10%), 0 4px 8px rgb(0 0 0 / 13%),
+          0 0 0 1px rgb(0 0 0 / 2%);
+      }
+    }
+    .range__tooltip-value {
+      font-size: 12px;
+      font-weight: normal;
+      background-color: transparent;
+      padding: 4px 12px;
+    }
+    .range__tooltip-arrow {
+      display: none;
+    }
+  }
+
+  .pretto-range.range {
+    --range-size: 8px;
+    --range-color: #52af77;
+    --range-disabled-color: #bdbdbd;
+    --range-rail-color: currentColor;
+    --range-rail-disabled-color: currentColor;
+    --range-thumb-size: 24px;
+
+    .range__base {
+      border-radius: 12px;
+    }
+    .range__rail {
+      opacity: 0.38;
+    }
+    .range__thumb {
+      transform: none;
+      border: 2px solid currentColor;
+      background-color: #ffffff;
+    }
+    .range__tooltip {
+      opacity: 1;
+      visibility: visible;
+      line-height: 1.2;
+      font-size: 12px;
+      background: unset;
+      padding: 0;
+      margin-bottom: 4px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50% 50% 50% 0;
+      background-color: #52af77;
+      transform-origin: bottom left;
+      transform: rotate(-45deg) scale(0);
+    }
+    .range__handle_open .range__tooltip {
+      transform: rotate(-45deg) scale(1);
+    }
+    .range__tooltip-value {
+      transform: rotate(45deg);
+      padding: 1px 0 0;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      background-color: transparent;
+      line-height: 1.2;
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffffff;
+      border-radius: 50%;
+    }
+    .range__tooltip-arrow {
+      display: none;
+    }
+  }
+
+  .airbnb-range.range {
+    --range-outer-size: 29px;
+    --range-size: 3px;
+    --range-track-size: 5px;
+    --range-rail-color: #d8d8d8;
+    --range-rail-disabled-color: var(--range-rail-color);
+    --range-color: #3a8589;
+    --range-disabled-color: #bdbdbd;
+    --range-thumb-size: 27px;
+
+    [data-theme='dark'] & {
+      --range-rail-color: rgb(191 191 191 / 0.38);
+    }
+
+    .range__base {
+      border-radius: 12px;
+    }
+    .range__handle {
+      &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        transform: scale(0.95);
+        transition: inherit;
+        transition-property: transform;
+        background-color: currentColor;
+        opacity: 0.16;
+        z-index: -1;
+      }
+      &_active::after,
+      &:hover::after {
+        transform: scale(1.6);
+      }
+    }
+    .range__thumb {
+      transform: none;
+      background-color: #ffffff;
+      border: 1px solid currentColor;
+      box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+        0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .airbnb-range__thumb-bars {
+      display: flex;
+    }
+    .airbnb-range__thumb-bar {
+      height: 9px;
+      width: 1px;
+      background-color: currentColor;
+      margin-left: 1px;
+      margin-right: 1px;
+    }
+  }
+
+  /* Button */
+  .mui-button.button {
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+    min-width: 64px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    outline: 0;
+    box-shadow: none;
+
+    &_contained {
+      --mui-button-color: hsl(210 79% 46%);
+      --mui-button-text-color: #ffffff;
+      --mui-button-hover-color: hsl(212 80% 42%);
+
+      [data-theme='dark'] & {
+        --mui-button-color: hsl(207 90% 77%);
+        --mui-button-hover-color: hsl(207 90% 61%);
+        --mui-button-text-color: rgba(0, 0, 0, 0.87);
+      }
+
+      border-color: transparent;
+      background-color: var(--mui-button-color);
+      color: var(--mui-button-text-color);
+      box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+        0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+
+      &:hover,
+      &.button_focus-visible {
+        background-color: var(--mui-button-hover-color);
+        box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+          0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
+      }
+      &:active {
+        box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%),
+          0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+      }
+    }
+    &_outlined {
+      --mui-button-color-hsl: 210 79% 46%;
+      --mui-button-bg-hover-color: hsl(var(--mui-button-color-hsl) / 4%);
+
+      [data-theme='dark'] & {
+        --mui-button-color-hsl: 207 90% 77%;
+        --mui-button-bg-hover-color: hsl(var(--mui-button-color-hsl) / 8%);
+      }
+
+      color: hsl(var(--mui-button-color-hsl));
+      background-color: transparent;
+      border: 1px solid hsl(var(--mui-button-color-hsl) / 50%);
+
+      &:hover,
+      &.button_focus-visible {
+        background-color: var(--mui-button-bg-hover-color);
+        border: 1px solid hsl(var(--mui-button-color-hsl));
+      }
+    }
+  }
+
+  .chakra-button.button {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    outline: 0;
+
+    &_focus-visible {
+      box-shadow: 0 0 0 3px hsl(207 73% 57% / 60%);
+    }
+
+    &_solid {
+      --chakra-button-color: hsl(209 62% 50%);
+      --chakra-button-text-color: #ffffff;
+      --chakra-button-hover-color: hsl(211 61% 43%);
+      --chakra-button-active-color: hsl(213 49% 34%);
+
+      [data-theme='dark'] & {
+        --chakra-button-color: hsl(203 82% 76%);
+        --chakra-button-text-color: hsl(220 26% 14%);
+        --chakra-button-hover-color: hsl(205 79% 66%);
+        --chakra-button-active-color: hsl(207 73% 57%);
+      }
+
+      background-color: var(--chakra-button-color);
+      border-color: transparent;
+      color: var(--chakra-button-text-color);
+
+      &:hover {
+        background-color: var(--chakra-button-hover-color);
+      }
+      &:active {
+        background-color: var(--chakra-button-active-color);
+      }
+    }
+    &_outline {
+      --chakra-button-color: hsl(211 61% 43%);
+      --chakra-button-bg-hover-color: hsl(201 100% 96%);
+      --chakra-button-bg-active-color: hsl(202 81% 86%);
+
+      [data-theme='dark'] & {
+        --chakra-button-color: hsl(203 82% 76%);
+        --chakra-button-bg-hover-color: hsl(203 82% 76% / 12%);
+        --chakra-button-bg-active-color: hsl(203 82% 76% / 24%);
+      }
+
+      background-color: transparent;
+      border-color: var(--chakra-button-color);
+      color: var(--chakra-button-color);
+
+      &:hover {
+        background-color: var(--chakra-button-bg-hover-color);
+      }
+      &:active {
+        background-color: var(--chakra-button-bg-active-color);
+      }
+    }
   }
 
   /* Radio */
@@ -413,24 +1159,32 @@
 
   .mui-checkbox.checkbox {
     --checkbox-size: 18px;
-    --checkbox-color: hsl(0 0% 0% / 60%);
-    --checkbox-active-color: hsl(210 79% 46%);
-    --checkbox-disabled-color: hsl(0 0% 0% / 26%);
+    --mui-checkbox-color: hsl(0 0% 0% / 60%);
+    --mui-checkbox-checked-color: hsl(210 79% 46%);
+    --mui-checkbox-disabled-color: hsl(0 0% 0% / 26%);
 
     [data-theme='dark'] & {
-      --checkbox-color: hsl(0 0% 100% / 70%);
-      --checkbox-active-color: hsl(207 90% 77%);
-      --checkbox-disabled-color: rgb(255 255 255 / 30%);
+      --mui-checkbox-color: hsl(0 0% 100% / 70%);
+      --mui-checkbox-checked-color: hsl(207 90% 77%);
+      --mui-checkbox-disabled-color: rgb(255 255 255 / 30%);
     }
 
     .checkbox__base {
-      outline: 0;
+      box-shadow: none;
       border-radius: 50%;
+      color: var(--mui-checkbox-color);
 
       &::before {
         width: 40px;
         height: 40px;
       }
+    }
+    &_checked .checkbox__base,
+    &_indeterminate .checkbox__base {
+      color: var(--mui-checkbox-checked-color);
+    }
+    &_disabled .checkbox__base {
+      color: var(--mui-checkbox-disabled-color);
     }
     &_focus-visible .checkbox__base::before {
       background-color: currentColor;
@@ -680,28 +1434,26 @@
     --switch-width: 42px;
     --switch-height: 22px;
     --switch-thumb-size: 16px;
-    --switch-color: hsl(0 0% 0% / 0.38);
-    --switch-active-color: hsl(210 79% 46% / 0.5);
-    --switch-thumb-color: #ffffff;
-    --switch-thumb-active-color: #1976d2;
-    --switch-track-icon-color: #ffffff;
-    --ripple-opacity: 0.2;
+    --android-switch-color: hsl(0 0% 0% / 0.38);
+    --android-switch-checked-color: hsl(210 79% 46% / 0.5);
+    --android-switch-thumb-color: #ffffff;
+    --android-switch-thumb-checked-color: #1976d2;
+    --android-switch-icon-color: #ffffff;
 
     [data-theme='dark'] & {
-      --switch-color: rgb(255 255 255 / 0.3);
-      --switch-active-color: hsl(210 60% 46% / 0.7);
-      --switch-thumb-color: rgb(224 224 224);
-      --switch-thumb-active-color: rgb(144 202 249);
-      --switch-track-icon-color: rgba(0 0 0 / 0.87);
+      --android-switch-color: rgb(255 255 255 / 0.3);
+      --android-switch-checked-color: hsl(210 60% 46% / 0.7);
+      --android-switch-thumb-color: rgb(224 224 224);
+      --android-switch-thumb-checked-color: rgb(144 202 249);
+      --android-switch-icon-color: rgba(0 0 0 / 0.87);
     }
 
-    .switch__base {
-      outline: 0;
-    }
     .switch__track {
+      background-color: var(--android-switch-color);
       font-size: 16px;
-      color: var(--switch-track-icon-color);
+      color: var(--android-switch-icon-color);
       position: relative;
+      box-shadow: none;
 
       svg {
         position: absolute;
@@ -716,19 +1468,33 @@
         }
       }
     }
-    &_focus-visible .switch__thumb::before {
-      content: '';
-      position: absolute;
-      width: 240%;
-      height: 240%;
-      top: 50%;
-      left: 50%;
-      border-radius: inherit;
-      background-color: inherit;
-      animation: ripple-check 200ms var(--ease-out) forwards;
+    &_checked .switch__track {
+      background-color: var(--android-switch-checked-color);
     }
-    &_focus-visible&_checked .switch__thumb::before {
-      animation: ripple-checked 200ms var(--ease-out) forwards;
+    .switch__thumb {
+      background-color: var(--android-switch-thumb-color);
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 240%;
+        height: 240%;
+        top: 50%;
+        left: 50%;
+        border-radius: inherit;
+        background-color: inherit;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: 200ms var(--ease-out);
+        transition-properties: transform, opacity;
+      }
+    }
+    &_checked .switch__thumb {
+      background-color: var(--android-switch-thumb-checked-color);
+    }
+    &_focus-visible .switch__thumb::before {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.2;
     }
   }
 
@@ -736,31 +1502,35 @@
     --switch-width: 44px;
     --switch-height: 22px;
     --switch-thumb-size: 18px;
-    --switch-transition: 0.2s ease-in-out;
-    --switch-color: hsl(0 0% 0% / 25%);
-    --switch-active-color: hsl(209 100% 55%);
-    --switch-thumb-color: #ffffff;
-    --switch-thumb-active-color: var(--switch-thumb-color);
-    --focus-ring-color: hsl(0 0% 0% / 10%);
-    --focus-ring-active-color: hsl(199 100% 95%);
-    --focus-ring-width: 3px;
-    --focus-ring-offset: 0;
+    --ant-switch-color: hsl(0 0% 0% / 25%);
+    --ant-switch-checked-color: hsl(209 100% 55%);
+    --ant-switch-outline-color: hsl(0 0% 0% / 10%);
+    --ant-switch-outline-checked-color: hsl(199 100% 95%);
 
-    :where([data-theme='dark']) & {
-      --switch-color: hsl(0 0% 100% / 30%);
-      --switch-active-color: hsl(209 81% 48%);
-      --focus-ring-color: rgb(255 255 255 / 10%);
-      --focus-ring-active-color: hsl(209 81% 48% / 30%);
+    [data-theme='dark'] & {
+      --ant-switch-color: hsl(0 0% 100% / 30%);
+      --ant-switch-checked-color: hsl(209 81% 48%);
+      --ant-switch-outline-color: rgb(255 255 255 / 10%);
+      --ant-switch-outline-checked-color: hsl(209 81% 48% / 30%);
     }
 
-    &_checked {
-      --focus-ring-color: var(--focus-ring-active-color);
+    .switch__track {
+      background-color: var(--ant-switch-color);
+      transition-duration: 0.2s;
+      transition-timing-function: ease-in-out;
     }
-
-    /* &:not(.switch_focus-visible) .switch__base {
-      outline-color: transparent;
-    } */
+    &_checked .switch__track {
+      background-color: var(--ant-switch-checked-color);
+    }
+    &_focus-visible .switch__track {
+      box-shadow: 0 0 0 2px var(--ant-switch-outline-color);
+    }
+    &_checked&_focus-visible .switch__track {
+      box-shadow: 0 0 0 2px var(--ant-switch-outline-checked-color);
+    }
     .switch__thumb {
+      background-color: #ffffff;
+
       &:before {
         content: '';
         position: absolute;
@@ -775,11 +1545,13 @@
         box-shadow: 0 2px 4px hsl(139 100% 7% / 20%);
       }
     }
+    .switch__input:active + .switch__track .switch__thumb,
     &:active .switch__thumb {
       &:before {
         right: -30%;
       }
     }
+    &_checked .switch__input:active + .switch__track .switch__thumb,
     &_checked:active .switch__thumb {
       &:before {
         right: 0;
@@ -792,30 +1564,35 @@
     --switch-width: 32px;
     --switch-height: 16px;
     --switch-thumb-size: 20px;
-    --switch-color: hsl(240 5% 65%);
-    --switch-active-color: hsl(200 98% 39%);
-    --switch-thumb-color: #ffffff;
-    --switch-focus-ring-color: rgb(14 165 233 / 0.4);
+    --shoelace-switch-color: hsl(240 5% 65%);
+    --shoelace-switch-checked-color: hsl(200 98% 39%);
+    --shoelace-switch-outline-color: rgb(14 165 233 / 0.4);
 
     [data-theme='dark'] & {
-      --switch-color: hsl(240 5% 35%);
-      --switch-active-color: hsl(199 98% 62%);
-      --switch-thumb-color: var(--bg-color);
-      --switch-focus-ring-color: rgb(31 170 238 / 0.4);
+      --shoelace-switch-color: hsl(240 5% 35%);
+      --shoelace-switch-checked-color: hsl(199 98% 62%);
+      --shoelace-switch-outline-color: rgb(31 170 238 / 0.4);
     }
 
-    .switch__base {
-      outline: 0;
+    .switch__track {
+      background-color: var(--shoelace-switch-color);
+      box-shadow: none;
+      transition-duration: 150ms;
+      transition-timing-function: ease;
+    }
+    &_checked .switch__track {
+      background-color: var(--shoelace-switch-checked-color);
     }
     .switch__thumb {
-      border: 1px solid var(--switch-color);
+      background-color: var(--color-bg);
+      border: 1px solid var(--shoelace-switch-color);
     }
     &_checked .switch__thumb {
-      border-color: var(--switch-active-color);
+      border-color: var(--shoelace-switch-checked-color);
     }
     &_focus-visible .switch__thumb {
-      border-color: var(--switch-active-color);
-      box-shadow: 0 0 0 3px var(--switch-focus-ring-color);
+      border-color: var(--shoelace-switch-checked-color);
+      box-shadow: 0 0 0 3px var(--shoelace-switch-outline-color);
     }
   }
 
@@ -824,39 +1601,45 @@
     --switch-height: 20px;
     --switch-thumb-size: 32px;
     --switch-thumb-left: -1px;
-    --switch-color: hsl(210 13% 71%);
-    --switch-active-color: var(--switch-color);
-    --switch-thumb-color: #001e3c;
-    --ripple-opacity: 0.4;
+    --MUI-switch-color: hsl(210 13% 71%);
+    --MUI-switch-thumb-color: #001e3c;
 
     [data-theme='dark'] & {
-      --switch-color: #8796a5;
-      --switch-thumb-color: #003892;
-      --ripple-opacity: 0.3;
+      --MUI-switch-color: #8796a5;
+      --MUI-switch-thumb-color: #003892;
     }
 
-    .switch__base {
-      outline: 0;
+    .switch__track {
+      box-shadow: none;
+      background-color: var(--MUI-switch-color);
     }
     .switch__thumb {
+      background-color: var(--MUI-switch-thumb-color);
       color: #ffffff;
       font-size: 20px;
       box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
         0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+      display: grid;
+      place-items: center;
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        border-radius: inherit;
+        background-color: #ffffff;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: 200ms var(--ease-out);
+        transition-properties: transform, opacity;
+      }
     }
     &_focus-visible .switch__thumb::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 50%;
-      left: 50%;
-      border-radius: inherit;
-      background-color: #ffffff;
-      animation: ripple-check 200ms var(--ease-out) forwards;
-    }
-    &_focus-visible&_checked .switch__thumb::before {
-      animation: ripple-checked 200ms var(--ease-out) forwards;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.35;
     }
   }
 
@@ -864,39 +1647,51 @@
     --switch-width: 34px;
     --switch-height: 14px;
     --switch-thumb-size: 20px;
-    --switch-color: hsl(0 0% 0% / 0.38);
-    --switch-active-color: hsl(210 79% 46% / 0.5);
-    --switch-thumb-color: #ffffff;
-    --switch-thumb-active-color: hsl(210 79% 46%);
-    --ripple-opacity: 0.3;
+    --mui-switch-color: hsl(0 0% 0% / 0.38);
+    --mui-switch-checked-color: hsl(210 79% 46% / 0.5);
+    --mui-switch-thumb-color: #ffffff;
+    --mui-switch-thumb-checked-color: hsl(210 79% 46%);
 
     [data-theme='dark'] & {
-      --switch-color: hsl(0 0% 100% / 0.3);
-      --switch-active-color: hsl(207 90% 77% / 0.5);
-      --switch-thumb-color: #ffffff;
-      --switch-thumb-active-color: hsl(207 90% 77%);
+      --mui-switch-color: hsl(0 0% 100% / 0.3);
+      --mui-switch-checked-color: hsl(207 90% 77% / 0.5);
+      --mui-switch-thumb-color: rgb(224, 224, 224);
+      --mui-switch-thumb-checked-color: hsl(207 90% 77%);
     }
 
-    .switch__base {
-      outline: 0;
+    .switch__track {
+      box-shadow: none;
+      background-color: var(--mui-switch-color);
+    }
+    &_checked .switch__track {
+      background-color: var(--mui-switch-checked-color);
     }
     .switch__thumb {
+      background-color: var(--mui-switch-thumb-color);
       box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
         0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 190%;
+        height: 190%;
+        top: 50%;
+        left: 50%;
+        border-radius: inherit;
+        background-color: inherit;
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+        transition: 200ms var(--ease-out);
+        transition-properties: transform, opacity;
+      }
+    }
+    &_checked .switch__thumb {
+      background-color: var(--mui-switch-thumb-checked-color);
     }
     &_focus-visible .switch__thumb::before {
-      content: '';
-      position: absolute;
-      width: 190%;
-      height: 190%;
-      top: 50%;
-      left: 50%;
-      border-radius: inherit;
-      background-color: inherit;
-      animation: ripple-check 200ms var(--ease-out) forwards;
-    }
-    &_focus-visible&_checked .switch__thumb::before {
-      animation: ripple-checked 200ms var(--ease-out) forwards;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.3;
     }
   }
 </style>

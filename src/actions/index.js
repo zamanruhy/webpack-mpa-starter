@@ -1,6 +1,5 @@
 export { default as portalAction } from './portal'
 export { default as collapseAction } from './collapse'
-export { default as modalAction } from './modal'
 export { default as intersectAction } from './intersect'
-export { default as actionsAction } from './actions'
+export { default as eventsAction } from './events'
 export { default as focusVisibleAction } from './focus-visible'

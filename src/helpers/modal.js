@@ -1,24 +1,24 @@
-const popups = new Set()
+const modals = new Set()
 let offsetElements = null
 let scrollbarWidth = null
 
-export function registerPopup(popup) {
-  if (popups.has(popup)) {
+export function registerModal(modal) {
+  if (modals.has(modal)) {
     return
   }
-  popups.add(popup)
-  if (popups.size === 1) {
+  modals.add(modal)
+  if (modals.size === 1) {
     setScrollbar()
     document.body.style.overflow = 'hidden'
   }
 }
 
-export function unregisterPopup(popup) {
-  if (!popups.has(popup)) {
+export function unregisterModal(modal) {
+  if (!modals.has(modal)) {
     return
   }
-  popups.delete(popup)
-  if (popups.size === 0) {
+  modals.delete(modal)
+  if (modals.size === 0) {
     resetScrollbar()
     document.body.style.overflow = ''
   }

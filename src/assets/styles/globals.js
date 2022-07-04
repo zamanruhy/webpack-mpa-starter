@@ -1,41 +1,43 @@
-const { fromString, fromRgb } = require('css-color-converter')
+// const { fromString, fromRgb } = require('css-color-converter')
 
 const breakpoints = {
-  sm: 576,
-  md: 768,
-  lg: 992,
-  xl: 1200,
-  xxl: 1400
+  sm: '576px',
+  md: '768px',
+  lg: '992px',
+  xl: '1200px',
+  '2xl': '1400px'
 }
 
 // Variables
 const variables = {
-  // 'color-primary': '#1976d2' // #a17d78
+  'color-primary': 'blue', // #a17d78
+  'side-padding': '15px',
+  'max-width': 'calc(1200px + $side-padding * 2)'
 }
 
 // Functions
 const functions = {
-  lighten(value, frac) {
-    const lighten = 1 + parseFloat(frac)
-    const rgba = fromString(value).toRgbaArray()
-    const r = rgba[0] * lighten
-    const g = rgba[1] * lighten
-    const b = rgba[2] * lighten
-    return fromRgb([r, g, b]).toHexString()
-  },
-  darken(value, frac) {
-    const darken = 1 - parseFloat(frac)
-    const rgba = fromString(value).toRgbaArray()
-    const r = rgba[0] * darken
-    const g = rgba[1] * darken
-    const b = rgba[2] * darken
-    return fromRgb([r, g, b]).toHexString()
-  },
-  'to-rgba'(value, alpha = 1) {
-    alpha = parseFloat(alpha)
-    const [r, g, b] = fromString(value).toRgbaArray()
-    return `rgba(${[r, g, b, alpha]})`
-  },
+  // lighten(value, frac) {
+  //   const lighten = 1 + parseFloat(frac)
+  //   const rgba = fromString(value).toRgbaArray()
+  //   const r = rgba[0] * lighten
+  //   const g = rgba[1] * lighten
+  //   const b = rgba[2] * lighten
+  //   return fromRgb([r, g, b]).toHexString()
+  // },
+  // darken(value, frac) {
+  //   const darken = 1 - parseFloat(frac)
+  //   const rgba = fromString(value).toRgbaArray()
+  //   const r = rgba[0] * darken
+  //   const g = rgba[1] * darken
+  //   const b = rgba[2] * darken
+  //   return fromRgb([r, g, b]).toHexString()
+  // },
+  // 'to-rgba'(value, alpha = 1) {
+  //   alpha = parseFloat(alpha)
+  //   const [r, g, b] = fromString(value).toRgbaArray()
+  //   return `rgba(${[r, g, b, alpha]})`
+  // },
   linear(v1, v2, w1, w2, unit) {
     if (!['vh', 'vmin', 'vmax'].includes(unit)) {
       unit = 'vw'
@@ -48,7 +50,9 @@ const functions = {
 
     for (let i = 0; i < v1.length; i++) {
       const slope = (v2[i] - v1[i]) / (w2 - w1)
-      const calc = `calc(${v1[i] - w1 * slope}px + ${100 * slope}${unit})`
+      const calc = `calc(${(v1[i] - w1 * slope).toFixed(3)}px + ${(
+        100 * slope
+      ).toFixed(3)}${unit})`
       list.push(`clamp(${v1[i]}px, ${calc}, ${v2[i]}px)`)
     }
 
@@ -59,67 +63,76 @@ const functions = {
 // Mixins
 const mixins = {
   'font-face'(_, name, path, weight, style, exts = 'woff2 woff') {
-    const src = exts
-      .split(' ')
-      .map((ext) => `url("${path}.${ext}") format("${ext}")`)
-      .join(',')
     return {
       '@font-face': {
         'font-family': `"${name}"`,
         'font-weight': weight,
         'font-style': style,
         'font-display': 'swap',
-        src
+        src: exts
+          .split(' ')
+          .map((ext) => `url("${path}.${ext}") format("${ext}")`)
+          .join(',')
       }
     }
   },
-  up(_, min) {
-    min = breakpoints[min] || parseFloat(min)
-    return min > 0
-      ? {
-          [`@media (min-width: ${min}px)`]: {
-            '@mixin-content': {}
-          }
-        }
-      : {
-          '@mixin-content': {}
-        }
-  },
-  down(_, max) {
-    max = breakpoints[max] || parseFloat(max)
-    max = max - 0.02
-    return max > 0
-      ? {
-          [`@media (max-width: ${max}px)`]: {
-            '@mixin-content': {}
-          }
-        }
-      : {}
-  },
-  between(_, min, max) {
+  // up(_, min) {
+  //   min = parseFloat(breakpoints[min] || min)
+  //   return {
+  //     [`@media (min-width: ${min}px)`]: {
+  //       '@mixin-content': {}
+  //     }
+  //   }
+  // },
+  // down(_, max) {
+  //   max = parseFloat(breakpoints[max] || max)
+  //   return {
+  //     [`@media (max-width: ${max - 1}px)`]: {
+  //       '@mixin-content': {}
+  //     }
+  //   }
+  // },
+  // between(_, min, max) {
+  //   return {
+  //     [`@mixin up ${min}`]: {
+  //       [`@mixin down ${max}`]: {
+  //         '@mixin-content': {}
+  //       }
+  //     }
+  //   }
+  // },
+  ...Object.keys(breakpoints).reduce((acc, bp) => {
+    const val = parseFloat(breakpoints[bp])
     return {
-      [`@mixin up ${min}`]: {
-        [`@mixin down ${max}`]: {
-          '@mixin-content': {}
+      ...acc,
+      [bp]: () => {
+        return {
+          [`@media (min-width: ${val}px)`]: {
+            '@mixin-content': {}
+          }
+        }
+      },
+      [`<${bp}`]: () => {
+        return {
+          [`@media (max-width: ${val - 0.1}px)`]: {
+            '@mixin-content': {}
+          }
         }
       }
     }
-  },
-  truncate(_, lines = 1, lineHeight) {
+  }, {}),
+  truncate(_, lines = 1) {
     return parseInt(lines) === 1
       ? {
-          overflow: 'hidden',
+          'white-space': 'nowrap',
           'text-overflow': 'ellipsis',
-          'white-space': 'nowrap'
+          overflow: 'hidden'
         }
       : {
           display: '-webkit-box',
           '-webkit-line-clamp': lines,
           '-webkit-box-orient': 'vertical',
-          'max-height': `calc(${lines} * ${lineHeight} * 1em)`,
-          'line-height': lineHeight,
-          overflow: 'hidden',
-          'text-overflow': 'ellipsis'
+          overflow: 'hidden'
         }
   },
   'focus-ring'(_, width = '3px', offset = '2px', color = 'hsl(39 89% 55%)') {
@@ -148,7 +161,7 @@ const mixins = {
       (acc, n) => {
         return {
           ...acc,
-          [`@mixin up ${w1 + (n - 0.5) * wStep}px`]: {
+          [`@media (min-width: ${w1 + (n - 0.5) * wStep}px)`]: {
             [property]: `${v1 + n * step}${vUnit}`
           }
         }
